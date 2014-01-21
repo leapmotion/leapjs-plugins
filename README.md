@@ -14,7 +14,8 @@ additional functionality will be available to you.  See [hand-entry](hand-entry)
 <script type="text/javascript">
   var controller = new Leap.Controller();
   controller.use('handEntry')
-</script>```
+</script>
+```
 
 
  - Each plugin is individually documented, with demo, on the [gh-pages](gh-pages).
