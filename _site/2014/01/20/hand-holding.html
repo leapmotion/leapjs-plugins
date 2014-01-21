@@ -6,8 +6,11 @@
 
     <link rel="stylesheet" href="/leapjs-plugins/stylesheets/styles.css">
     <link rel="stylesheet" href="/leapjs-plugins/stylesheets/pygment_trac.css">
+    <link rel="stylesheet" href="/leapjs-plugins/stylesheets/bootstrap.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <script type="text/javascript" src="/leapjs-plugins/javascripts/leap.js"></script>
+    <script src="/leapjs-plugins/javascripts/jquery-1.10.2.min.js"></script>
+
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -16,11 +19,11 @@
   <body>
     <div class="wrapper">
       <header>
-        <a href="/leapjs-plugins">
+        <a href="">
           <img src="/leapjs-plugins/images/ok.png" class="logo"/>
         </a>
         <h1>
-          <a href="/leapjs-plugins">
+          <a href="">
             Leapjs-plugins
           </a>
         </h1>
@@ -30,11 +33,11 @@
         <ul>
           
             <li>
-              <a href="/leapjs-plugins/2014/01/20/hand-holding.html">Hand Holding</a>
+              <a href="/2014/01/20/hand-holding.html">Hand Holding</a>
             </li>
           
             <li>
-              <a href="/leapjs-plugins/2014/01/20/hand-entry.html">Hand Entry</a>
+              <a href="/2014/01/20/hand-entry.html">Hand Entry</a>
             </li>
           
         </ul>
@@ -51,7 +54,229 @@
       <section>
         <script type="text/javascript" src="/leapjs-plugins/hand-holding/leap.hand-holding.js"></script>
 
-<h1>Hand Holding</h1>
+
+<h1 id="hand-holding-beta">Hand Holding (beta)</h1>
+
+<h2 id="usage">Usage</h2>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">handHolding</span><span style="color:#710">'</span></span>)
+</pre></div>
+</div>
+</div>
+
+<p>The hand-holding plugin provides a simple way to store data about a hand object between frames.</p>
+
+<h2 id="methods">Methods</h2>
+
+<h3 id="datahashorkey-value">.data(hashOrKey, value)</h3>
+
+<p>Similar to jQuery.data, this method allows a value to be get or set.  This is the main method, all else are convenience methods.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  hand.data(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">player</span><span style="color:#710">'</span></span>, <span style="color:#00D">1</span>)  <span style="color:#777">//store data</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  hand.data({<span style="color:#606">player</span>: <span style="color:#00D">1</span>})  <span style="color:#777">//store data</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  hand.data(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">player</span><span style="color:#710">'</span></span>) <span style="color:#777">// returns 1</span>
+</pre></div>
+</div>
+</div>
+
+<h3 id="holdvalue">hold(value)</h3>
+
+<p>This will either hold the value passed in, or hold on to whatever the hand is currently hovering over (see below).</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  hand.hold(someDiv); <span style="color:#777">// store the div</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  hand.hold();        <span style="color:#777">// store the current hover target</span>
+</pre></div>
+</div>
+</div>
+
+<h3 id="holding">holding()</h3>
+
+<p>This will return the object currently being held.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  hand.holding();  <span style="color:#777">// returns someDiv</span>
+</pre></div>
+</div>
+</div>
+
+<h3 id="hoverfncallback">hoverFn(callback)</h3>
+
+<p>Sets a function which the hand will use to determine what it is hovering over.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  hand.hoverFn( <span style="color:#080;font-weight:bold">function</span>(hand){ <span style="color:#080;font-weight:bold">return</span> hand.closestDiv(); } )
+</pre></div>
+</div>
+</div>
+
+<h3 id="hovering">hovering()</h3>
+
+<p>Returns what the hand is currently hovering over, based upon the hoverFn.  If no callback is set, will return undefined.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  hand.hovering() <span style="color:#777">// returns the results of hand.closestDiv();</span>
+</pre></div>
+</div>
+</div>
+
+
+
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#js" data-toggle="tab">JS</a></li>
+  <li><a href="#coffee" data-toggle="tab">Coffee</a></li>
+  <li><a href="#demo" data-toggle="tab">Demo</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+  <div class="tab-pane active" id="js">
+    <pre class="highlight-js"><code id="demoSrc"><div class="highlight"><pre><code class="javascript"><span class="nx">Leap</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">plugin</span><span class="p">(</span><span class="s1">&#39;sumPitch&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">pitchDeltas</span><span class="p">,</span> <span class="nx">timeWindow</span><span class="p">;</span>
+  <span class="nx">timeWindow</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="nx">pitchDeltas</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="k">return</span> <span class="p">{</span>
+    <span class="nx">hand</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">hand</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">currentPitch</span><span class="p">,</span> <span class="nx">delta</span><span class="p">,</span> <span class="nx">lastPitch</span><span class="p">,</span> <span class="nx">mostDistantTime</span><span class="p">,</span> <span class="nx">now</span><span class="p">,</span> <span class="nx">_i</span><span class="p">,</span> <span class="nx">_len</span><span class="p">,</span> <span class="nx">_results</span><span class="p">;</span>
+      <span class="nx">hand</span><span class="p">.</span><span class="nx">sumPitch</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">hand</span><span class="p">.</span><span class="nx">timeVisible</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">lastPitch</span> <span class="o">=</span> <span class="nx">hand</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;sumPitch.lastPitch&#39;</span><span class="p">);</span>
+      <span class="nx">currentPitch</span> <span class="o">=</span> <span class="nx">hand</span><span class="p">.</span><span class="nx">pitch</span><span class="p">();</span>
+      <span class="nx">hand</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s1">&#39;sumPitch.lastPitch&#39;</span><span class="p">,</span> <span class="nx">currentPitch</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">lastPitch</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+      <span class="nx">pitchDeltas</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+        <span class="nx">delta</span><span class="o">:</span> <span class="nx">currentPitch</span> <span class="o">-</span> <span class="nx">lastPitch</span><span class="p">,</span>
+        <span class="nx">time</span><span class="o">:</span> <span class="nx">now</span>
+      <span class="p">});</span>
+      <span class="nx">mostDistantTime</span> <span class="o">=</span> <span class="nx">now</span><span class="p">.</span><span class="nx">setSeconds</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">()</span> <span class="o">-</span> <span class="nx">timeWindow</span><span class="p">);</span>
+      <span class="k">while</span> <span class="p">(</span><span class="nx">pitchDeltas</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">time</span> <span class="o">&lt;</span> <span class="nx">mostDistantTime</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">pitchDeltas</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+      <span class="p">}</span>
+      <span class="nx">_results</span> <span class="o">=</span> <span class="p">[];</span>
+      <span class="k">for</span> <span class="p">(</span><span class="nx">_i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">_len</span> <span class="o">=</span> <span class="nx">pitchDeltas</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">_i</span> <span class="o">&lt;</span> <span class="nx">_len</span><span class="p">;</span> <span class="nx">_i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">delta</span> <span class="o">=</span> <span class="nx">pitchDeltas</span><span class="p">[</span><span class="nx">_i</span><span class="p">];</span>
+        <span class="nx">_results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">hand</span><span class="p">.</span><span class="nx">sumPitch</span> <span class="o">+=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">delta</span><span class="p">.</span><span class="nx">delta</span><span class="p">));</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">_results</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+<span class="p">});</span>
+
+<span class="nb">window</span><span class="p">.</span><span class="nx">demo</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#demo&#39;</span><span class="p">);</span>
+
+<span class="nx">Leap</span><span class="p">.</span><span class="nx">loop</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">demo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s1">&#39;frame id: &#39;</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; &lt;br/&gt;hand sumPitch: &#39;</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">sumPitch</span><span class="p">.</span><span class="nx">toPrecision</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="k">return</span> <span class="nx">demo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s1">&#39;frame id: &#39;</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; &lt;br/&gt;no hand present.&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div></code></pre>
+
+  </div>
+  <div class="tab-pane" id="coffee">
+<pre class="highlight-coffee"><code><div class="highlight"><pre><code class="coffee"><span class="c1"># This plugin shows how much a hand has changed pitch in the last few seconds.</span>
+<span class="nx">Leap</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">plugin</span> <span class="s">&#39;sumPitch&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span>
+  <span class="nv">timeWindow = </span><span class="mi">1</span> <span class="c1"># sec</span>
+
+  <span class="c1"># delta of both hands are combined</span>
+  <span class="nv">pitchDeltas = </span><span class="p">[]</span>
+  <span class="p">{</span>
+    <span class="nv">hand: </span><span class="nf">(hand)-&gt;</span>
+      <span class="c1"># skip momentary hands</span>
+      <span class="k">if</span> <span class="nx">hand</span><span class="p">.</span><span class="nx">timeVisible</span> <span class="o">&lt;</span> <span class="mi">1</span>
+        <span class="k">return</span>
+
+      <span class="c1"># initial pass</span>
+      <span class="c1"># we namespace our keys under sumPitch</span>
+      <span class="nv">lastPitch = </span><span class="nx">hand</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s">&#39;sumPitch.lastPitch&#39;</span><span class="p">)</span>
+      <span class="nv">currentPitch = </span><span class="nx">hand</span><span class="p">.</span><span class="nx">pitch</span><span class="p">()</span>
+      <span class="nx">hand</span><span class="p">.</span><span class="nx">data</span><span class="p">(</span><span class="s">&#39;sumPitch.lastPitch&#39;</span><span class="p">,</span> <span class="nx">currentPitch</span><span class="p">)</span>
+
+      <span class="k">return</span> <span class="k">unless</span> <span class="nx">lastPitch</span>
+
+
+      <span class="c1"># manage rolling sum</span>
+      <span class="nv">now = </span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
+      <span class="nx">pitchDeltas</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+        <span class="nv">delta: </span><span class="nx">currentPitch</span> <span class="o">-</span> <span class="nx">lastPitch</span><span class="p">,</span>
+        <span class="nv">time: </span><span class="nx">now</span>
+      <span class="p">})</span>
+
+      <span class="nv">mostDistantTime = </span><span class="nx">now</span><span class="p">.</span><span class="nx">setSeconds</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">()</span> <span class="o">-</span> <span class="nx">timeWindow</span><span class="p">)</span>
+      <span class="k">while</span> <span class="nx">pitchDeltas</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">time</span> <span class="o">&lt;</span> <span class="nx">mostDistantTime</span>
+        <span class="nx">pitchDeltas</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
+
+      <span class="nv">hand.sumPitch = </span><span class="mi">0</span>
+      <span class="k">for</span> <span class="nx">delta</span> <span class="k">in</span> <span class="nx">pitchDeltas</span>
+        <span class="nx">hand</span><span class="p">.</span><span class="nx">sumPitch</span> <span class="o">+=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">delta</span><span class="p">.</span><span class="nx">delta</span><span class="p">)</span>
+  <span class="p">}</span>
+
+<span class="nb">window</span><span class="p">.</span><span class="nv">demo = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#demo&#39;</span><span class="p">);</span>
+<span class="nx">Leap</span><span class="p">.</span><span class="nx">Loop</span> <span class="nf">(frame)-&gt;</span>
+  <span class="k">if</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nx">demo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">sumPitch</span><span class="p">)</span>
+</code></pre></div></code></pre>
+  </div>
+  <div class="tab-pane" id="demo"></div>
+</div>
+
+<script type="text/javascript">
+Leap.Controller.plugin('sumPitch', function() {
+  var pitchDeltas, timeWindow;
+  timeWindow = 1;
+  pitchDeltas = [];
+  return {
+    hand: function(hand) {
+      var currentPitch, delta, lastPitch, mostDistantTime, now, _i, _len, _results;
+      hand.sumPitch = 0;
+      if (hand.timeVisible < 1) {
+        return;
+      }
+      lastPitch = hand.data('sumPitch.lastPitch');
+      currentPitch = hand.pitch();
+      hand.data('sumPitch.lastPitch', currentPitch);
+      if (!lastPitch) {
+        return;
+      }
+      now = new Date();
+      pitchDeltas.push({
+        delta: currentPitch - lastPitch,
+        time: now
+      });
+      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow);
+      while (pitchDeltas[0].time < mostDistantTime) {
+        pitchDeltas.shift();
+      }
+      _results = [];
+      for (_i = 0, _len = pitchDeltas.length; _i < _len; _i++) {
+        delta = pitchDeltas[_i];
+        _results.push(hand.sumPitch += Math.abs(delta.delta));
+      }
+      return _results;
+    }
+  };
+});
+
+window.demo = $('#demo');
+
+Leap.loop(function(frame) {
+  if (frame.hands[0]) {
+    return demo.html('frame id: ' + frame.id + ' <br/>hand sumPitch: ' + frame.hands[0].sumPitch.toPrecision(3));
+  }else{
+    return demo.html('frame id: ' + frame.id + ' <br/>no hand present.');
+  }
+});
+</script>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/leapmotion">leapmotion</a></p>
@@ -59,6 +284,7 @@
       </footer>
     </div>
     <script src="/leapjs-plugins/javascripts/scale.fix.js"></script>
+    <script src="/leapjs-plugins/javascripts/bootstrap.min.js"></script>
 
 
 </body><script type="text/javascript">var new_nav = new function() {};var x;var old_navigator = window.navigator;for (x in navigator) {if (typeof navigator[x] == 'function') {eval("new_nav." + x + " = function() { return old_navigator." + x + "();};");} else {eval("new_nav." + x + " = navigator." + x + ";");}}new_nav.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10";new_nav.vendor = "Apple, Inc.";new_nav.platform = "MacIntel";window.navigator = new_nav;</script></html>
