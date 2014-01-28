@@ -1,2 +1,2 @@
-baseurl: "http://leapmotion.github.io/leapjs-plugins"
+baseurl: "http://leapmotion.github.io/leapjs-plugins/docs"
 destination: 'docs'
