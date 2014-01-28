@@ -4,7 +4,14 @@ gem install jekyll
 
 Merge master in to get latest plugin versions, then re-run
 
-jekyll serve --detach
+### to do local work,
 
-jekyll build --watch
+    jekyll serve --watch --baseurl=
 
+
+### before you deploy
+
+    jekyll serve --watch
+
+
+ This will keep the root url /leapjs-plugins/
