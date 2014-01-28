@@ -1,1 +1,2 @@
 baseurl: "http://leapmotion.github.io/leapjs-plugins"
+destination: 'docs'
