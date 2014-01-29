@@ -1,5 +1,5 @@
 /*!    
- * LeapJS-Plugins  - v0.1.0 - 2014-01-27    
+ * LeapJS-Plugins  - v0.1.0 - 2014-01-29    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc. and other contributors    
@@ -118,6 +118,48 @@
           var getHover;
           if (getHover = this.data('getHover')) {
             return this._hovering || (this._hovering = getHover.call(this));
+          }
+        }
+      }
+    };
+  });
+
+}).call(this);
+
+
+//Filename: 'main/screen-position/leap-screen-position.js'
+(function() {
+  Leap.plugin('screenPosition', function(options) {
+    var position_methods, positioning, previousPosition;
+    positioning = options.positioning || 'absolute';
+    previousPosition = void 0;
+    position_methods = {
+      absolute: function(vec3) {
+        var scale, vertical_offset;
+        scale = 8;
+        vertical_offset = -150;
+        return previousPosition = {
+          x: (document.body.offsetWidth / 2) + (vec3[0] * scale),
+          y: (document.body.offsetHeight / 2) + ((vec3[1] + vertical_offset) * scale * -1)
+        };
+      }
+    };
+    return {
+      hand: {
+        screenPosition: function() {
+          if (typeof positioning === 'function') {
+            return positioning(this.stabilizedTipPosition);
+          } else {
+            return position_methods[positioning](this.stabilizedTipPosition);
+          }
+        }
+      },
+      pointable: {
+        screenPosition: function() {
+          if (typeof positioning === 'function') {
+            return positioning(this.stabilizedTipPosition);
+          } else {
+            return position_methods[positioning](this.stabilizedTipPosition);
           }
         }
       }
