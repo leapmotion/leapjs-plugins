@@ -1,26 +1,31 @@
 <!DOCTYPE html>
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>{{page.title}}</title>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <title>{{page.title}}</title>
 
-    <link rel="stylesheet" href="{{ site.baseurl }}/stylesheets/styles.css">
-    <link rel="stylesheet" href="{{ site.baseurl }}/stylesheets/pygment_trac.css">
-    <link rel="stylesheet" href="{{ site.baseurl }}/stylesheets/bootstrap.min.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <script type="text/javascript" src="{{ site.baseurl }}/javascripts/leap.js"></script>
-    <script src="{{ site.baseurl }}/javascripts/jquery-1.10.2.min.js"></script>
+  <head profile="http://www.w3.org/2005/10/profile">
+  <link rel="icon"  type="image/ico" href="{{ site.baseurl }}/images/favicon.ico">
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+  <link rel="stylesheet" href="{{ site.baseurl }}/stylesheets/styles.css">
+  <link rel="stylesheet" href="{{ site.baseurl }}/stylesheets/pygment_trac.css">
+  <link rel="stylesheet" href="{{ site.baseurl }}/stylesheets/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <script type="text/javascript" src="{{ site.baseurl }}/javascripts/leap.js"></script>
+  <script src="{{ site.baseurl }}/javascripts/jquery-1.10.2.min.js"></script>
 
-  </head>
+  <!--[if lt IE 9]>
+  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
   <body>
     <div class="wrapper">
       <header>
         <a href="{{ site.baseurl }}">
-          <img src="{{ site.baseurl }}/images/ok.png" class="logo"/>
+          <img src="{{ site.baseurl }}/images/logo.png" class="logo"/>
         </a>
         <h1>
           <a href="{{ site.baseurl }}">
@@ -31,20 +36,26 @@
 
 
         <ul>
-          {% for post in site.posts %}
-            <li>
-              <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
-            </li>
-          {% endfor %}
+          <li>
+            <a href="{{ site.baseurl }}/hand-entry">Hand Entry</a>
+          </li>
+          <li>
+            <a href="{{ site.baseurl }}/hand-hold">Hand Hold</a>
+          </li>
+          <li>
+            <a href="{{ site.baseurl }}/screen-position">Screen Position</a>
+          </li>
         </ul>
 
-        <p class="view"><a href="https://github.com/leapmotion{{ site.baseurl }}">View the Project on GitHub <small>leapmotion/leapjs-plugins</small></a></p>
+        <hr/>
+
+        <p class="view"><a href="https://github.com/leapmotion/leapjs-plugins">View the Project on GitHub <small>leapmotion/leapjs-plugins</small></a></p>
         <div style="clear: both;"></div>
 
         <ul class="dl">
-          <li><a href="https://github.com/leapmotion{{ site.baseurl }}/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/leapmotion{{ site.baseurl }}/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/leapmotion{{ site.baseurl }}">View On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/leapmotion/leapjs-plugins/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/leapmotion/leapjs-plugins/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/leapmotion/leapjs-plugins">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>

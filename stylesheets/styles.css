@@ -47,7 +47,6 @@ a {
 a small {
   font-size:11px;
   color:#777;
-  margin-top:-0.6em;
   display:block;
 }
 
@@ -130,6 +129,7 @@ header ul.dl {
 header ul{
   list-style-type: none;
   padding-left: 10px;
+  line-height: 1.5em;
 }
 
 
@@ -230,23 +230,23 @@ footer {
   }
 }
 
-@media print, screen and (max-width: 720px) {
-  body {
-    word-wrap:break-word;
-  }
-  
-  header {
-    padding:0;
-  }
-  
-  header ul, header p.view {
-    position:static;
-  }
-  
-  pre, code {
-    word-wrap:normal;
-  }
-}
+/*@media print, screen and (max-width: 720px) {*/
+  /*body {*/
+    /*word-wrap:break-word;*/
+  /*}*/
+  /**/
+  /*header {*/
+    /*padding:0;*/
+  /*}*/
+  /**/
+  /*header ul, header p.view {*/
+    /*position:static;*/
+  /*}*/
+  /**/
+  /*pre, code {*/
+    /*word-wrap:normal;*/
+  /*}*/
+/*}*/
 
 @media print, screen and (max-width: 480px) {
   body {
