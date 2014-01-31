@@ -1,5 +1,5 @@
 /*!    
- * LeapJS-Plugins  - v0.1.0 - 2014-01-29    
+ * LeapJS-Plugins  - v0.1.0 - 2014-01-30    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc. and other contributors    
@@ -62,9 +62,9 @@
 }).call(this);
 
 
-//Filename: 'main/hand-holding/leap-hand-holding.js'
+//Filename: 'main/hand-hold/leap-hand-hold.js'
 (function() {
-  Leap.Controller.plugin('handHolding', function() {
+  Leap.Controller.plugin('handHold', function() {
     var extraHandData;
     extraHandData = {};
     return {
@@ -130,37 +130,35 @@
 //Filename: 'main/screen-position/leap-screen-position.js'
 (function() {
   Leap.plugin('screenPosition', function(options) {
-    var position_methods, positioning, previousPosition;
+    var position, position_methods, positioning;
     positioning = options.positioning || 'absolute';
-    previousPosition = void 0;
+    position = function(vec3) {
+      if (typeof positioning === 'function') {
+        return positioning.call(this, vec3);
+      } else {
+        return position_methods[positioning].call(this, vec3);
+      }
+    };
     position_methods = {
       absolute: function(vec3) {
         var scale, vertical_offset;
         scale = 8;
         vertical_offset = -150;
-        return previousPosition = {
+        return this._screenPosition || (this._screenPosition = {
           x: (document.body.offsetWidth / 2) + (vec3[0] * scale),
           y: (document.body.offsetHeight / 2) + ((vec3[1] + vertical_offset) * scale * -1)
-        };
+        });
       }
     };
     return {
       hand: {
-        screenPosition: function() {
-          if (typeof positioning === 'function') {
-            return positioning(this.stabilizedTipPosition);
-          } else {
-            return position_methods[positioning](this.stabilizedTipPosition);
-          }
+        screenPosition: function(vec3) {
+          return position.call(this, vec3 || this.stabilizedPalmPosition);
         }
       },
       pointable: {
-        screenPosition: function() {
-          if (typeof positioning === 'function') {
-            return positioning(this.stabilizedTipPosition);
-          } else {
-            return position_methods[positioning](this.stabilizedTipPosition);
-          }
+        screenPosition: function(vec3) {
+          return position.call(this, vec3 || this.stabilizedTipPosition);
         }
       }
     };

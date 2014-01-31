@@ -1,5 +1,5 @@
 (function() {
-  Leap.Controller.plugin('handHolding', function() {
+  Leap.Controller.plugin('handHold', function() {
     var extraHandData;
     extraHandData = {};
     return {
