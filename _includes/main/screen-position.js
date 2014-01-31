@@ -3,7 +3,7 @@ window.handHoldDemoOutput = $('#screen-position-demo .output')
 
 window.controller = new Leap.Controller()
   .use('screenPosition', {
-    scale: 4
+    scale: 8
   })
   .connect()
   .on('frame', function(frame) {
