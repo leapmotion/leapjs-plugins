@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="{{ site.baseurl }}/stylesheets/bootstrap.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <script type="text/javascript" src="{{ site.baseurl }}/javascripts/leap.js"></script>
+  <script type="text/javascript" src="{{ site.baseurl }}/main/leapjs-plugins-0.1.0.js"></script>
   <script src="{{ site.baseurl }}/javascripts/jquery-1.10.2.min.js"></script>
 
   <!--[if lt IE 9]>
@@ -21,7 +22,7 @@
   <![endif]-->
 
 </head>
-  <body>
+  <body data-spy="scroll" data-target="ul.nav">
     <div class="wrapper">
       <header>
         <a href="{{ site.baseurl }}">
@@ -32,37 +33,35 @@
             Leapjs-plugins
           </a>
         </h1>
-        <p>A collection of plugins available to be used with leapjs.</p>
+        <p>
+          A collection of plugins available to be used with LeapJS.  The library is written in CoffeeScript, but
+          CoffeeScript is not required to run applications.
+        </p>
 
 
-        <ul>
+        <ul class="nav">
           <li>
-            <a href="{{ site.baseurl }}/main/hand-entry">Hand Entry</a>
+            <a href="#hand-entry">Hand Entry</a>
           </li>
           <li>
-            <a href="{{ site.baseurl }}/main/hand-hold">Hand Hold</a>
+            <a href="#hand-hold">Hand Hold</a>
           </li>
           <li>
-            <a href="{{ site.baseurl }}/main/screen-position">Screen Position</a>
+            <a href="#screen-position">Screen Position</a>
           </li>
         </ul>
 
         <hr/>
 
-        <p class="view"><a href="https://github.com/leapmotion/leapjs-plugins">View the Project on GitHub <small>leapmotion/leapjs-plugins</small></a></p>
+        <p class="view"><a href="http://js.leapmotion.com">Download the source</a></p>
+        <p class="view"><a href="http://github.com/leapmotion/leapjs-plugins">View the Project on GitHub <small>leapmotion/leapjs-plugins</small></a></p>
         <div style="clear: both;"></div>
 
-        <ul class="dl">
-          <li><a href="https://github.com/leapmotion/leapjs-plugins/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/leapmotion/leapjs-plugins/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/leapmotion/leapjs-plugins">View On <strong>GitHub</strong></a></li>
-        </ul>
       </header>
-      <section>
-        {{ content }}
-      </section>
+      {{ content }}
       <footer>
-        <p>This project is maintained by <a href="https://github.com/leapmotion">leapmotion</a></p>
+        <p>This project is maintained by <a href="https://github.com/leapmotion">leapmotion</a>.</p>
+        <p>Edit <a href="http://github.com/leapmotion/leapjs-plugins/tree/gh-pages/_includes/main">the markdown</a> for these docs on github.</p>
         <p><small>Hosted on GitHub Pages — Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
