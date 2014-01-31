@@ -1,46 +1,53 @@
-Leap.Controller.plugin('sumPitch', function() {
-  var pitchDeltas, timeWindow;
-  timeWindow = 1;
-  pitchDeltas = [];
+// Calculates how much a hand has changed pitch in the last few seconds.
+Leap.Controller.plugin('sumPitch', function(options) {
+  options || (options = {})
+  var pitchData = [],
+      timeWindow = options.timeWindow || 1; // seconds
+
   return {
     hand: function(hand) {
-      var currentPitch, delta, lastPitch, mostDistantTime, now, _i, _len, _results;
+      var currentPitch, data, lastPitch, mostDistantTime, now, _i, _len;
+
       hand.sumPitch = 0;
       if (hand.timeVisible < 1) {
         return;
       }
+
       lastPitch = hand.data('sumPitch.lastPitch');
       currentPitch = hand.pitch();
       hand.data('sumPitch.lastPitch', currentPitch);
+
       if (!lastPitch) {
         return;
       }
+
+      // store values with timesstamps
       now = new Date();
-      pitchDeltas.push({
+      pitchData.push({
         delta: currentPitch - lastPitch,
         time: now
       });
-//      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow);
-//      while (pitchDeltas[0].time < mostDistantTime) {
-//        pitchDeltas.shift();
-//      }
-      _results = [];
-      console.log('results', _results);
-      for (_i = 0, _len = pitchDeltas.length; _i < _len; _i++) {
-        delta = pitchDeltas[_i];
-        _results.push(hand.sumPitch += Math.abs(delta.delta));
+
+      // manage rolling sum
+      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow);
+      while (pitchData[0].time < mostDistantTime) {
+        pitchData.shift();
       }
-      return _results;
+
+      for (_i = 0, _len = pitchData.length; _i < _len; _i++) {
+        data = pitchData[_i];
+        hand.sumPitch += Math.abs(data.delta);
+      }
     }
   };
 });
 
-window.demo = $('#demo');
+window.handHoldDemo = $('#hand-hold-demo');
 
 Leap.loop(function(frame) {
   if (frame.hands[0]) {
-    return demo.html('frame id: ' + frame.id + ' <br/>hand sumPitch: ' + frame.hands[0].sumPitch.toPrecision(3));
+    return handHoldDemo.html('frame id: ' + frame.id + ' <br/>hand sumPitch: ' + frame.hands[0].sumPitch.toPrecision(3));
   }else{
-    return demo.html('frame id: ' + frame.id + ' <br/>no hand present.');
+    return handHoldDemo.html('frame id: ' + frame.id + ' <br/>no hand present.');
   }
 });
