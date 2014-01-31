@@ -20,11 +20,12 @@ Leap.Controller.plugin('sumPitch', function() {
         delta: currentPitch - lastPitch,
         time: now
       });
-      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow);
-      while (pitchDeltas[0].time < mostDistantTime) {
-        pitchDeltas.shift();
-      }
+//      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow);
+//      while (pitchDeltas[0].time < mostDistantTime) {
+//        pitchDeltas.shift();
+//      }
       _results = [];
+      console.log('results', _results);
       for (_i = 0, _len = pitchDeltas.length; _i < _len; _i++) {
         delta = pitchDeltas[_i];
         _results.push(hand.sumPitch += Math.abs(delta.delta));

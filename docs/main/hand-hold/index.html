@@ -37,13 +37,13 @@
 
         <ul>
           <li>
-            <a href="http://leapmotion.github.io/leapjs-plugins/docs/hand-entry">Hand Entry</a>
+            <a href="http://leapmotion.github.io/leapjs-plugins/docs/main/hand-entry">Hand Entry</a>
           </li>
           <li>
-            <a href="http://leapmotion.github.io/leapjs-plugins/docs/hand-hold">Hand Hold</a>
+            <a href="http://leapmotion.github.io/leapjs-plugins/docs/main/hand-hold">Hand Hold</a>
           </li>
           <li>
-            <a href="http://leapmotion.github.io/leapjs-plugins/docs/screen-position">Screen Position</a>
+            <a href="http://leapmotion.github.io/leapjs-plugins/docs/main/screen-position">Screen Position</a>
           </li>
         </ul>
 
@@ -59,10 +59,10 @@
         </ul>
       </header>
       <section>
-        <script type="text/javascript" src="http://leapmotion.github.io/leapjs-plugins/docs/hand-holding/leap.hand-holding.js"></script>
+        <script type="text/javascript" src="http://leapmotion.github.io/leapjs-plugins/docs/main/hand-holding/leap.hand-hold.js"></script>
 
 
-<h1 id="hand-holding-beta">Hand Holding (beta)</h1>
+<h1 id="hand-hold">Hand Hold</h1>
 
 <h2 id="usage">Usage</h2>
 
@@ -164,11 +164,12 @@
         <span class="nx">delta</span><span class="o">:</span> <span class="nx">currentPitch</span> <span class="o">-</span> <span class="nx">lastPitch</span><span class="p">,</span>
         <span class="nx">time</span><span class="o">:</span> <span class="nx">now</span>
       <span class="p">});</span>
-      <span class="nx">mostDistantTime</span> <span class="o">=</span> <span class="nx">now</span><span class="p">.</span><span class="nx">setSeconds</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">()</span> <span class="o">-</span> <span class="nx">timeWindow</span><span class="p">);</span>
-      <span class="k">while</span> <span class="p">(</span><span class="nx">pitchDeltas</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">time</span> <span class="o">&lt;</span> <span class="nx">mostDistantTime</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">pitchDeltas</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
-      <span class="p">}</span>
+<span class="c1">//      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow);</span>
+<span class="c1">//      while (pitchDeltas[0].time &lt; mostDistantTime) {</span>
+<span class="c1">//        pitchDeltas.shift();</span>
+<span class="c1">//      }</span>
       <span class="nx">_results</span> <span class="o">=</span> <span class="p">[];</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="nx">_results</span><span class="p">);</span>
       <span class="k">for</span> <span class="p">(</span><span class="nx">_i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">_len</span> <span class="o">=</span> <span class="nx">pitchDeltas</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">_i</span> <span class="o">&lt;</span> <span class="nx">_len</span><span class="p">;</span> <span class="nx">_i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">delta</span> <span class="o">=</span> <span class="nx">pitchDeltas</span><span class="p">[</span><span class="nx">_i</span><span class="p">];</span>
         <span class="nx">_results</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">hand</span><span class="p">.</span><span class="nx">sumPitch</span> <span class="o">+=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">delta</span><span class="p">.</span><span class="nx">delta</span><span class="p">));</span>
@@ -234,7 +235,7 @@
     <span class="nx">demo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">sumPitch</span><span class="p">)</span>
 </code></pre></div></code></pre>
   </div>
-  <div class="tab-pane" id="demo"></div>
+  <div class="tab-pane" id="demo">No Leap Plugged In</div>
 </div>
 
 <script type="text/javascript">
@@ -260,11 +261,12 @@ Leap.Controller.plugin('sumPitch', function() {
         delta: currentPitch - lastPitch,
         time: now
       });
-      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow);
-      while (pitchDeltas[0].time < mostDistantTime) {
-        pitchDeltas.shift();
-      }
+//      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow);
+//      while (pitchDeltas[0].time < mostDistantTime) {
+//        pitchDeltas.shift();
+//      }
       _results = [];
+      console.log('results', _results);
       for (_i = 0, _len = pitchDeltas.length; _i < _len; _i++) {
         delta = pitchDeltas[_i];
         _results.push(hand.sumPitch += Math.abs(delta.delta));

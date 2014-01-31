@@ -1,4 +1,4 @@
-# Hand Holding (beta)
+# Hand Hold
 
 ## Usage
 

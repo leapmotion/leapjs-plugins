@@ -27,7 +27,7 @@ Leap.Controller.plugin 'handEntry', ->
       for id in previousHandIds
         if newValidHandIds.indexOf(id) == -1
           previousHandIds.remove id
-          @emit('handLost', frame.hand(id))
+          @emit('handLost', @lastConnectionFrame.hand(id))
 
       for id in newValidHandIds
         if previousHandIds.indexOf(id) == -1
