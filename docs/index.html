@@ -384,17 +384,18 @@ Here we scale based upon the interaction box and screen size:</p>
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>, {<span style="color:#606">positioning</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">absolute</span><span style="color:#710">'</span></span>}) <span style="color:#777">// the default</span>
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  <span style="color:#777">// or</span>
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  controller.use <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>, {
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    <span style="color:#606">method</span>: (positionVec3)-&gt;
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    <span style="color:#06B;font-weight:bold">method</span>: <span style="color:#080;font-weight:bold">function</span>(positionVec3){
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      <span style="color:#777">// Arguments for Leap.vec3 are (out, a, b)</span>
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      [
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        Leap.vec3.subtract(positionVec3, positionVec3, <span style="color:#F00;background-color:#FAA">@</span>frame.interactionBox.center)
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        Leap.vec3.divide(positionVec3, positionVec3, <span style="color:#F00;background-color:#FAA">@</span>frame.interactionBox.size)
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        Leap.vec3.subtract(positionVec3, positionVec3, <span style="color:#963">this</span>.frame.interactionBox.center)
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        Leap.vec3.divide(positionVec3, positionVec3, <span style="color:#963">this</span>.frame.interactionBox.size)
 <span class="line-numbers"><a href="#n11" name="n11">11</a></span>        Leap.vec3.multiply(positionVec3, positionVec3, [document.body.offsetWidth, document.body.offsetHeight, <span style="color:#00D">0</span>])
 <span class="line-numbers"><a href="#n12" name="n12">12</a></span>      ]
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  }
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  <span style="color:#777">// later...</span>
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  hand.screenPosition() <span style="color:#777">// returns [156,204,121]</span>
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    }
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  }
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  <span style="color:#777">// later...</span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  hand.screenPosition() <span style="color:#777">// returns [156,204,121]</span>
 </pre></div>
 </div>
 </div>

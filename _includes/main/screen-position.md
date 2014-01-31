@@ -17,13 +17,14 @@ Here we scale based upon the interaction box and screen size:
   controller.use('screenPosition', {positioning: 'absolute'}) // the default
   // or
   controller.use 'screenPosition', {
-    method: (positionVec3)->
+    method: function(positionVec3){
       // Arguments for Leap.vec3 are (out, a, b)
       [
-        Leap.vec3.subtract(positionVec3, positionVec3, @frame.interactionBox.center)
-        Leap.vec3.divide(positionVec3, positionVec3, @frame.interactionBox.size)
+        Leap.vec3.subtract(positionVec3, positionVec3, this.frame.interactionBox.center)
+        Leap.vec3.divide(positionVec3, positionVec3, this.frame.interactionBox.size)
         Leap.vec3.multiply(positionVec3, positionVec3, [document.body.offsetWidth, document.body.offsetHeight, 0])
       ]
+    }
   }
 
   // later...
