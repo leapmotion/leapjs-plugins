@@ -14,7 +14,7 @@ Leap.Controller.plugin 'handEntry', ->
           }
       }
       return this;
-  };`
+  }`
 
   @on "deviceDisconnected",  ->
     for id in previousHandIds

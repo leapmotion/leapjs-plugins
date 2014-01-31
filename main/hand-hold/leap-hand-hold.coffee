@@ -1,4 +1,4 @@
-Leap.Controller.plugin 'handHolding', ->
+Leap.Controller.plugin 'handHold', ->
   extraHandData = {}
   {
     hand: {
