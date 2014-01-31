@@ -1,5 +1,6 @@
 # Hand Entry
 -----------
+<a class="view-source" href="https://github.com/leapmotion/leapjs-plugins/tree/master/main/hand-entry" target="_blank">View Source</a>
 
 ## Usage
 

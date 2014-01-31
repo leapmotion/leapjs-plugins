@@ -1,5 +1,6 @@
 # Hand Hold
 -----------
+<a class="view-source" href="https://github.com/leapmotion/leapjs-plugins/tree/master/main/hand-hold" target="_blank">View Source</a>
 
 ## Usage
 

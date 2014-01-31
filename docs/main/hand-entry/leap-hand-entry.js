@@ -31,7 +31,7 @@
           id = previousHandIds[_i];
           if (newValidHandIds.indexOf(id) === -1) {
             previousHandIds.remove(id);
-            this.emit('handLost', frame.hand(id));
+            this.emit('handLost', this.lastConnectionFrame.hand(id));
           }
         }
         _results = [];

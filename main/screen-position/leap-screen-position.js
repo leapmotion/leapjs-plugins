@@ -1,34 +1,37 @@
 (function() {
   Leap.plugin('screenPosition', function(options) {
-    var position, position_methods, positioning;
-    positioning = options.positioning || 'absolute';
-    position = function(vec3) {
-      if (typeof positioning === 'function') {
-        return positioning.call(this, vec3);
-      } else {
-        return position_methods[positioning].call(this, vec3);
+    var position, positioningMethods;
+    if (options == null) {
+      options = {};
+    }
+    options.positioning || (options.positioning = 'absolute');
+    options.scale || (options.scale = 8);
+    options.verticalOffset || (options.verticalOffset = -250);
+    positioningMethods = {
+      absolute: function(positionVec3) {
+        return [(document.body.offsetWidth / 2) + (positionVec3[0] * options.scale), (document.body.offsetHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale * -1), 0];
       }
     };
-    position_methods = {
-      absolute: function(vec3) {
-        var scale, vertical_offset;
-        scale = 8;
-        vertical_offset = -150;
-        return this._screenPosition || (this._screenPosition = {
-          x: (document.body.offsetWidth / 2) + (vec3[0] * scale),
-          y: (document.body.offsetHeight / 2) + ((vec3[1] + vertical_offset) * scale * -1)
-        });
+    position = function(vec3, memoize) {
+      var screenPositionVec3;
+      if (memoize == null) {
+        memoize = false;
       }
+      screenPositionVec3 = typeof options.positioning === 'function' ? options.positioning.call(this, vec3) : positioningMethods[options.positioning].call(this, vec3);
+      if (memoize) {
+        this.screenPositionVec3 = screenPositionVec3;
+      }
+      return screenPositionVec3;
     };
     return {
       hand: {
         screenPosition: function(vec3) {
-          return position.call(this, vec3 || this.stabilizedPalmPosition);
+          return position.call(this, vec3 || this.stabilizedPalmPosition, !vec3);
         }
       },
       pointable: {
         screenPosition: function(vec3) {
-          return position.call(this, vec3 || this.stabilizedTipPosition);
+          return position.call(this, vec3 || this.stabilizedTipPosition, !vec3);
         }
       }
     };

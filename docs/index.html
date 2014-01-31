@@ -7,15 +7,15 @@
   <title>LeapJS-plugins by Leapmotion</title>
 
   <head profile="http://www.w3.org/2005/10/profile">
-  <link rel="icon"  type="image/ico" href="/images/favicon.ico">
+  <link rel="icon"  type="image/ico" href="http://leapmotion.github.io/leapjs-plugins/docs/images/favicon.ico">
 
-  <link rel="stylesheet" href="/stylesheets/styles.css">
-  <link rel="stylesheet" href="/stylesheets/pygment_trac.css">
-  <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+  <link rel="stylesheet" href="http://leapmotion.github.io/leapjs-plugins/docs/stylesheets/styles.css">
+  <link rel="stylesheet" href="http://leapmotion.github.io/leapjs-plugins/docs/stylesheets/pygment_trac.css">
+  <link rel="stylesheet" href="http://leapmotion.github.io/leapjs-plugins/docs/stylesheets/bootstrap.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <script type="text/javascript" src="/javascripts/leap.js"></script>
-  <script type="text/javascript" src="/main/leapjs-plugins-0.1.0.js"></script>
-  <script src="/javascripts/jquery-1.10.2.min.js"></script>
+  <script type="text/javascript" src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/leap.js"></script>
+  <script type="text/javascript" src="http://leapmotion.github.io/leapjs-plugins/docs/main/leapjs-plugins-0.1.0.js"></script>
+  <script src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/jquery-1.10.2.min.js"></script>
 
   <!--[if lt IE 9]>
   <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -25,11 +25,13 @@
   <body data-spy="scroll" data-target="ul.nav">
     <div class="wrapper">
       <header>
-        <a href="">
-          <img src="/images/logo.png" class="logo"/>
-        </a>
+        <div style="text-align: center">
+          <a href="http://leapmotion.github.io/leapjs-plugins/docs">
+            <img src="http://leapmotion.github.io/leapjs-plugins/docs/images/logo.png" class="logo"/>
+          </a>
+        </div>
         <h1>
-          <a href="">
+          <a href="http://leapmotion.github.io/leapjs-plugins/docs">
             Leapjs-plugins
           </a>
         </h1>
@@ -63,6 +65,7 @@
 
 <h1 id="hand-entry">Hand Entry</h1>
 <hr />
+<p><a class="view-source" href="https://github.com/leapmotion/leapjs-plugins/tree/master/main/hand-entry" target="_blank">View Source</a></p>
 
 <h2 id="usage">Usage</h2>
 
@@ -113,6 +116,7 @@
 
 <h1 id="hand-hold">Hand Hold</h1>
 <hr />
+<p><a class="view-source" href="https://github.com/leapmotion/leapjs-plugins/tree/master/main/hand-hold" target="_blank">View Source</a></p>
 
 <h2 id="usage">Usage</h2>
 
@@ -184,16 +188,14 @@
 
 
 
-<!-- Nav tabs -->
 <ul class="nav nav-tabs">
-  <li class="active"><a href="#coffee" data-toggle="tab">Coffee</a></li>
-  <li><a href="#js" data-toggle="tab">JS</a></li>
+  <li class="active"><a href="#hand-hold-coffee" data-toggle="tab">Coffee</a></li>
+  <li><a href="#hand-hold-js" data-toggle="tab">JS</a></li>
   <li><a href="#hand-hold-demo" data-toggle="tab">Demo</a></li>
 </ul>
 
-<!-- Tab panes -->
 <div class="tab-content">
-  <div class="tab-pane active" id="coffee">
+  <div class="tab-pane active" id="hand-hold-coffee">
 <pre class="highlight-coffee"><code><div class="highlight"><pre><code class="coffee"><span class="c1"># Calculates how much a hand has changed pitch in the last few seconds.</span>
 <span class="nx">Leap</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">plugin</span> <span class="s">&#39;sumPitch&#39;</span><span class="p">,</span> <span class="nf">(options = {})-&gt;</span>
   <span class="nv">timeWindow = </span><span class="nx">options</span><span class="p">.</span><span class="nx">timeWindow</span> <span class="o">||</span> <span class="mi">1</span> <span class="c1"># seconds</span>
@@ -237,8 +239,8 @@
   <span class="nx">handHoldDemo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;frame id: </span><span class="si">#{</span><span class="nx">frame</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s"> &lt;br/&gt;hand sumPitch: </span><span class="si">#{</span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">sumPitch</span><span class="p">.</span><span class="nx">toPrecision</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)</span>
 </code></pre></div></code></pre>
   </div>
-  <div class="tab-pane" id="js">
-    <pre class="highlight-js"><code id="demoSrc"><div class="highlight"><pre><code class="javascript"><span class="c1">// Calculates how much a hand has changed pitch in the last few seconds.</span>
+  <div class="tab-pane" id="hand-hold-js">
+    <pre class="highlight-js"><code><div class="highlight"><pre><code class="javascript"><span class="c1">// Calculates how much a hand has changed pitch in the last few seconds.</span>
 <span class="nx">Leap</span><span class="p">.</span><span class="nx">Controller</span><span class="p">.</span><span class="nx">plugin</span><span class="p">(</span><span class="s1">&#39;sumPitch&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">options</span> <span class="o">||</span> <span class="p">(</span><span class="nx">options</span> <span class="o">=</span> <span class="p">{})</span>
   <span class="kd">var</span> <span class="nx">pitchData</span> <span class="o">=</span> <span class="p">[],</span>
@@ -293,7 +295,7 @@
 <span class="p">});</span>
 </code></pre></div></code></pre>
   </div>
-  <div class="tab-pane" id="hand-hold-demo">No Leap Plugged In</div>
+  <div class="tab-pane demo" id="hand-hold-demo">No Leap Device Attached</div>
 </div>
 
 <script type="text/javascript">
@@ -359,49 +361,151 @@ Leap.loop(function(frame) {
 
 <h1 id="screen-position">Screen Position</h1>
 <hr />
+<p><a class="view-source" href="https://github.com/leapmotion/leapjs-plugins/tree/master/main/screen-position" target="_blank">View Source</a></p>
+
+<p>Adds the “screenPosition” method by default to hands and pointables.  This returns a vec3 (an array of length 3) with [x,y,z] screen coordinates indicating where the hand is.  This method can accept an optional vec3, allowing it to convert any arbitrary vec3 of coordinates.</p>
+
+<p>When this method is run without arguments, two attributes are added to the hand/finger, @screenPositionVec3 and @screenPosition, saving the calculated results.</p>
+
+<p>Custom positioning methods can be passed in, allowing different scaling techniques,<br />
+e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)<br />
+Here we scale based upon the interaction box and screen size:</p>
 
 <h2 id="usage">Usage</h2>
 
 <div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>)
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span style="color:#777">// or</span>
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>, {<span style="color:#606">positioning</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">absolute</span><span style="color:#710">'</span></span>}) <span style="color:#777">// the default</span>
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  <span style="color:#777">// or</span>
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>, {
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    <span style="color:#06B;font-weight:bold">positioning</span>: <span style="color:#080;font-weight:bold">function</span>(){ <span style="color:#080;font-weight:bold">return</span> [<span style="color:#00D">0</span>,<span style="color:#00D">0</span>,<span style="color:#00D">0</span>] }
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  }) <span style="color:#777">// the default</span>
-<span class="line-numbers"><a href="#n8" name="n8">8</a></span>
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>)
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  <span style="color:#777">// or</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>, {<span style="color:#606">positioning</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">absolute</span><span style="color:#710">'</span></span>}) <span style="color:#777">// the default</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  <span style="color:#777">// or</span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  controller.use <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>, {
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    <span style="color:#606">method</span>: (positionVec3)-&gt;
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      <span style="color:#F00;background-color:#FAA">#</span> Arguments <span style="color:#080;font-weight:bold">for</span> Leap.vec3 are (out, a, b)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      [
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        Leap.vec3.subtract(positionVec3, positionVec3, <span style="color:#F00;background-color:#FAA">@</span>frame.interactionBox.center)
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        Leap.vec3.divide(positionVec3, positionVec3, <span style="color:#F00;background-color:#FAA">@</span>frame.interactionBox.size)
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>        Leap.vec3.multiply(positionVec3, positionVec3, [document.body.offsetWidth, document.body.offsetHeight, <span style="color:#00D">0</span>])
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      ]
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  }
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  <span style="color:#777">// later...</span>
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  hand.screenPosition() <span style="color:#777">// returns [156,204,121]</span>
 </pre></div>
 </div>
 </div>
-
-<p>The hand-holding plugin provides a simple way to store data about a hand object between frames.</p>
+<p>More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec3.html</p>
 
 <h2 id="methods">Methods</h2>
 
-<h3 id="datahashorkey-value">.data(hashOrKey, value)</h3>
+<h3 id="screenpositionpositionvec3">.screenPosition([positionVec3])</h3>
 
-<p>Similar to jQuery.data, this method allows a value to be get or set.  This is the main method, all else are convenience methods.</p>
+<p>Returns the location of the hand in screen-space, or the passed in vector in screen-space.<br />
+Applies to hands and pointables.</p>
 
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  hand.data(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">player</span><span style="color:#710">'</span></span>, <span style="color:#00D">1</span>)  <span style="color:#777">//store data</span>
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  hand.data({<span style="color:#606">player</span>: <span style="color:#00D">1</span>})  <span style="color:#777">//store data</span>
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  hand.data(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">player</span><span style="color:#710">'</span></span>) <span style="color:#777">// returns 1</span>
-</pre></div>
+
+
+
+
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#screen-position-coffee" data-toggle="tab">Coffee</a></li>
+  <li><a href="#screen-position-js" data-toggle="tab">JS</a></li>
+  <li><a href="#screen-position-demo" data-toggle="tab">Demo</a></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="screen-position-coffee">
+<pre class="highlight-coffee"><code><div class="highlight"><pre><code class="coffee"><span class="nb">window</span><span class="p">.</span><span class="nv">handHoldDemoCursor = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#screen-position-demo .cursor&#39;</span><span class="p">)</span>
+<span class="nb">window</span><span class="p">.</span><span class="nv">handHoldDemoOutput = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#screen-position-demo .output&#39;</span><span class="p">)</span>
+<span class="nb">window</span><span class="p">.</span><span class="nv">controller = </span><span class="k">new</span> <span class="nx">Leap</span><span class="p">.</span><span class="nx">Controller</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;screenPosition&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nv">scale: </span><span class="mi">4</span><span class="p">})</span> <span class="c1"># default is 8, but we have a small window</span>
+  <span class="p">.</span><span class="nx">connect</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s">&#39;frame&#39;</span><span class="p">,</span> <span class="nf">(frame)-&gt;</span>
+    <span class="k">if</span> <span class="nv">hand = </span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="nx">handHoldDemoOutput</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;[&lt;br/&gt;&amp;nbsp;&amp;nbsp;</span><span class="si">#{</span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s"></span>
+<span class="s">        &lt;br/&gt;&amp;nbsp;&amp;nbsp;</span><span class="si">#{</span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s"></span>
+<span class="s">        &lt;br/&gt;&amp;nbsp;&amp;nbsp;</span><span class="si">#{</span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s">&lt;br/&gt;]&quot;</span><span class="p">)</span>
+      <span class="nx">handHoldDemoCursor</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span>
+        <span class="nv">left: </span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="nv">top: </span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="p">)</span>
+  <span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s">&#39;deviceConnected&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#screen-position-demo .noleap&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+  <span class="p">)</span>
+</code></pre></div></code></pre>
+  </div>
+  <div class="tab-pane" id="screen-position-js">
+    <pre class="highlight-js"><code><div class="highlight"><pre><code class="javascript"><span class="nb">window</span><span class="p">.</span><span class="nx">handHoldDemoCursor</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#screen-position-demo .cursor&#39;</span><span class="p">);</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">handHoldDemoOutput</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#screen-position-demo .output&#39;</span><span class="p">)</span>
+
+<span class="nb">window</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Leap</span><span class="p">.</span><span class="nx">Controller</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;screenPosition&#39;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">scale</span><span class="o">:</span> <span class="mi">4</span>
+  <span class="p">})</span>
+  <span class="p">.</span><span class="nx">connect</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">hand</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">hand</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+
+      <span class="nx">handHoldDemoOutput</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s2">&quot;[&lt;br/&gt;&amp;nbsp;&amp;nbsp;&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span>
+        <span class="s2">&quot;        &lt;br/&gt;&amp;nbsp;&amp;nbsp;&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span>
+        <span class="s2">&quot;        &lt;br/&gt;&amp;nbsp;&amp;nbsp;&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;&lt;br/&gt;]&quot;</span><span class="p">);</span>
+
+      <span class="k">return</span> <span class="nx">handHoldDemoCursor</span><span class="p">.</span><span class="nx">css</span><span class="p">({</span>
+        <span class="nx">left</span><span class="o">:</span> <span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
+        <span class="nx">top</span><span class="o">:</span> <span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;deviceConnected&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+  <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#screen-position-demo .noleap&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+<span class="p">});</span>
+</code></pre></div></code></pre>
+  </div>
+  <div class="tab-pane demo" id="screen-position-demo">
+    <div class="cursor"></div>
+    <div class="output"></div>
+    <span class="noleap">No Leap Device Attached</span>
+  </div>
 </div>
-</div>
+
+<script type="text/javascript">
+window.handHoldDemoCursor = $('#screen-position-demo .cursor');
+window.handHoldDemoOutput = $('#screen-position-demo .output')
+
+window.controller = new Leap.Controller()
+  .use('screenPosition', {
+    scale: 4
+  })
+  .connect()
+  .on('frame', function(frame) {
+    var hand;
+    if (hand = frame.hands[0]) {
+
+      handHoldDemoOutput.html("[<br/>&nbsp;&nbsp;" + (hand.screenPosition()[0]) +
+        "        <br/>&nbsp;&nbsp;" + (hand.screenPosition()[1]) +
+        "        <br/>&nbsp;&nbsp;" + (hand.screenPosition()[2]) + "<br/>]");
+
+      return handHoldDemoCursor.css({
+        left: hand.screenPosition()[0] + 'px',
+        top: hand.screenPosition()[1] + 'px'
+      });
+    }
+}).on('deviceConnected', function(){
+  $('#screen-position-demo .noleap').remove()
+});
 
 
+
+</script>
 </section>
 
       <footer>
-        <p>This project is maintained by <a href="https://github.com/leapmotion">leapmotion</a>.</p>
         <p>Edit <a href="http://github.com/leapmotion/leapjs-plugins/tree/gh-pages/_includes/main">the markdown</a> for these docs on github.</p>
+        <p>This project is maintained by <a href="https://github.com/leapmotion">leapmotion</a>.</p>
         <p><small>Hosted on GitHub Pages — Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
-    <script src="/javascripts/scale.fix.js"></script>
-    <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/scale.fix.js"></script>
+    <script src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/bootstrap.min.js"></script>
 
 
 </body><script type="text/javascript">var new_nav = new function() {};var x;var old_navigator = window.navigator;for (x in navigator) {if (typeof navigator[x] == 'function') {eval("new_nav." + x + " = function() { return old_navigator." + x + "();};");} else {eval("new_nav." + x + " = navigator." + x + ";");}}new_nav.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10";new_nav.vendor = "Apple, Inc.";new_nav.platform = "MacIntel";window.navigator = new_nav;</script></html>

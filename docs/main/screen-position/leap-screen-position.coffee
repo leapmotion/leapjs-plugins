@@ -2,9 +2,6 @@
 # with [x,y,z] screen coordinates indicating where the hand is.  This method can accept an optional vec3, allowing
 # it to convert any arbitrary vec3 of coordinates.
 #
-# When this method is run without arguments, two attributes are added to the hand/finger,
-# @screenPositionVec3 and @screenPosition, saving the calculated results.
-#
 # Custom positioning methods can be passed in, allowing different scaling techniques,
 # e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)
 # Here we scale based upon the interaction box and screen size:
@@ -25,13 +22,13 @@ Leap.plugin 'screenPosition', (options = {})->
   # positioning can be one of a series of predefined position identifiers, or a custom method.
   options.positioning ||= 'absolute'
   options.scale ||= 8
-  options.veritcalOffset ||= -150
+  options.verticalOffset ||= -250
 
   positioningMethods = {
     absolute: (positionVec3)->
       [
         (document.body.offsetWidth / 2) + (positionVec3[0] * options.scale),
-        (document.body.offsetHeight / 2) + ((positionVec3[1] + options.veritcalOffset) * options.scale * -1),
+        (document.body.offsetHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale * -1),
         0
       ]
   }
@@ -45,18 +42,13 @@ Leap.plugin 'screenPosition', (options = {})->
 
     if memoize
       @screenPositionVec3 = screenPositionVec3
-      @screenPosition = {
-        x: @screenPositionVec3[0]
-        y: @screenPositionVec3[1]
-        z: @screenPositionVec3[2]
-      }
 
     screenPositionVec3
 
 
   {
     hand: {
-      # screenPosition will use the stabilized position by default, or allow any array of [x,y,z] to be passed in.       
+      # screenPosition will use the stabilized position by default, or allow any array of [x,y,z] to be passed in.
       screenPosition: (vec3)->
         position.call(@, vec3 || @stabilizedPalmPosition, !vec3)
     }

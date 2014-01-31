@@ -23,16 +23,14 @@ title: LeapJS-plugins by Leapmotion
 {% endmarkdown %}
 
 
-<!-- Nav tabs -->
 <ul class="nav nav-tabs">
-  <li class="active"><a href="#coffee" data-toggle="tab">Coffee</a></li>
-  <li><a href="#js" data-toggle="tab">JS</a></li>
+  <li class="active"><a href="#hand-hold-coffee" data-toggle="tab">Coffee</a></li>
+  <li><a href="#hand-hold-js" data-toggle="tab">JS</a></li>
   <li><a href="#hand-hold-demo" data-toggle="tab">Demo</a></li>
 </ul>
 
-<!-- Tab panes -->
 <div class="tab-content">
-  <div class="tab-pane active" id="coffee">
+  <div class="tab-pane active" id="hand-hold-coffee">
 <pre class="highlight-coffee"><code>{% highlight coffee %}
 # Calculates how much a hand has changed pitch in the last few seconds.
 Leap.Controller.plugin 'sumPitch', (options = {})->
@@ -77,10 +75,10 @@ Leap.Loop (frame)->
   handHoldDemo.html("frame id: #{frame.id} <br/>hand sumPitch: #{frame.hands[0].sumPitch.toPrecision(3)}")
 {% endhighlight %}</code></pre>
   </div>
-  <div class="tab-pane" id="js">
-    <pre class="highlight-js"><code id="demoSrc">{% highlight javascript %}{% include /main/hand-hold.js %}{% endhighlight %}</code></pre>
+  <div class="tab-pane" id="hand-hold-js">
+    <pre class="highlight-js"><code>{% highlight javascript %}{% include /main/hand-hold.js %}{% endhighlight %}</code></pre>
   </div>
-  <div class="tab-pane" id="hand-hold-demo">No Leap Plugged In</div>
+  <div class="tab-pane demo" id="hand-hold-demo">No Leap Device Attached</div>
 </div>
 
 <script type="text/javascript">
@@ -96,4 +94,48 @@ Leap.Loop (frame)->
 {% include /main/screen-position.md %}
 
 {% endmarkdown %}
+
+
+
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#screen-position-coffee" data-toggle="tab">Coffee</a></li>
+  <li><a href="#screen-position-js" data-toggle="tab">JS</a></li>
+  <li><a href="#screen-position-demo" data-toggle="tab">Demo</a></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="screen-position-coffee">
+<pre class="highlight-coffee"><code>{% highlight coffee %}
+window.handHoldDemoCursor = $('#screen-position-demo .cursor')
+window.handHoldDemoOutput = $('#screen-position-demo .output')
+window.controller = new Leap.Controller()
+  .use('screenPosition', {scale: 4}) # default is 8, but we have a small window
+  .connect()
+  .on('frame', (frame)->
+    if hand = frame.hands[0]
+      handHoldDemoOutput.html("[<br/>&nbsp;&nbsp;#{hand.screenPosition()[0]}
+        <br/>&nbsp;&nbsp;#{hand.screenPosition()[1]}
+        <br/>&nbsp;&nbsp;#{hand.screenPosition()[2]}<br/>]")
+      handHoldDemoCursor.css(
+        left: hand.screenPosition()[0],
+        top: hand.screenPosition()[1]
+      )
+  ).on('deviceConnected', ->
+    $('#screen-position-demo .noleap').remove()
+  )
+{% endhighlight %}</code></pre>
+  </div>
+  <div class="tab-pane" id="screen-position-js">
+    <pre class="highlight-js"><code>{% highlight javascript %}{% include /main/screen-position.js %}{% endhighlight %}</code></pre>
+  </div>
+  <div class="tab-pane demo" id="screen-position-demo">
+    <div class="cursor"></div>
+    <div class="output"></div>
+    <span class="noleap">No Leap Device Attached</span>
+  </div>
+</div>
+
+<script type="text/javascript">
+{% include /main/screen-position.js %}
+</script>
 </section>

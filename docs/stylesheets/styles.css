@@ -3,7 +3,6 @@
 .logo{
   width: 120px;
   padding: 10px;
-  margin-top: -40px;
 }
 
 body {
@@ -51,7 +50,7 @@ a small {
 }
 
 .wrapper {
-  width:860px;
+  width:960px;
   margin:0 auto;
 }
 
@@ -172,7 +171,7 @@ header ul.dl a strong {
 }
 
 section {
-  width:500px;
+  width:650px;
   float:right;
   padding-bottom:50px;
 }
@@ -189,14 +188,14 @@ hr {
 }
 
 footer {
-  width:270px;
+  width:240px;
   float:left;
   position:fixed;
   bottom:50px;
 }
 
 
-#hand-hold-demo{
+.demo{
   padding: 20px 60px;
   font-size: 20px;
   min-height: 500px; /* prevent screen jump */
@@ -209,4 +208,26 @@ footer {
     font-size:12pt;
     color:#444;
   }
+}
+
+
+a.view-source{
+  float: right;
+}
+
+/* screen position */
+
+.cursor {
+  width: 100px;
+  height: 100px;
+  position: fixed;
+  margin-left: -50px;
+  margin-top: -50px;
+  z-index: 910;
+
+  background: black;
+  border-radius: 100%;
+  background: -webkit-radial-gradient(100px 100px, circle, #5cabff, #000);
+  background: -moz-radial-gradient(100px 100px, circle, #5cabff, #000);
+  background: radial-gradient(100px 100px, circle, #5cabff, #000);
 }

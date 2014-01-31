@@ -1,5 +1,15 @@
 # Screen Position
 -----------
+<a class="view-source" href="https://github.com/leapmotion/leapjs-plugins/tree/master/main/screen-position" target="_blank">View Source</a>
+
+Adds the "screenPosition" method by default to hands and pointables.  This returns a vec3 (an array of length 3) with [x,y,z] screen coordinates indicating where the hand is.  This method can accept an optional vec3, allowing it to convert any arbitrary vec3 of coordinates.
+
+When this method is run without arguments, two attributes are added to the hand/finger, @screenPositionVec3 and @screenPosition, saving the calculated results.
+
+Custom positioning methods can be passed in, allowing different scaling techniques,
+e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)
+Here we scale based upon the interaction box and screen size:
+
 
 ## Usage
 
@@ -8,23 +18,26 @@
   // or
   controller.use('screenPosition', {positioning: 'absolute'}) // the default
   // or
-  controller.use('screenPosition', {
-    positioning: function(){ return [0,0,0] }
-  }) // the default
+  controller.use 'screenPosition', {
+    method: (positionVec3)->
+      # Arguments for Leap.vec3 are (out, a, b)
+      [
+        Leap.vec3.subtract(positionVec3, positionVec3, @frame.interactionBox.center)
+        Leap.vec3.divide(positionVec3, positionVec3, @frame.interactionBox.size)
+        Leap.vec3.multiply(positionVec3, positionVec3, [document.body.offsetWidth, document.body.offsetHeight, 0])
+      ]
+  }
 
+  // later...
+  hand.screenPosition() // returns [156,204,121]
 ```
+More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec3.html
 
-The hand-holding plugin provides a simple way to store data about a hand object between frames.
+
 
 ## Methods
 
-### .data(hashOrKey, value)
+### .screenPosition([positionVec3])
 
-Similar to jQuery.data, this method allows a value to be get or set.  This is the main method, all else are convenience methods.
-
-```js
-  hand.data('player', 1)  //store data
-  hand.data({player: 1})  //store data
-  hand.data('player') // returns 1
-```
-
+Returns the location of the hand in screen-space, or the passed in vector in screen-space.
+Applies to hands and pointables.
