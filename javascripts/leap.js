@@ -1,11 +1,11 @@
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 /*!
- * LeapJS v0.4.0-beta1
+ * LeapJS v0.4.0
  * http://github.com/leapmotion/leapjs/
  *
  * Copyright 2013 LeapMotion, Inc. and other contributors
  * Released under the BSD-2-Clause license
- * https://github.com/leapmotion/leapjs/blob/master/LICENSE.txt
+ * http://github.com/leapmotion/leapjs/blob/master/LICENSE.txt
  */
 },{}],2:[function(require,module,exports){
 var CircularBuffer = module.exports = function(size) {
@@ -299,6 +299,8 @@ var Controller = module.exports = function(opts) {
     this.connectionType = opts.connectionType;
   }
   this.connection = new this.connectionType(opts);
+  this._pluginPipelineSteps = {};
+  this._pluginExtendedMethods = {};
   if (opts.useAllPlugins) this.useRegisteredPlugins();
   this.setupConnectionEvents();
 }
@@ -311,8 +313,12 @@ Controller.prototype.gesture = function(type, cb) {
   return creator;
 }
 
+/*
+ * @returns the controller
+ */
 Controller.prototype.setBackground = function(state) {
   this.connection.setBackground(state);
+  return this;
 }
 
 Controller.prototype.inBrowser = function() {
@@ -323,6 +329,9 @@ Controller.prototype.useAnimationLoop = function() {
   return this.inBrowser() && typeof(chrome) === "undefined";
 }
 
+/*
+ * @returns the controller
+ */
 Controller.prototype.connect = function() {
   var controller = this;
   if (this.connection.connect() && this.inBrowser() && !controller.suppressAnimationLoop) {
@@ -332,10 +341,15 @@ Controller.prototype.connect = function() {
     }
     window.requestAnimationFrame(callback);
   }
+  return this;
 }
 
+/*
+ * @returns the controller
+ */
 Controller.prototype.disconnect = function() {
   this.connection.disconnect();
+  return this;
 }
 
 /**
@@ -378,7 +392,7 @@ Controller.prototype.loop = function(callback) {
       this.once(this.frameEventName, immediateRunnerCallback);
       break;
   }
-  this.connect();
+  return this.connect();
 }
 
 Controller.prototype.addStep = function(step) {
@@ -433,9 +447,6 @@ Controller.prototype.setupConnectionEvents = function() {
   this.connection.on('protocol', function(protocol) { controller.emit('protocol', protocol); });
   this.connection.on('deviceConnect', function(evt) { controller.emit(evt.state ? 'deviceConnected' : 'deviceDisconnected'); });
 }
-
-
-
 
 
 Controller._pluginFactories = {};
@@ -520,11 +531,11 @@ Controller._pluginFactories = {};
  * });
  *
  */
-Controller.plugin = function(name, factory) {
-  if (this._pluginFactories[name]) {
-    throw "Plugin \"" + name + "\" already registered";
+Controller.plugin = function(pluginName, factory) {
+  if (this._pluginFactories[pluginName]) {
+    throw "Plugin \"" + pluginName + "\" already registered";
   }
-  return this._pluginFactories[name] = factory;
+  return this._pluginFactories[pluginName] = factory;
 };
 
 /*
@@ -536,43 +547,19 @@ Controller.plugins = function() {
 };
 
 /*
- * Wraps a plugin callback method in method which can be run inside the pipeline.
- * This wrapper method loops the callback over objects within the frame as is appropriate,
- * calling the callback for each in turn.
- *
- * @method createStepFunction
- * @memberOf Leap.Controller.prototype
- * @param {Controller} The controller on which the callback is called.
- * @param {String} type What frame object the callback is run for and receives.
- *       Can be one of 'frame', 'finger', 'hand', 'pointable', 'tool'
- * @param {function} callback The method which will be run inside the pipeline loop.  Receives one argument, such as a hand.
- * @private
- */
-var createStepFunction = function(controller, type, callback) {
-  return function(frame) {
-    var dependencies, i, len;
-    dependencies = (type == 'frame') ? [frame] : (frame[type + 's'] || []);
-      
-    for (i = 0, len = dependencies.length; i < len; i++) {
-      callback.call(controller, dependencies[i]);
-    }
-
-    return frame;
-  };
-};
-
-/*
- * Tells a controller to begin using a registered plugin.  The plugin's functionality will be added to all frames
+ * Begin using a registered plugin.  The plugin's functionality will be added to all frames
  * returned by the controller (and/or added to the objects within the frame).
  *  - The order of plugin execution inside the loop will match the order in which use is called by the application.
  *  - The plugin be run for both deviceFrames and animationFrames.
  *
  * @method use
  * @memberOf Leap.Controller.prototype
+ * @param pluginName
  * @param {Hash} Options to be passed to the plugin's factory.
+ * @returns the controller
  */
 Controller.prototype.use = function(pluginName, options) {
-  var callback, pluginFactory, type, pluginInstance;
+  var functionOrHash, pluginFactory, key, pluginInstance, klass;
 
   pluginFactory = Controller._pluginFactories[pluginName];
 
@@ -583,32 +570,77 @@ Controller.prototype.use = function(pluginName, options) {
   options || (options = {});
   pluginInstance = pluginFactory.call(this, options);
 
-  for (type in pluginInstance) {
-    callback = pluginInstance[type];
+  for (key in pluginInstance) {
+    functionOrHash = pluginInstance[key];
 
-    if (typeof callback === 'function') {
-      this.addStep(createStepFunction(this, type, callback));
+    if (typeof functionOrHash === 'function') {
+      if (!this.pipeline) this.pipeline = new Pipeline(this);
+      if (!this._pluginPipelineSteps[pluginName]) this._pluginPipelineSteps[pluginName] = [];
+
+      this._pluginPipelineSteps[pluginName].push( this.pipeline.addWrappedStep(key, functionOrHash) );
     } else {
-      switch (type) {
+      if (!this._pluginExtendedMethods[pluginName]) this._pluginExtendedMethods[pluginName] = [];
+
+      switch (key) {
         case 'frame':
-          _.extend(Leap.Frame.prototype, callback);
-          _.extend(Leap.Frame.Invalid, callback);
+          klass = Leap.Frame
           break;
         case 'hand':
-          _.extend(Leap.Hand.prototype, callback);
-          _.extend(Leap.Hand.Invalid, callback);
+          klass = Leap.Hand
           break;
         case 'pointable':
-          _.extend(Leap.Pointable.prototype, callback);
-          _.extend(Leap.Pointable.Invalid, callback);
+          klass = Leap.Pointable
           break;
         default:
-          throw pluginName + ' specifies invalid object type "' + type + '" for prototypical extension'
+          throw pluginName + ' specifies invalid object type "' + key + '" for prototypical extension'
+      }
+
+      _.extend(klass.prototype, functionOrHash);
+      _.extend(klass.Invalid, functionOrHash);
+      this._pluginExtendedMethods[pluginName].push([klass, functionOrHash])
+    }
+  }
+  return this;
+};
+
+/*
+ * Stop using a used plugin.  This will remove any of the plugin's pipeline methods (those called on every frame)
+ * and remove any methods which extend frame-object prototypes.
+ *
+ * @method stopUsing
+ * @memberOf Leap.Controller.prototype
+ * @param pluginName
+ * @returns the controller
+ */
+Controller.prototype.stopUsing = function (pluginName) {
+  var steps = this._pluginPipelineSteps[pluginName],
+      extMethodHashes = this._pluginExtendedMethods[pluginName],
+      i = 0, klass, extMethodHash;
+
+  if (steps) {
+    for (i = 0; i < steps.length; i++) {
+      this.pipeline.removeStep(steps[i]);
+    }
+  }
+
+  if (extMethodHashes){
+    for (i = 0; i < extMethodHashes.length; i++){
+      klass = extMethodHashes[i][0]
+      extMethodHash = extMethodHashes[i][1]
+      console.log('deleting from',  'method:', extMethodHash, klass.prototype[extMethodHash]);
+      for (var methodName in extMethodHash) {
+        delete klass.prototype[methodName]
+        delete klass.Invalid[methodName]
       }
     }
-
   }
-};
+
+  return this;
+}
+
+Controller.prototype.plugin = function(pluginName){
+  this.plugins
+}
 
 Controller.prototype.useRegisteredPlugins = function(){
   for (var plugin in Controller._pluginFactories){
@@ -2219,15 +2251,16 @@ InteractionBox.prototype.toString = function() {
 InteractionBox.Invalid = { valid: false };
 
 },{"gl-matrix":21}],12:[function(require,module,exports){
-var Pipeline = module.exports = function() {
+var Pipeline = module.exports = function (controller) {
   this.steps = [];
+  this.controller = controller;
 }
 
-Pipeline.prototype.addStep = function(step) {
+Pipeline.prototype.addStep = function (step) {
   this.steps.push(step);
 }
 
-Pipeline.prototype.run = function(frame) {
+Pipeline.prototype.run = function (frame) {
   var stepsLength = this.steps.length;
   for (var i = 0; i != stepsLength; i++) {
     if (!frame) break;
@@ -2236,6 +2269,41 @@ Pipeline.prototype.run = function(frame) {
   return frame;
 }
 
+Pipeline.prototype.removeStep = function(step){
+  var index = this.steps.indexOf(step);
+  if (index === -1) throw "Step not found in pipeline";
+  this.steps.splice(index, 1);
+}
+
+/*
+ * Wraps a plugin callback method in method which can be run inside the pipeline.
+ * This wrapper method loops the callback over objects within the frame as is appropriate,
+ * calling the callback for each in turn.
+ *
+ * @method createStepFunction
+ * @memberOf Leap.Controller.prototype
+ * @param {Controller} The controller on which the callback is called.
+ * @param {String} type What frame object the callback is run for and receives.
+ *       Can be one of 'frame', 'finger', 'hand', 'pointable', 'tool'
+ * @param {function} callback The method which will be run inside the pipeline loop.  Receives one argument, such as a hand.
+ * @private
+ */
+Pipeline.prototype.addWrappedStep = function (type, callback) {
+  var controller = this.controller,
+    step = function (frame) {
+      var dependencies, i, len;
+      dependencies = (type == 'frame') ? [frame] : (frame[type + 's'] || []);
+
+      for (i = 0, len = dependencies.length; i < len; i++) {
+        callback.call(controller, dependencies[i]);
+      }
+
+      return frame;
+    };
+
+  this.addStep(step);
+  return step;
+};
 },{}],13:[function(require,module,exports){
 var glMatrix = require("gl-matrix")
   , vec3 = glMatrix.vec3;
@@ -2601,7 +2669,8 @@ module.exports = {
   full: "0.4.0-beta1",
   major: 0,
   minor: 4,
-  dot: 0
+  dot: 0,
+  patch: 'beta1'
 }
 },{}],19:[function(require,module,exports){
 var process=require("__browserify_process");if (!process.EventEmitter) process.EventEmitter = function () {};

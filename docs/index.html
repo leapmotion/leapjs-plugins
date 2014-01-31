@@ -7,15 +7,15 @@
   <title>LeapJS-plugins by Leapmotion</title>
 
   <head profile="http://www.w3.org/2005/10/profile">
-  <link rel="icon"  type="image/ico" href="http://leapmotion.github.io/leapjs-plugins/docs/images/favicon.ico">
+  <link rel="icon"  type="image/ico" href="/images/favicon.ico">
 
-  <link rel="stylesheet" href="http://leapmotion.github.io/leapjs-plugins/docs/stylesheets/styles.css">
-  <link rel="stylesheet" href="http://leapmotion.github.io/leapjs-plugins/docs/stylesheets/pygment_trac.css">
-  <link rel="stylesheet" href="http://leapmotion.github.io/leapjs-plugins/docs/stylesheets/bootstrap.min.css">
+  <link rel="stylesheet" href="/stylesheets/styles.css">
+  <link rel="stylesheet" href="/stylesheets/pygment_trac.css">
+  <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <script type="text/javascript" src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/leap.js"></script>
-  <script type="text/javascript" src="http://leapmotion.github.io/leapjs-plugins/docs/main/leapjs-plugins-0.1.0.js"></script>
-  <script src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/jquery-1.10.2.min.js"></script>
+  <script type="text/javascript" src="/javascripts/leap.js"></script>
+  <script type="text/javascript" src="/main/leapjs-plugins-0.1.0.js"></script>
+  <script src="/javascripts/jquery-1.10.2.min.js"></script>
 
   <!--[if lt IE 9]>
   <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -25,11 +25,11 @@
   <body data-spy="scroll" data-target="ul.nav">
     <div class="wrapper">
       <header>
-        <a href="http://leapmotion.github.io/leapjs-plugins/docs">
-          <img src="http://leapmotion.github.io/leapjs-plugins/docs/images/logo.png" class="logo"/>
+        <a href="">
+          <img src="/images/logo.png" class="logo"/>
         </a>
         <h1>
-          <a href="http://leapmotion.github.io/leapjs-plugins/docs">
+          <a href="">
             Leapjs-plugins
           </a>
         </h1>
@@ -164,7 +164,9 @@
 <p>Sets a function which the hand will use to determine what it is hovering over.</p>
 
 <div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  hand.hoverFn( <span style="color:#080;font-weight:bold">function</span>(hand){ <span style="color:#080;font-weight:bold">return</span> hand.closestDiv(); } )
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  hand.hoverFn(
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    <span style="color:#080;font-weight:bold">function</span>(hand){ <span style="color:#080;font-weight:bold">return</span> hand.closestDiv(); }
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  )
 </pre></div>
 </div>
 </div>
@@ -358,6 +360,37 @@ Leap.loop(function(frame) {
 <h1 id="screen-position">Screen Position</h1>
 <hr />
 
+<h2 id="usage">Usage</h2>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>)
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span style="color:#777">// or</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>, {<span style="color:#606">positioning</span>: <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">absolute</span><span style="color:#710">'</span></span>}) <span style="color:#777">// the default</span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  <span style="color:#777">// or</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">screenPosition</span><span style="color:#710">'</span></span>, {
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    <span style="color:#06B;font-weight:bold">positioning</span>: <span style="color:#080;font-weight:bold">function</span>(){ <span style="color:#080;font-weight:bold">return</span> [<span style="color:#00D">0</span>,<span style="color:#00D">0</span>,<span style="color:#00D">0</span>] }
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  }) <span style="color:#777">// the default</span>
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>
+</pre></div>
+</div>
+</div>
+
+<p>The hand-holding plugin provides a simple way to store data about a hand object between frames.</p>
+
+<h2 id="methods">Methods</h2>
+
+<h3 id="datahashorkey-value">.data(hashOrKey, value)</h3>
+
+<p>Similar to jQuery.data, this method allows a value to be get or set.  This is the main method, all else are convenience methods.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  hand.data(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">player</span><span style="color:#710">'</span></span>, <span style="color:#00D">1</span>)  <span style="color:#777">//store data</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  hand.data({<span style="color:#606">player</span>: <span style="color:#00D">1</span>})  <span style="color:#777">//store data</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  hand.data(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">player</span><span style="color:#710">'</span></span>) <span style="color:#777">// returns 1</span>
+</pre></div>
+</div>
+</div>
+
 
 </section>
 
@@ -367,8 +400,8 @@ Leap.loop(function(frame) {
         <p><small>Hosted on GitHub Pages — Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
-    <script src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/scale.fix.js"></script>
-    <script src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/scale.fix.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
 
 
 </body><script type="text/javascript">var new_nav = new function() {};var x;var old_navigator = window.navigator;for (x in navigator) {if (typeof navigator[x] == 'function') {eval("new_nav." + x + " = function() { return old_navigator." + x + "();};");} else {eval("new_nav." + x + " = navigator." + x + ";");}}new_nav.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10";new_nav.vendor = "Apple, Inc.";new_nav.platform = "MacIntel";window.navigator = new_nav;</script></html>

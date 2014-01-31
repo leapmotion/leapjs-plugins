@@ -43,7 +43,9 @@ This will return the object currently being held.
 Sets a function which the hand will use to determine what it is hovering over.
 
 ```js
-  hand.hoverFn( function(hand){ return hand.closestDiv(); } )
+  hand.hoverFn(
+    function(hand){ return hand.closestDiv(); }
+  )
 ```
 
 ### hovering()
