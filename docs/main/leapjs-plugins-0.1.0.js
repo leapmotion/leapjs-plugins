@@ -136,10 +136,10 @@
     }
     options.positioning || (options.positioning = 'absolute');
     options.scale || (options.scale = 8);
-    options.verticalOffset || (options.verticalOffset = -250);
+    options.verticalOffset || (options.verticalOffset = -100);
     positioningMethods = {
       absolute: function(positionVec3) {
-        return [(document.body.offsetWidth / 2) + (positionVec3[0] * options.scale), (document.body.offsetHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale * -1), 0];
+        return [(document.body.offsetWidth / 2) + (positionVec3[0] * options.scale), (document.body.offsetHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale), 0];
       }
     };
     position = function(vec3, memoize) {

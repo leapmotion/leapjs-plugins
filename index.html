@@ -124,7 +124,7 @@ controller.on 'frame', (frame)->
 window.handHoldDemoCursor = $('#screen-position-demo .cursor')
 window.handHoldDemoOutput = $('#screen-position-demo .output')
 controller
-  .use('screenPosition', {scale: 4}) # default is 8, but we have a small window
+  .use('screenPosition', {scale: 8})
   .on('frame', (frame)->
     if hand = frame.hands[0]
       handHoldDemoOutput.html("[<br/>&nbsp;&nbsp;#{hand.screenPosition()[0]}
@@ -132,7 +132,7 @@ controller
         <br/>&nbsp;&nbsp;#{hand.screenPosition()[2]}<br/>]")
       handHoldDemoCursor.css(
         left: hand.screenPosition()[0],
-        top: hand.screenPosition()[1]
+        bottom: hand.screenPosition()[1]
       )
   ).on('deviceConnected', ->
     $('#screen-position-demo .noleap').remove()

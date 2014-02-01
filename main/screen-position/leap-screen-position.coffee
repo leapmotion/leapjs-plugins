@@ -22,13 +22,13 @@ Leap.plugin 'screenPosition', (options = {})->
   # positioning can be one of a series of predefined position identifiers, or a custom method.
   options.positioning ||= 'absolute'
   options.scale ||= 8
-  options.verticalOffset ||= -250
+  options.verticalOffset ||= -100
 
   positioningMethods = {
     absolute: (positionVec3)->
       [
         (document.body.offsetWidth / 2) + (positionVec3[0] * options.scale),
-        (document.body.offsetHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale * -1),
+        (document.body.offsetHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale),
         0
       ]
   }

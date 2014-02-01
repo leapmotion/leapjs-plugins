@@ -443,7 +443,7 @@ Applies to hands and pointables.</p>
 <pre class="highlight-coffee"><code><div class="highlight"><pre><code class="coffee"><span class="nb">window</span><span class="p">.</span><span class="nv">handHoldDemoCursor = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#screen-position-demo .cursor&#39;</span><span class="p">)</span>
 <span class="nb">window</span><span class="p">.</span><span class="nv">handHoldDemoOutput = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#screen-position-demo .output&#39;</span><span class="p">)</span>
 <span class="nx">controller</span>
-  <span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;screenPosition&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nv">scale: </span><span class="mi">4</span><span class="p">})</span> <span class="c1"># default is 8, but we have a small window</span>
+  <span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;screenPosition&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nv">scale: </span><span class="mi">8</span><span class="p">})</span>
   <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s">&#39;frame&#39;</span><span class="p">,</span> <span class="nf">(frame)-&gt;</span>
     <span class="k">if</span> <span class="nv">hand = </span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
       <span class="nx">handHoldDemoOutput</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;[&lt;br/&gt;&amp;nbsp;&amp;nbsp;</span><span class="si">#{</span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s"></span>
@@ -451,7 +451,7 @@ Applies to hands and pointables.</p>
 <span class="s">        &lt;br/&gt;&amp;nbsp;&amp;nbsp;</span><span class="si">#{</span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s">&lt;br/&gt;]&quot;</span><span class="p">)</span>
       <span class="nx">handHoldDemoCursor</span><span class="p">.</span><span class="nx">css</span><span class="p">(</span>
         <span class="nv">left: </span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="nv">top: </span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="nv">bottom: </span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
       <span class="p">)</span>
   <span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s">&#39;deviceConnected&#39;</span><span class="p">,</span> <span class="nf">-&gt;</span>
     <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#screen-position-demo .noleap&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
@@ -476,7 +476,7 @@ Applies to hands and pointables.</p>
 
       <span class="k">return</span> <span class="nx">handHoldDemoCursor</span><span class="p">.</span><span class="nx">css</span><span class="p">({</span>
         <span class="nx">left</span><span class="o">:</span> <span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">,</span>
-        <span class="nx">top</span><span class="o">:</span> <span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+        <span class="nx">bottom</span><span class="o">:</span> <span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
       <span class="p">});</span>
     <span class="p">}</span>
 <span class="p">}).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;deviceConnected&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
@@ -509,7 +509,7 @@ controller
 
       return handHoldDemoCursor.css({
         left: hand.screenPosition()[0] + 'px',
-        top: hand.screenPosition()[1] + 'px'
+        bottom: hand.screenPosition()[1] + 'px'
       });
     }
 }).on('deviceConnected', function(){

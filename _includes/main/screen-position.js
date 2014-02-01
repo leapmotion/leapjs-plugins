@@ -15,7 +15,7 @@ controller
 
       return handHoldDemoCursor.css({
         left: hand.screenPosition()[0] + 'px',
-        top: hand.screenPosition()[1] + 'px'
+        bottom: hand.screenPosition()[1] + 'px'
       });
     }
 }).on('deviceConnected', function(){
