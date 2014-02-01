@@ -1,11 +1,10 @@
 window.handHoldDemoCursor = $('#screen-position-demo .cursor');
 window.handHoldDemoOutput = $('#screen-position-demo .output')
 
-window.controller = new Leap.Controller()
+controller
   .use('screenPosition', {
     scale: 8
   })
-  .connect()
   .on('frame', function(frame) {
     var hand;
     if (hand = frame.hands[0]) {

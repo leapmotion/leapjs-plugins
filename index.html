@@ -8,6 +8,9 @@ title: LeapJS-plugins by Leapmotion
 if (window.location.hostname == "leapmotion.github.io" && ['/leapjs-plugins/', 'leapjs-plugins/index.html'].indexOf(window.location.pathname) != -1){
   window.location = "/leapjs-plugins/docs"
 }
+
+var controller = new Leap.Controller();
+  controller.connect()
 </script>
 
 <section>
@@ -61,15 +64,14 @@ Leap.Controller.plugin 'sumPitch', (options = {})->
       return unless lastPitch
 
       # store values with timestamps
-      now = new Date()
+      now = Date.now()
       pitchData.push({
         delta: currentPitch - lastPitch,
         time: now
       })
 
       # manage rolling sum
-      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow)
-      while pitchData[0].time < mostDistantTime
+      while pitchData[0].time < (now - (timeWindow * 1000))
         pitchData.shift()
 
       hand.sumPitch = 0
@@ -77,10 +79,15 @@ Leap.Controller.plugin 'sumPitch', (options = {})->
         hand.sumPitch += Math.abs(data.delta)
   }
 
+# The controller has already been initialized at the top of the page.  Otherwise:
+# controller = new Leap.Controller();
+#   controller.connect()
 window.handHoldDemo = $('#hand-hold-demo')
-Leap.Loop (frame)->
+controller.on 'frame', (frame)->
   if frame.hands[0]
-  handHoldDemo.html("frame id: #{frame.id} <br/>hand sumPitch: #{frame.hands[0].sumPitch.toPrecision(3)}")
+    handHoldDemo.html("frame id: #{frame.id} <br/>hand sumPitch (in the last second): #{frame.hands[0].sumPitch.toPrecision(3)}")
+  else
+    handHoldDemo.html('frame id: ' + frame.id + ' <br/>no hand present.');
 {% endhighlight %}</code></pre>
   </div>
   <div class="tab-pane" id="hand-hold-js">
@@ -116,9 +123,8 @@ Leap.Loop (frame)->
 <pre class="highlight-coffee"><code>{% highlight coffee %}
 window.handHoldDemoCursor = $('#screen-position-demo .cursor')
 window.handHoldDemoOutput = $('#screen-position-demo .output')
-window.controller = new Leap.Controller()
+controller
   .use('screenPosition', {scale: 4}) # default is 8, but we have a small window
-  .connect()
   .on('frame', (frame)->
     if hand = frame.hands[0]
       handHoldDemoOutput.html("[<br/>&nbsp;&nbsp;#{hand.screenPosition()[0]}
@@ -144,6 +150,7 @@ window.controller = new Leap.Controller()
 </div>
 
 <script type="text/javascript">
-{% include /main/screen-position.js %}
+  {% include /main/screen-position.js %}
 </script>
+
 </section>

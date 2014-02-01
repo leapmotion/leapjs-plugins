@@ -22,15 +22,14 @@ Leap.Controller.plugin('sumPitch', function(options) {
       }
 
       // store values with timesstamps
-      now = new Date();
+      now = Date.now();
       pitchData.push({
         delta: currentPitch - lastPitch,
         time: now
       });
 
       // manage rolling sum
-      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow);
-      while (pitchData[0].time < mostDistantTime) {
+      while (pitchData[0].time < (now - (timeWindow * 1000))) {
         pitchData.shift();
       }
 
@@ -44,10 +43,17 @@ Leap.Controller.plugin('sumPitch', function(options) {
 
 window.handHoldDemo = $('#hand-hold-demo');
 
-Leap.loop(function(frame) {
-  if (frame.hands[0]) {
-    return handHoldDemo.html('frame id: ' + frame.id + ' <br/>hand sumPitch: ' + frame.hands[0].sumPitch.toPrecision(3));
-  }else{
-    return handHoldDemo.html('frame id: ' + frame.id + ' <br/>no hand present.');
-  }
-});
+// The controller has already been initialized at the top of the page.  Otherwise:
+// var controller = new Leap.Controller();
+//   controller.connect()
+
+controller
+  .use('handHold')
+  .use('sumPitch')
+  .on('frame', function(frame) {
+    if (frame.hands[0]) {
+      return handHoldDemo.html('frame id: ' + frame.id + ' <br/>hand sumPitch (in the last second): ' + frame.hands[0].sumPitch.toPrecision(3));
+    }else{
+      return handHoldDemo.html('frame id: ' + frame.id + ' <br/>no hand present.');
+    }
+  })

@@ -55,6 +55,7 @@
 
         <hr/>
 
+        <p class="view"><a href="http://github.com/leapmotion/leapjs-plugins/wiki">List of community plugins</a></p>
         <p class="view"><a href="http://js.leapmotion.com">Download the source</a></p>
         <p class="view"><a href="http://github.com/leapmotion/leapjs-plugins">View the Project on GitHub <small>leapmotion/leapjs-plugins</small></a></p>
         <div style="clear: both;"></div>
@@ -65,6 +66,9 @@
 if (window.location.hostname == "leapmotion.github.io" && ['/leapjs-plugins/', 'leapjs-plugins/index.html'].indexOf(window.location.pathname) != -1){
   window.location = "/leapjs-plugins/docs"
 }
+
+var controller = new Leap.Controller();
+  controller.connect()
 </script>
 
 <section>
@@ -224,15 +228,14 @@ if (window.location.hostname == "leapmotion.github.io" && ['/leapjs-plugins/', '
       <span class="k">return</span> <span class="k">unless</span> <span class="nx">lastPitch</span>
 
       <span class="c1"># store values with timestamps</span>
-      <span class="nv">now = </span><span class="k">new</span> <span class="nb">Date</span><span class="p">()</span>
+      <span class="nv">now = </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span>
       <span class="nx">pitchData</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
         <span class="nv">delta: </span><span class="nx">currentPitch</span> <span class="o">-</span> <span class="nx">lastPitch</span><span class="p">,</span>
         <span class="nv">time: </span><span class="nx">now</span>
       <span class="p">})</span>
 
       <span class="c1"># manage rolling sum</span>
-      <span class="nv">mostDistantTime = </span><span class="nx">now</span><span class="p">.</span><span class="nx">setSeconds</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">()</span> <span class="o">-</span> <span class="nx">timeWindow</span><span class="p">)</span>
-      <span class="k">while</span> <span class="nx">pitchData</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">time</span> <span class="o">&lt;</span> <span class="nx">mostDistantTime</span>
+      <span class="k">while</span> <span class="nx">pitchData</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">time</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nx">now</span> <span class="o">-</span> <span class="p">(</span><span class="nx">timeWindow</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span>
         <span class="nx">pitchData</span><span class="p">.</span><span class="nx">shift</span><span class="p">()</span>
 
       <span class="nv">hand.sumPitch = </span><span class="mi">0</span>
@@ -240,10 +243,15 @@ if (window.location.hostname == "leapmotion.github.io" && ['/leapjs-plugins/', '
         <span class="nx">hand</span><span class="p">.</span><span class="nx">sumPitch</span> <span class="o">+=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">delta</span><span class="p">)</span>
   <span class="p">}</span>
 
+<span class="c1"># The controller has already been initialized at the top of the page.  Otherwise:</span>
+<span class="c1"># controller = new Leap.Controller();</span>
+<span class="c1">#   controller.connect()</span>
 <span class="nb">window</span><span class="p">.</span><span class="nv">handHoldDemo = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#hand-hold-demo&#39;</span><span class="p">)</span>
-<span class="nx">Leap</span><span class="p">.</span><span class="nx">Loop</span> <span class="nf">(frame)-&gt;</span>
+<span class="nx">controller</span><span class="p">.</span><span class="nx">on</span> <span class="s">&#39;frame&#39;</span><span class="p">,</span> <span class="nf">(frame)-&gt;</span>
   <span class="k">if</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-  <span class="nx">handHoldDemo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;frame id: </span><span class="si">#{</span><span class="nx">frame</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s"> &lt;br/&gt;hand sumPitch: </span><span class="si">#{</span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">sumPitch</span><span class="p">.</span><span class="nx">toPrecision</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="nx">handHoldDemo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;frame id: </span><span class="si">#{</span><span class="nx">frame</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s"> &lt;br/&gt;hand sumPitch (in the last second): </span><span class="si">#{</span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">sumPitch</span><span class="p">.</span><span class="nx">toPrecision</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="nx">handHoldDemo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s">&#39;frame id: &#39;</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s">&#39; &lt;br/&gt;no hand present.&#39;</span><span class="p">);</span>
 </code></pre></div></code></pre>
   </div>
   <div class="tab-pane" id="hand-hold-js">
@@ -271,15 +279,14 @@ if (window.location.hostname == "leapmotion.github.io" && ['/leapjs-plugins/', '
       <span class="p">}</span>
 
       <span class="c1">// store values with timesstamps</span>
-      <span class="nx">now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+      <span class="nx">now</span> <span class="o">=</span> <span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
       <span class="nx">pitchData</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
         <span class="nx">delta</span><span class="o">:</span> <span class="nx">currentPitch</span> <span class="o">-</span> <span class="nx">lastPitch</span><span class="p">,</span>
         <span class="nx">time</span><span class="o">:</span> <span class="nx">now</span>
       <span class="p">});</span>
 
       <span class="c1">// manage rolling sum</span>
-      <span class="nx">mostDistantTime</span> <span class="o">=</span> <span class="nx">now</span><span class="p">.</span><span class="nx">setSeconds</span><span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getSeconds</span><span class="p">()</span> <span class="o">-</span> <span class="nx">timeWindow</span><span class="p">);</span>
-      <span class="k">while</span> <span class="p">(</span><span class="nx">pitchData</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">time</span> <span class="o">&lt;</span> <span class="nx">mostDistantTime</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">while</span> <span class="p">(</span><span class="nx">pitchData</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">time</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nx">now</span> <span class="o">-</span> <span class="p">(</span><span class="nx">timeWindow</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)))</span> <span class="p">{</span>
         <span class="nx">pitchData</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
       <span class="p">}</span>
 
@@ -293,13 +300,20 @@ if (window.location.hostname == "leapmotion.github.io" && ['/leapjs-plugins/', '
 
 <span class="nb">window</span><span class="p">.</span><span class="nx">handHoldDemo</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#hand-hold-demo&#39;</span><span class="p">);</span>
 
-<span class="nx">Leap</span><span class="p">.</span><span class="nx">loop</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">handHoldDemo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s1">&#39;frame id: &#39;</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; &lt;br/&gt;hand sumPitch: &#39;</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">sumPitch</span><span class="p">.</span><span class="nx">toPrecision</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
-  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
-    <span class="k">return</span> <span class="nx">handHoldDemo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s1">&#39;frame id: &#39;</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; &lt;br/&gt;no hand present.&#39;</span><span class="p">);</span>
-  <span class="p">}</span>
-<span class="p">});</span>
+<span class="c1">// The controller has already been initialized at the top of the page.  Otherwise:</span>
+<span class="c1">// var controller = new Leap.Controller();</span>
+<span class="c1">//   controller.connect()</span>
+
+<span class="nx">controller</span>
+  <span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;handHold&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;sumPitch&#39;</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">handHoldDemo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s1">&#39;frame id: &#39;</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; &lt;br/&gt;hand sumPitch (in the last second): &#39;</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">sumPitch</span><span class="p">.</span><span class="nx">toPrecision</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+      <span class="k">return</span> <span class="nx">handHoldDemo</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s1">&#39;frame id: &#39;</span> <span class="o">+</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; &lt;br/&gt;no hand present.&#39;</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
 </code></pre></div></code></pre>
   </div>
   <div class="tab-pane demo" id="hand-hold-demo">No Leap Device Attached</div>
@@ -330,15 +344,14 @@ Leap.Controller.plugin('sumPitch', function(options) {
       }
 
       // store values with timesstamps
-      now = new Date();
+      now = Date.now();
       pitchData.push({
         delta: currentPitch - lastPitch,
         time: now
       });
 
       // manage rolling sum
-      mostDistantTime = now.setSeconds(now.getSeconds() - timeWindow);
-      while (pitchData[0].time < mostDistantTime) {
+      while (pitchData[0].time < (now - (timeWindow * 1000))) {
         pitchData.shift();
       }
 
@@ -352,13 +365,20 @@ Leap.Controller.plugin('sumPitch', function(options) {
 
 window.handHoldDemo = $('#hand-hold-demo');
 
-Leap.loop(function(frame) {
-  if (frame.hands[0]) {
-    return handHoldDemo.html('frame id: ' + frame.id + ' <br/>hand sumPitch: ' + frame.hands[0].sumPitch.toPrecision(3));
-  }else{
-    return handHoldDemo.html('frame id: ' + frame.id + ' <br/>no hand present.');
-  }
-});
+// The controller has already been initialized at the top of the page.  Otherwise:
+// var controller = new Leap.Controller();
+//   controller.connect()
+
+controller
+  .use('handHold')
+  .use('sumPitch')
+  .on('frame', function(frame) {
+    if (frame.hands[0]) {
+      return handHoldDemo.html('frame id: ' + frame.id + ' <br/>hand sumPitch (in the last second): ' + frame.hands[0].sumPitch.toPrecision(3));
+    }else{
+      return handHoldDemo.html('frame id: ' + frame.id + ' <br/>no hand present.');
+    }
+  })
 </script>
 
 </section>
@@ -422,9 +442,8 @@ Applies to hands and pointables.</p>
   <div class="tab-pane active" id="screen-position-coffee">
 <pre class="highlight-coffee"><code><div class="highlight"><pre><code class="coffee"><span class="nb">window</span><span class="p">.</span><span class="nv">handHoldDemoCursor = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#screen-position-demo .cursor&#39;</span><span class="p">)</span>
 <span class="nb">window</span><span class="p">.</span><span class="nv">handHoldDemoOutput = </span><span class="nx">$</span><span class="p">(</span><span class="s">&#39;#screen-position-demo .output&#39;</span><span class="p">)</span>
-<span class="nb">window</span><span class="p">.</span><span class="nv">controller = </span><span class="k">new</span> <span class="nx">Leap</span><span class="p">.</span><span class="nx">Controller</span><span class="p">()</span>
+<span class="nx">controller</span>
   <span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s">&#39;screenPosition&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nv">scale: </span><span class="mi">4</span><span class="p">})</span> <span class="c1"># default is 8, but we have a small window</span>
-  <span class="p">.</span><span class="nx">connect</span><span class="p">()</span>
   <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s">&#39;frame&#39;</span><span class="p">,</span> <span class="nf">(frame)-&gt;</span>
     <span class="k">if</span> <span class="nv">hand = </span><span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
       <span class="nx">handHoldDemoOutput</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;[&lt;br/&gt;&amp;nbsp;&amp;nbsp;</span><span class="si">#{</span><span class="nx">hand</span><span class="p">.</span><span class="nx">screenPosition</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s"></span>
@@ -443,11 +462,10 @@ Applies to hands and pointables.</p>
     <pre class="highlight-js"><code><div class="highlight"><pre><code class="javascript"><span class="nb">window</span><span class="p">.</span><span class="nx">handHoldDemoCursor</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#screen-position-demo .cursor&#39;</span><span class="p">);</span>
 <span class="nb">window</span><span class="p">.</span><span class="nx">handHoldDemoOutput</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#screen-position-demo .output&#39;</span><span class="p">)</span>
 
-<span class="nb">window</span><span class="p">.</span><span class="nx">controller</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Leap</span><span class="p">.</span><span class="nx">Controller</span><span class="p">()</span>
+<span class="nx">controller</span>
   <span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="s1">&#39;screenPosition&#39;</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">scale</span><span class="o">:</span> <span class="mi">8</span>
   <span class="p">})</span>
-  <span class="p">.</span><span class="nx">connect</span><span class="p">()</span>
   <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">frame</span><span class="p">)</span> <span class="p">{</span>
     <span class="kd">var</span> <span class="nx">hand</span><span class="p">;</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">hand</span> <span class="o">=</span> <span class="nx">frame</span><span class="p">.</span><span class="nx">hands</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
@@ -474,14 +492,13 @@ Applies to hands and pointables.</p>
 </div>
 
 <script type="text/javascript">
-window.handHoldDemoCursor = $('#screen-position-demo .cursor');
+  window.handHoldDemoCursor = $('#screen-position-demo .cursor');
 window.handHoldDemoOutput = $('#screen-position-demo .output')
 
-window.controller = new Leap.Controller()
+controller
   .use('screenPosition', {
     scale: 8
   })
-  .connect()
   .on('frame', function(frame) {
     var hand;
     if (hand = frame.hands[0]) {
@@ -502,6 +519,7 @@ window.controller = new Leap.Controller()
 
 
 </script>
+
 </section>
 
       <footer>
