@@ -3,7 +3,7 @@ module.exports = (grunt) ->
   filename = "<%= pkg.name %>-<%= pkg.version %>"
   banner = (project)->
      '/*
-    \n * LeapJS-Plugins #{project}- v<%= pkg.version %> - <%= grunt.template.today(\"yyyy-mm-dd\") %>
+    \n * LeapJS-Plugins ' + project + ' - v<%= pkg.version %> - <%= grunt.template.today(\"yyyy-mm-dd\") %>
     \n * http://github.com/leapmotion/leapjs-plugins/
     \n *
     \n * Copyright <%= grunt.template.today(\"yyyy\") %> LeapMotion, Inc
@@ -50,12 +50,12 @@ module.exports = (grunt) ->
           "\n//Filename: '#{filepath}'\n#{src}"
       main:
         options:
-          banner: banner(' ')
+          banner: banner('')
         src: 'main/**/*.js'
         dest: "main/#{filename}.js"
       extras:
         options:
-          banner: banner('Extra ')
+          banner: banner('Extra')
         src: 'extras/**/*.js'
         dest: "extras/#{filename}-extras.js"
 
