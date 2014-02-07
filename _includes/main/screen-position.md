@@ -22,13 +22,13 @@ Here we scale based upon the interaction box and screen size:
       [
         Leap.vec3.subtract(positionVec3, positionVec3, this.frame.interactionBox.center)
         Leap.vec3.divide(positionVec3, positionVec3, this.frame.interactionBox.size)
-        Leap.vec3.multiply(positionVec3, positionVec3, [document.body.offsetWidth, document.body.offsetHeight, 0])
+        Leap.vec3.multiply(positionVec3, positionVec3, [window.innerWidth, window.innerHeight, 0])
       ]
     }
   }
 
   // later...
-  hand.screenPosition() // returns [156,204,121]
+  hand.screenPosition() // returns [156,204,0]
 ```
 More info on vec3 can be found, <a target="_blank" href="http://glmatrix.net/docs/2.2.0/symbols/vec3.html">In the gl-matrix docs</a>
 
