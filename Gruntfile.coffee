@@ -27,8 +27,6 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON("package.json")
 
     coffee:
-      options:
-        banner: 'test'
       dynamic_mappings:
         files: [{
           expand: true
@@ -61,9 +59,13 @@ module.exports = (grunt) ->
 
     uglify:
       main:
+        options:
+           banner: banner('')
         src: "main/#{filename}.js"
         dest: "main/#{filename}.min.js"
       extras:
+        options:
+          banner: banner('Extra')
         src: "extras/#{filename}-extras.js"
         dest: "extras/#{filename}-extras.min.js"
 
