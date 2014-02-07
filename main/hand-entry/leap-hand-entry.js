@@ -1,3 +1,10 @@
+/*
+Emits controller events when a hand enters of leaves the frame
+"handLost" and "handFound"
+Each event also includes the hand object, which will be invalid for the handLost event.
+*/
+
+
 (function() {
   Leap.Controller.plugin('handEntry', function() {
     var previousHandIds;

@@ -4,10 +4,9 @@
   "description": "A collection of useful plugins for LeapJS",
   "main": "index.js",
   "dependencies": {
-    "leapjs": "0.4.0"
   },
   "devDependencies": {
-    "coffee-script": ">=1.6.3",
+    "coffee-script": ">=1.7.1",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-uglify": "~0.3.2",
     "grunt-contrib-coffee": "~0.8.2",
@@ -26,9 +25,9 @@
     "controller"
   ],
   "author": "pehrlich",
-  "license": "BSD-2-Clause",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/leapmotion/leapjs-plugins/issues"
+    "url": "http://github.com/leapmotion/leapjs-plugins/issues"
   },
-  "homepage": "https://github.com/leapmotion/leapjs-plugins"
+  "homepage": "http://leapmotion.github.io/leapjs-plugins/docs"
 }

@@ -1,34 +1,59 @@
+/*
+Adds the "screenPosition" method by default to hands and pointables.  This returns a vec3 (an array of length 3)
+with [x,y,z] screen coordinates indicating where the hand is, originating from the bottom left.
+This method can accept an optional vec3, allowing it to convert any arbitrary vec3 of coordinates.
+
+Custom positioning methods can be passed in, allowing different scaling techniques,
+e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)
+Here we scale based upon the interaction box and screen size:
+
+controller.use 'screenPosition', {
+  method: (positionVec3)->
+    Arguments for Leap.vec3 are (out, a, b)
+    [
+      Leap.vec3.subtract(positionVec3, positionVec3, @frame.interactionBox.center)
+      Leap.vec3.divide(positionVec3, positionVec3, @frame.interactionBox.size)
+      Leap.vec3.multiply(positionVec3, positionVec3, [document.body.offsetWidth, document.body.offsetHeight, 0])
+    ]
+}
+More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec3.html
+*/
+
+
 (function() {
   Leap.plugin('screenPosition', function(options) {
-    var position, position_methods, positioning;
-    positioning = options.positioning || 'absolute';
-    position = function(vec3) {
-      if (typeof positioning === 'function') {
-        return positioning.call(this, vec3);
-      } else {
-        return position_methods[positioning].call(this, vec3);
+    var position, positioningMethods;
+    if (options == null) {
+      options = {};
+    }
+    options.positioning || (options.positioning = 'absolute');
+    options.scale || (options.scale = 8);
+    options.verticalOffset || (options.verticalOffset = -100);
+    positioningMethods = {
+      absolute: function(positionVec3) {
+        return [(window.innerWidth / 2) + (positionVec3[0] * options.scale), (window.innerHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale), 0];
       }
     };
-    position_methods = {
-      absolute: function(vec3) {
-        var scale, vertical_offset;
-        scale = 8;
-        vertical_offset = -150;
-        return this._screenPosition || (this._screenPosition = {
-          x: (document.body.offsetWidth / 2) + (vec3[0] * scale),
-          y: (document.body.offsetHeight / 2) + ((vec3[1] + vertical_offset) * scale * -1)
-        });
+    position = function(vec3, memoize) {
+      var screenPositionVec3;
+      if (memoize == null) {
+        memoize = false;
       }
+      screenPositionVec3 = typeof options.positioning === 'function' ? options.positioning.call(this, vec3) : positioningMethods[options.positioning].call(this, vec3);
+      if (memoize) {
+        this.screenPositionVec3 = screenPositionVec3;
+      }
+      return screenPositionVec3;
     };
     return {
       hand: {
         screenPosition: function(vec3) {
-          return position.call(this, vec3 || this.stabilizedPalmPosition);
+          return position.call(this, vec3 || this.stabilizedPalmPosition, !vec3);
         }
       },
       pointable: {
         screenPosition: function(vec3) {
-          return position.call(this, vec3 || this.stabilizedTipPosition);
+          return position.call(this, vec3 || this.stabilizedTipPosition, !vec3);
         }
       }
     };
