@@ -1,3 +1,25 @@
+/*
+Adds the "screenPosition" method by default to hands and pointables.  This returns a vec3 (an array of length 3)
+with [x,y,z] screen coordinates indicating where the hand is, originating from the bottom left.
+This method can accept an optional vec3, allowing it to convert any arbitrary vec3 of coordinates.
+
+Custom positioning methods can be passed in, allowing different scaling techniques,
+e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)
+Here we scale based upon the interaction box and screen size:
+
+controller.use 'screenPosition', {
+  method: (positionVec3)->
+    Arguments for Leap.vec3 are (out, a, b)
+    [
+      Leap.vec3.subtract(positionVec3, positionVec3, @frame.interactionBox.center)
+      Leap.vec3.divide(positionVec3, positionVec3, @frame.interactionBox.size)
+      Leap.vec3.multiply(positionVec3, positionVec3, [document.body.offsetWidth, document.body.offsetHeight, 0])
+    ]
+}
+More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec3.html
+*/
+
+
 (function() {
   Leap.plugin('screenPosition', function(options) {
     var position, positioningMethods;
@@ -9,7 +31,7 @@
     options.verticalOffset || (options.verticalOffset = -100);
     positioningMethods = {
       absolute: function(positionVec3) {
-        return [(document.body.offsetWidth / 2) + (positionVec3[0] * options.scale), (document.body.offsetHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale), 0];
+        return [(window.innerWidth / 2) + (positionVec3[0] * options.scale), (window.innerHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale), 0];
       }
     };
     position = function(vec3, memoize) {

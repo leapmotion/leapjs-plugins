@@ -1,6 +1,8 @@
-# Emits controller events when a hand enters of leaves the frame
-# "handLost" and "handFound"
-# Each event also includes the hand object, which will be invalid for the handLost event.
+###
+Emits controller events when a hand enters of leaves the frame
+"handLost" and "handFound"
+Each event also includes the hand object, which will be invalid for the handLost event.
+###
 Leap.Controller.plugin 'handEntry', ->
   previousHandIds = []
 
