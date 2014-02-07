@@ -26,5 +26,6 @@ additional functionality will be available to you.  See [hand-entry](hand-entry)
 Contributing
 ===============
 
- - Contact [@LeapmotionDev](https://twitter.com/LeapMotionDev) for help
- - [SDK License](SDK License)
+ - Make a fork, name your branch, add your plugin or fix.
+ - Add your name to the CONTRIBUTORS list, agreeing to the CLA
+ - Open a Pull Request
