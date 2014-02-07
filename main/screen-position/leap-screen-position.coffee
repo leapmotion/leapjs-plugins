@@ -1,7 +1,7 @@
 ###
 Adds the "screenPosition" method by default to hands and pointables.  This returns a vec3 (an array of length 3)
-with [x,y,z] screen coordinates indicating where the hand is.  This method can accept an optional vec3, allowing
-it to convert any arbitrary vec3 of coordinates.
+with [x,y,z] screen coordinates indicating where the hand is, originating from the bottom left.
+This method can accept an optional vec3, allowing it to convert any arbitrary vec3 of coordinates.
 
 Custom positioning methods can be passed in, allowing different scaling techniques,
 e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)
@@ -29,8 +29,8 @@ Leap.plugin 'screenPosition', (options = {})->
   positioningMethods = {
     absolute: (positionVec3)->
       [
-        (document.body.offsetWidth / 2) + (positionVec3[0] * options.scale),
-        (document.body.offsetHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale),
+        (window.innerWidth / 2) + (positionVec3[0] * options.scale),
+        (window.innerHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale),
         0
       ]
   }
