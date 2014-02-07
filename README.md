@@ -17,9 +17,9 @@ additional functionality will be available to you.  See [hand-entry](hand-entry)
 </script>
 ```
 
-
- - Each plugin is individually documented, with demo, on the [gh-pages](gh-pages).
- - See [making plugins](making plugins) on the leapjs wiki.
+ - Download [from the CDN](http://developer.leapmotion.com/leapjs/plugins).
+ - Each plugin is individually documented, with demo, on the gh-pages [docs site](http://leapmotion.github.io/leapjs-plugins/docs/).
+ - See [making plugins](http://github.com/leapmotion/leapjs/wiki/plugins) on the leapjs wiki.
 
 
 
