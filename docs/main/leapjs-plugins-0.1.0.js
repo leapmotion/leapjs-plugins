@@ -1,13 +1,31 @@
-/*!    
- * LeapJS-Plugins  - v0.1.0 - 2014-01-31    
+/*    
+ * LeapJS-Plugins #{project}- v0.1.0 - 2014-02-07    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
- * Copyright 2014 LeapMotion, Inc. and other contributors    
- * Released under the BSD-2-Clause license    
- * http://github.com/leapmotion/leapjs-plugins/blob/master/LICENSE    
+ * Copyright 2014 LeapMotion, Inc    
+ *    
+ * Licensed under the Apache License, Version 2.0 (the "License");    
+ * you may not use this file except in compliance with the License.    
+ * You may obtain a copy of the License at    
+ *    
+ *     http://www.apache.org/licenses/LICENSE-2.0    
+ *    
+ * Unless required by applicable law or agreed to in writing, software    
+ * distributed under the License is distributed on an "AS IS" BASIS,    
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    
+ * See the License for the specific language governing permissions and    
+ * limitations under the License.    
+ *    
  */    
 
 //Filename: 'main/hand-entry/leap-hand-entry.js'
+/*
+Emits controller events when a hand enters of leaves the frame
+"handLost" and "handFound"
+Each event also includes the hand object, which will be invalid for the handLost event.
+*/
+
+
 (function() {
   Leap.Controller.plugin('handEntry', function() {
     var previousHandIds;
@@ -128,6 +146,28 @@
 
 
 //Filename: 'main/screen-position/leap-screen-position.js'
+/*
+Adds the "screenPosition" method by default to hands and pointables.  This returns a vec3 (an array of length 3)
+with [x,y,z] screen coordinates indicating where the hand is, originating from the bottom left.
+This method can accept an optional vec3, allowing it to convert any arbitrary vec3 of coordinates.
+
+Custom positioning methods can be passed in, allowing different scaling techniques,
+e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)
+Here we scale based upon the interaction box and screen size:
+
+controller.use 'screenPosition', {
+  method: (positionVec3)->
+    Arguments for Leap.vec3 are (out, a, b)
+    [
+      Leap.vec3.subtract(positionVec3, positionVec3, @frame.interactionBox.center)
+      Leap.vec3.divide(positionVec3, positionVec3, @frame.interactionBox.size)
+      Leap.vec3.multiply(positionVec3, positionVec3, [document.body.offsetWidth, document.body.offsetHeight, 0])
+    ]
+}
+More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec3.html
+*/
+
+
 (function() {
   Leap.plugin('screenPosition', function(options) {
     var position, positioningMethods;
@@ -139,7 +179,7 @@
     options.verticalOffset || (options.verticalOffset = -100);
     positioningMethods = {
       absolute: function(positionVec3) {
-        return [(document.body.offsetWidth / 2) + (positionVec3[0] * options.scale), (document.body.offsetHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale), 0];
+        return [(window.innerWidth / 2) + (positionVec3[0] * options.scale), (window.innerHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale), 0];
       }
     };
     position = function(vec3, memoize) {

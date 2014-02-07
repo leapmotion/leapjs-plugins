@@ -4,7 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <title>LeapJS-plugins by Leapmotion</title>
+  <title>LeapJS-Plugins by Leap Motion</title>
 
   <head profile="http://www.w3.org/2005/10/profile">
   <link rel="icon"  type="image/ico" href="http://leapmotion.github.io/leapjs-plugins/docs/images/favicon.ico">
@@ -36,7 +36,7 @@
           </a>
         </h1>
         <p>
-          A collection of plugins available to be used with LeapJS.  The library is written in CoffeeScript, but
+          A collection of plugins available to be used with <a href="http://github.com/leapmotion/leapjs">LeapJS</a>.  The library is written in CoffeeScript, but
           CoffeeScript is not required to run applications.
         </p>
 
@@ -55,9 +55,10 @@
 
         <hr/>
 
-        <p class="view"><a href="http://github.com/leapmotion/leapjs-plugins/wiki">List of community plugins</a></p>
-        <p class="view"><a href="http://js.leapmotion.com">Download the source</a></p>
-        <p class="view"><a href="http://github.com/leapmotion/leapjs-plugins">View the Project on GitHub <small>leapmotion/leapjs-plugins</small></a></p>
+        <p class="view"><a href="http://js.leapmotion.com">Download</a></p>
+        <p class="view"><a href="http://github.com/leapmotion/leapjs-plugins/wiki">Community Plugins</a></p>
+        <p class="view"><a href="http://github.com/leapmotion/leapjs/wiki/plugins">Making Plugins</a></p>
+        <p class="view"><a href="http://github.com/leapmotion/leapjs-plugins">GitHub Project<small>leapmotion/leapjs-plugins</small></a></p>
         <div style="clear: both;"></div>
 
       </header>
@@ -409,13 +410,13 @@ Here we scale based upon the interaction box and screen size:</p>
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      [
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        Leap.vec3.subtract(positionVec3, positionVec3, <span style="color:#963">this</span>.frame.interactionBox.center)
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        Leap.vec3.divide(positionVec3, positionVec3, <span style="color:#963">this</span>.frame.interactionBox.size)
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>        Leap.vec3.multiply(positionVec3, positionVec3, [document.body.offsetWidth, document.body.offsetHeight, <span style="color:#00D">0</span>])
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>        Leap.vec3.multiply(positionVec3, positionVec3, [window.innerWidth, window.innerHeight, <span style="color:#00D">0</span>])
 <span class="line-numbers"><a href="#n12" name="n12">12</a></span>      ]
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>    }
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>  }
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>
 <span class="line-numbers"><a href="#n16" name="n16">16</a></span>  <span style="color:#777">// later...</span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  hand.screenPosition() <span style="color:#777">// returns [156,204,121]</span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  hand.screenPosition() <span style="color:#777">// returns [156,204,0]</span>
 </pre></div>
 </div>
 </div>
