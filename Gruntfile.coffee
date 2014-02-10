@@ -33,7 +33,8 @@ module.exports = (grunt) ->
           cwd: 'main/'
           src: '**/*.coffee'
           dest: 'main/'
-          ext: '.js'
+          rename: (task, path, options)->
+            task + path.replace('.coffee', '.js')
         }]
 
     clean:
