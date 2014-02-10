@@ -27,5 +27,5 @@ Contributing
 ===============
 
  - Make a fork, name your branch, add your plugin or fix.
- - Add your name to the CONTRIBUTORS list, agreeing to the CLA
+ - Add your name to the CONTRIBUTORS.txt list, thereby agreeing to the terms and conditions of the Contributor License Agreement.
  - Open a Pull Request
