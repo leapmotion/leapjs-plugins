@@ -48,24 +48,38 @@ module.exports = (grunt) ->
 
     clean:
       main:
-        src: ['main/leapjs-plugins-0.1.0.js', 'main/leapjs-plugins-0.1.0.min.js']
+        src: ["main/#{filename}.js", "main/#{filename}.min.js"]
       extras:
-        src: ['extras/leapjs-plugins-0.1.0-extras.js', 'extras/leapjs-plugins-0.1.0-extras.min.js']
+        src: ["extras/#{filename}-extras.js", "extras/#{filename}-extras.min.js"]
 
     concat:
       options:
         process: (src, filepath) ->
           "\n//Filename: '#{filepath}'\n#{src}"
       main:
-        options:
-          banner: banner('')
         src: 'main/**/*.js'
         dest: "main/#{filename}.js"
       extras:
-        options:
-          banner: banner('Extra')
         src: 'extras/**/*.js'
         dest: "extras/#{filename}-extras.js"
+
+    browserify:
+      main:
+        src: "main/#{filename}.js"
+        dest: "main/#{filename}.js"
+      extras:
+        src: "main/#{filename}-extras.js"
+        dest: "extras/#{filename}-extras.js"
+
+    usebanner:
+      main:
+        options:
+          banner: banner('')
+        src: "main/#{filename}.js"
+      extras:
+        options:
+          banner: banner('Extra')
+        src: "exras/#{filename}.js"
 
     uglify:
       main:
@@ -83,6 +97,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
-  grunt.loadNpmTasks "grunt-contrib-uglify"
+  grunt.loadNpmTasks 'grunt-browserify'
+  grunt.loadNpmTasks 'grunt-contrib-uglify'
+  grunt.loadNpmTasks 'grunt-banner'
 
-  grunt.registerTask "default", ["coffee", "clean", "concat", "uglify"]
+  grunt.registerTask "default", ["coffee", "clean", "concat", "browserify", "usebanner", "uglify"]

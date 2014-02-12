@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.0 - 2014-02-13    
+ * LeapJS-Plugins  - v0.1.1 - 2014-02-13    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -18,6 +18,8 @@
  *    
  */    
 
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+
 //Filename: 'main/hand-entry/leap.hand-entry.js'
 /*
 Emits controller events when a hand enters of leaves the frame
@@ -27,7 +29,9 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 
 (function() {
-  Leap.Controller.plugin('handEntry', function() {
+  var handEntry;
+
+  handEntry = function() {
     var previousHandIds;
     previousHandIds = [];
     previousHandIds.remove = function() {
@@ -75,14 +79,22 @@ Each event also includes the hand object, which will be invalid for the handLost
         return _results;
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('handEntry', handEntry);
+  } else {
+    module.exports.handEntry = handEntry;
+  }
 
 }).call(this);
 
 
 //Filename: 'main/hand-hold/leap.hand-hold.js'
 (function() {
-  Leap.Controller.plugin('handHold', function() {
+  var handHold;
+
+  handHold = function() {
     var extraHandData;
     extraHandData = {};
     return {
@@ -140,10 +152,38 @@ Each event also includes the hand object, which will be invalid for the handLost
         }
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('handHold', handHold);
+  } else {
+    module.exports.handHold = handHold;
+  }
 
 }).call(this);
 
+
+//Filename: 'main/leapjs-plugins-0.1.0.min.js'
+/*    
+ * LeapJS-Plugins  - v0.1.0 - 2014-02-13    
+ * http://github.com/leapmotion/leapjs-plugins/    
+ *    
+ * Copyright 2014 LeapMotion, Inc    
+ *    
+ * Licensed under the Apache License, Version 2.0 (the "License");    
+ * you may not use this file except in compliance with the License.    
+ * You may obtain a copy of the License at    
+ *    
+ *     http://www.apache.org/licenses/LICENSE-2.0    
+ *    
+ * Unless required by applicable law or agreed to in writing, software    
+ * distributed under the License is distributed on an "AS IS" BASIS,    
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    
+ * See the License for the specific language governing permissions and    
+ * limitations under the License.    
+ *    
+ */    
+(function(){Leap.Controller.plugin("handEntry",function(){var a;return a=[],a.remove=function(){for(var a,b,c=arguments,d=c.length;d&&this.length;)for(a=c[--d];-1!==(b=this.indexOf(a));)this.splice(b,1);return this},this.on("deviceDisconnected",function(){var b,c,d,e;for(e=[],c=0,d=a.length;d>c;c++)b=a[c],e.push(this.emit("handLost",this.lastConnectionFrame.hand(b)));return e}),{frame:function(b){var c,d,e,f,g,h,i;for(d=b.hands.map(function(a){return a.id}),e=0,g=a.length;g>e;e++)c=a[e],-1===d.indexOf(c)&&(a.remove(c),this.emit("handLost",b.hand(c)));for(i=[],f=0,h=d.length;h>f;f++)c=d[f],-1===a.indexOf(c)?(a.push(c),i.push(this.emit("handFound",b.hand(c)))):i.push(void 0);return i}}})}).call(this),function(){Leap.Controller.plugin("handHold",function(){var a;return a={},{hand:{data:function(b,c){var d,e,f;if(a[e=this.id]||(a[e]=[]),c)return a[this.id][b]=c;if("[object String]"===toString.call(b))return a[this.id][b];f=[];for(d in b)c=b[d],f.push(void 0===c?delete a[this.id][d]:a[this.id][d]=c);return f},hold:function(a){return a?this.data({holding:a}):this.hold(this.hovering())},holding:function(){return this.data("holding")},release:function(){var a;return a=this.data("holding"),this.data({holding:void 0}),a},hoverFn:function(a){return this.data({getHover:a})},hovering:function(){var a;return(a=this.data("getHover"))?this._hovering||(this._hovering=a.call(this)):void 0}}}})}.call(this),function(){Leap.plugin("screenPosition",function(a){var b,c;return null==a&&(a={}),a.positioning||(a.positioning="absolute"),a.scale||(a.scale=8),a.verticalOffset||(a.verticalOffset=-100),c={absolute:function(b){return[window.innerWidth/2+b[0]*a.scale,window.innerHeight/2+(-1*b[1]+a.verticalOffset)*a.scale,0]}},b=function(b,d){var e;return null==d&&(d=!1),e="function"==typeof a.positioning?a.positioning.call(this,b):c[a.positioning].call(this,b),d&&(this.screenPositionVec3=e),e},{hand:{screenPosition:function(a){return b.call(this,a||this.stabilizedPalmPosition,!a)}},pointable:{screenPosition:function(a){return b.call(this,a||this.stabilizedTipPosition,!a)}}}})}.call(this);
 
 //Filename: 'main/screen-position/leap.screen-position.js'
 /*
@@ -169,7 +209,9 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
 
 
 (function() {
-  Leap.plugin('screenPosition', function(options) {
+  var screenPosition;
+
+  screenPosition = function(options) {
     var position, positioningMethods;
     if (options == null) {
       options = {};
@@ -205,6 +247,14 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
         }
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('screenPosition', screenPosition);
+  } else {
+    module.exports.screenPosition = screenPosition;
+  }
 
 }).call(this);
+
+},{}]},{},[1])
