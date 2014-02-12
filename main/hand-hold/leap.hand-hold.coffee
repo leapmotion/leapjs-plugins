@@ -1,4 +1,4 @@
-Leap.Controller.plugin 'handHold', ->
+handHold = ->
   extraHandData = {}
   {
     hand: {
@@ -45,3 +45,8 @@ Leap.Controller.plugin 'handHold', ->
 
     }
   }
+
+if (typeof Leap != 'undefined') && Leap.Controller
+  Leap.Controller.plugin 'handHold', handHold
+else
+  module.exports.handHold = handHold

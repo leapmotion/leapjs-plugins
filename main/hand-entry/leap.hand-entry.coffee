@@ -3,7 +3,8 @@ Emits controller events when a hand enters of leaves the frame
 "handLost" and "handFound"
 Each event also includes the hand object, which will be invalid for the handLost event.
 ###
-Leap.Controller.plugin 'handEntry', ->
+
+handEntry = ->
   previousHandIds = []
 
   #http://stackoverflow.com/questions/3954438/remove-item-from-array-by-value
@@ -37,3 +38,9 @@ Leap.Controller.plugin 'handEntry', ->
           @emit('handFound', frame.hand(id))
   }
 
+
+
+if (typeof Leap != 'undefined') && Leap.Controller
+ Leap.Controller.plugin 'handEntry', handEntry
+else
+  module.exports.handEntry = handEntry
