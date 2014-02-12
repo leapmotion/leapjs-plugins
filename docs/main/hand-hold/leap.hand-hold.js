@@ -1,5 +1,7 @@
 (function() {
-  Leap.Controller.plugin('handHold', function() {
+  var handHold;
+
+  handHold = function() {
     var extraHandData;
     extraHandData = {};
     return {
@@ -57,6 +59,12 @@
         }
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('handHold', handHold);
+  } else {
+    module.exports.handHold = handHold;
+  }
 
 }).call(this);

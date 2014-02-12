@@ -1,6 +1,6 @@
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 /*!
- * LeapJS v0.4.0
+ * LeapJS v0.4.1
  * http://github.com/leapmotion/leapjs/
  *
  * Copyright 2013 LeapMotion, Inc. and other contributors
@@ -41,6 +41,7 @@ var BaseConnection = module.exports = function(opts) {
   });
   this.host = this.opts.host;
   this.port = this.opts.port;
+  this.protocolVersionVerified = false;
   this.on('ready', function() {
     this.enableGestures(this.opts.enableGestures);
     this.setBackground(this.opts.background);
@@ -74,8 +75,15 @@ BaseConnection.prototype.enableGestures = function(enabled) {
 BaseConnection.prototype.handleClose = function(code, reason) {
   if (!this.connected) return;
   this.disconnect();
+
+  // 1001 - an active connection is closed
+  // 1006 - cannot connect
   if (code === 1001 && this.opts.requestProtocolVersion > 1) {
-    this.opts.requestProtocolVersion--;
+    if (this.protocolVersionVerified) {
+      this.protocolVersionVerified = false;
+    }else{
+      this.opts.requestProtocolVersion--;
+    }
   }
   this.startReconnection();
 }
@@ -108,9 +116,11 @@ BaseConnection.prototype.reconnect = function() {
 
 BaseConnection.prototype.handleData = function(data) {
   var message = JSON.parse(data);
+
   var messageEvent;
   if (this.protocol === undefined) {
     messageEvent = this.protocol = chooseProtocol(message);
+    this.protocolVersionVerified = true;
     this.emit('ready');
   } else {
     messageEvent = this.protocol(message);
@@ -271,8 +281,10 @@ var process=require("__browserify_process");var Frame = require('./frame')
  * Polling is an appropriate strategy for applications which already have an
  * intrinsic update loop, such as a game.
  */
+
+
 var Controller = module.exports = function(opts) {
-  var inNode = typeof(process) !== 'undefined' && process.title === 'node';
+  var inNode = (typeof(process) !== 'undefined' && process.versions && process.versions.node);
 
   opts = _.defaults(opts || {}, {
     inNode: inNode
@@ -408,10 +420,12 @@ Controller.prototype.processFrame = function(frame) {
     frame = this.pipeline.run(frame);
     if (!frame) frame = Frame.Invalid;
   }
+  // lastConnectionFrame is used by the animation loop
   this.lastConnectionFrame = frame;
   this.emit('deviceFrame', frame);
 }
 
+// on a deviceFrame or animationFrame, this emits a 'frame'
 Controller.prototype.processFinishedFrame = function(frame) {
   this.lastFrame = frame;
   if (frame.valid) {
@@ -561,7 +575,7 @@ Controller.plugins = function() {
 Controller.prototype.use = function(pluginName, options) {
   var functionOrHash, pluginFactory, key, pluginInstance, klass;
 
-  pluginFactory = Controller._pluginFactories[pluginName];
+	pluginFactory = (typeof pluginName == 'function') ? pluginName : Controller._pluginFactories[pluginName];
 
   if (!pluginFactory) {
     throw 'Leap Plugin ' + pluginName + ' not found.';
@@ -627,7 +641,6 @@ Controller.prototype.stopUsing = function (pluginName) {
     for (i = 0; i < extMethodHashes.length; i++){
       klass = extMethodHashes[i][0]
       extMethodHash = extMethodHashes[i][1]
-      console.log('deleting from',  'method:', extMethodHash, klass.prototype[extMethodHash]);
       for (var methodName in extMethodHash) {
         delete klass.prototype[methodName]
         delete klass.Invalid[methodName]
@@ -638,10 +651,6 @@ Controller.prototype.stopUsing = function (pluginName) {
   return this;
 }
 
-Controller.prototype.plugin = function(pluginName){
-  this.plugins
-}
-
 Controller.prototype.useRegisteredPlugins = function(){
   for (var plugin in Controller._pluginFactories){
     this.use(plugin);
@@ -650,6 +659,7 @@ Controller.prototype.useRegisteredPlugins = function(){
 
 
 _.extend(Controller.prototype, EventEmitter.prototype);
+
 },{"./circular_buffer":2,"./connection/browser":4,"./connection/node":5,"./frame":7,"./gesture":8,"./pipeline":12,"__browserify_process":20,"events":19,"underscore":22}],7:[function(require,module,exports){
 var Hand = require("./hand")
   , Pointable = require("./pointable")
@@ -1276,23 +1286,12 @@ var createGesture = exports.createGesture = function(data) {
   return gesture;
 }
 
+/*
+ * Returns a builder object, which uses method chaining for gesture callback binding.
+ */
 var gestureListener = exports.gestureListener = function(controller, type) {
   var handlers = {};
   var gestureMap = {};
-
-  var gestureCreator = function() {
-    var candidateGesture = gestureMap[gesture.id];
-    if (candidateGesture !== undefined) gesture.update(gesture, frame);
-    if (gesture.state == "start" || gesture.state == "stop") {
-      if (type == gesture.type && gestureMap[gesture.id] === undefined) {
-        gestureMap[gesture.id] = new Gesture(gesture, frame);
-        gesture.update(gesture, frame);
-      }
-      if (gesture.state == "stop") {
-        delete gestureMap[gesture.id];
-      }
-    }
-  };
 
   controller.on('gesture', function(gesture, frame) {
     if (gesture.type == type) {
@@ -2505,6 +2504,13 @@ Pointable.prototype.toString = function() {
 }
 
 /**
+ * Returns the hand which the pointable is attached to.
+ */
+Pointable.prototype.hand = function(){
+  return this.frame.hand(this.handId);
+}
+
+/**
  * An invalid Pointable object.
  *
  * You can use this Pointable instance in comparisons testing
@@ -2666,11 +2672,10 @@ Region.prototype.mapToXY = function(position, width, height) {
 _.extend(Region.prototype, EventEmitter.prototype)
 },{"events":19,"underscore":22}],18:[function(require,module,exports){
 module.exports = {
-  full: "0.4.0-beta1",
+  full: "0.4.1",
   major: 0,
   minor: 4,
-  dot: 0,
-  patch: 'beta1'
+  dot: 1
 }
 },{}],19:[function(require,module,exports){
 var process=require("__browserify_process");if (!process.EventEmitter) process.EventEmitter = function () {};
