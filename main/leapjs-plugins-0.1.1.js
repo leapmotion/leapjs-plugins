@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.0 - 2014-02-10    
+ * LeapJS-Plugins  - v0.1.1 - 2014-02-11    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -18,6 +18,8 @@
  *    
  */    
 
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+
 //Filename: 'main/hand-entry/leap.hand-entry.js'
 /*
 Emits controller events when a hand enters of leaves the frame
@@ -27,7 +29,9 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 
 (function() {
-  Leap.Controller.plugin('handEntry', function() {
+  var handEntry;
+
+  handEntry = function() {
     var previousHandIds;
     previousHandIds = [];
     previousHandIds.remove = function() {
@@ -75,14 +79,22 @@ Each event also includes the hand object, which will be invalid for the handLost
         return _results;
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('handEntry', handEntry);
+  } else {
+    module.exports.handEntry = handEntry;
+  }
 
 }).call(this);
 
 
 //Filename: 'main/hand-hold/leap.hand-hold.js'
 (function() {
-  Leap.Controller.plugin('handHold', function() {
+  var handHold;
+
+  handHold = function() {
     var extraHandData;
     extraHandData = {};
     return {
@@ -140,7 +152,13 @@ Each event also includes the hand object, which will be invalid for the handLost
         }
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('handHold', handHold);
+  } else {
+    module.exports.handHold = handHold;
+  }
 
 }).call(this);
 
@@ -169,7 +187,9 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
 
 
 (function() {
-  Leap.plugin('screenPosition', function(options) {
+  var screenPosition;
+
+  screenPosition = function(options) {
     var position, positioningMethods;
     if (options == null) {
       options = {};
@@ -205,6 +225,14 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
         }
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('screenPosition', screenPosition);
+  } else {
+    module.exports.screenPosition = screenPosition;
+  }
 
 }).call(this);
+
+},{}]},{},[1])

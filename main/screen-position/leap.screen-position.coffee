@@ -18,8 +18,7 @@ controller.use 'screenPosition', {
 }
 More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec3.html
 ###
-
-Leap.plugin 'screenPosition', (options = {})->
+screenPosition = (options = {})->
   # instance of extension should be tied to instance of hand
   # positioning can be one of a series of predefined position identifiers, or a custom method.
   options.positioning ||= 'absolute'
@@ -60,3 +59,8 @@ Leap.plugin 'screenPosition', (options = {})->
     }
   }
 
+
+if (typeof Leap != 'undefined') && Leap.Controller
+  Leap.Controller.plugin 'screenPosition', screenPosition
+else
+  module.exports.screenPosition = screenPosition
