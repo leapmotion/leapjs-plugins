@@ -30,7 +30,7 @@ Leap.plugin 'screenPosition', (options = {})->
     absolute: (positionVec3)->
       [
         (window.innerWidth / 2) + (positionVec3[0] * options.scale),
-        (window.innerHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale),
+        (window.innerHeight / 2) + ((-1 * positionVec3[1] + options.verticalOffset) * options.scale),
         0
       ]
   }
@@ -50,7 +50,7 @@ Leap.plugin 'screenPosition', (options = {})->
 
   {
     hand: {
-      # screenPosition will use the stabilized position by default, or allow any array of [x,y,z] to be passed in.       
+      # screenPosition will use the stabilized position by default, or allow any array of [x,y,z] to be passed in.
       screenPosition: (vec3)->
         position.call(@, vec3 || @stabilizedPalmPosition, !vec3)
     }
