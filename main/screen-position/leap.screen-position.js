@@ -31,7 +31,7 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
     options.verticalOffset || (options.verticalOffset = -100);
     positioningMethods = {
       absolute: function(positionVec3) {
-        return [(window.innerWidth / 2) + (positionVec3[0] * options.scale), (window.innerHeight / 2) + ((positionVec3[1] + options.verticalOffset) * options.scale), 0];
+        return [(window.innerWidth / 2) + (positionVec3[0] * options.scale), (window.innerHeight / 2) + ((-1 * positionVec3[1] + options.verticalOffset) * options.scale), 0];
       }
     };
     position = function(vec3, memoize) {
