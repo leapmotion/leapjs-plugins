@@ -7,6 +7,8 @@ Custom positioning methods can be passed in, allowing different scaling techniqu
 e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)
 Here we scale based upon the interaction box and screen size:
 
+options include: scale, scaleX, and scaleY.  They all default to 1.
+
 controller.use 'screenPosition', {
   method: (positionVec3)->
     Arguments for Leap.vec3 are (out, a, b)
@@ -22,16 +24,19 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
 
 (function() {
   Leap.plugin('screenPosition', function(options) {
-    var position, positioningMethods;
+    var baseScale, position, positioningMethods;
     if (options == null) {
       options = {};
     }
     options.positioning || (options.positioning = 'absolute');
-    options.scale || (options.scale = 8);
+    options.scale || (options.scale = 1);
+    options.scaleX || (options.scaleX = 1);
+    options.scaleY || (options.scaleY = 1);
     options.verticalOffset || (options.verticalOffset = -100);
+    baseScale = 6;
     positioningMethods = {
       absolute: function(positionVec3) {
-        return [(window.innerWidth / 2) + (positionVec3[0] * options.scale), (window.innerHeight / 2) + ((-1 * positionVec3[1] + options.verticalOffset) * options.scale), 0];
+        return [(window.innerWidth / 2) + (positionVec3[0] * baseScale * options.scale * options.scaleX), window.innerHeight + options.verticalOffset - (positionVec3[1] * baseScale * options.scale * options.scaleY), 0];
       }
     };
     position = function(vec3, memoize) {

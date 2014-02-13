@@ -7,6 +7,8 @@ Custom positioning methods can be passed in, allowing different scaling techniqu
 e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)
 Here we scale based upon the interaction box and screen size:
 
+options include: scale, scaleX, and scaleY.  They all default to 1.
+
 controller.use 'screenPosition', {
   method: (positionVec3)->
     Arguments for Leap.vec3 are (out, a, b)
@@ -23,14 +25,17 @@ Leap.plugin 'screenPosition', (options = {})->
   # instance of extension should be tied to instance of hand
   # positioning can be one of a series of predefined position identifiers, or a custom method.
   options.positioning ||= 'absolute'
-  options.scale ||= 8
-  options.verticalOffset ||= -100
+  options.scale ||= 1
+  options.scaleX ||= 1
+  options.scaleY ||= 1
+  options.verticalOffset ||= -100 # pixels
+  baseScale = 6
 
   positioningMethods = {
     absolute: (positionVec3)->
       [
-        (window.innerWidth / 2) + (positionVec3[0] * options.scale),
-        (window.innerHeight / 2) + ((-1 * positionVec3[1] + options.verticalOffset) * options.scale),
+        (window.innerWidth / 2) +                     (positionVec3[0] * baseScale * options.scale * options.scaleX),
+        window.innerHeight + options.verticalOffset - (positionVec3[1] * baseScale * options.scale * options.scaleY),
         0
       ]
   }
