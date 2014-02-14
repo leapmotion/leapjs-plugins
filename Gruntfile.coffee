@@ -23,10 +23,14 @@ module.exports = (grunt) ->
     \n */
     \n'
 
+# https://github.com/gruntjs/grunt/issues/315
+
   grunt.initConfig
     pkg: grunt.file.readJSON("package.json")
 
     coffee:
+      options:
+        sourceMap: false
       dynamic_mappings:
         files: [{
           expand: true
@@ -37,6 +41,12 @@ module.exports = (grunt) ->
             task + path.replace('.coffee', '.js')
         }]
 
+    usebanner:
+      main:
+        options:
+          banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
+        src: "main/**/*.js"
+
     clean:
       main:
         src: ['main/leapjs-plugins-0.1.0.js', 'main/leapjs-plugins-0.1.0.min.js']
@@ -44,9 +54,6 @@ module.exports = (grunt) ->
         src: ['extras/leapjs-plugins-0.1.0-extras.js', 'extras/leapjs-plugins-0.1.0-extras.min.js']
 
     concat:
-      options:
-        process: (src, filepath) ->
-          "\n//Filename: '#{filepath}'\n#{src}"
       main:
         options:
           banner: banner('')
@@ -75,5 +82,6 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks "grunt-contrib-uglify"
+  grunt.loadNpmTasks 'grunt-banner'
 
-  grunt.registerTask "default", ["coffee", "clean", "concat", "uglify"]
+  grunt.registerTask "default", ["coffee",  "usebanner", "clean", "concat", "uglify"]

@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.0 - 2014-02-12    
+ * LeapJS-Plugins  - v0.1.0 - 2014-02-13    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -17,8 +17,7 @@
  * limitations under the License.    
  *    
  */    
-
-//Filename: 'main/hand-entry/leap.hand-entry.js'
+//CoffeeScript generated from main/hand-entry/leap.hand-entry.coffee
 /*
 Emits controller events when a hand enters of leaves the frame
 "handLost" and "handFound"
@@ -79,8 +78,7 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 }).call(this);
 
-
-//Filename: 'main/hand-hold/leap.hand-hold.js'
+//CoffeeScript generated from main/hand-hold/leap.hand-hold.coffee
 (function() {
   Leap.Controller.plugin('handHold', function() {
     var extraHandData;
@@ -144,8 +142,7 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 }).call(this);
 
-
-//Filename: 'main/screen-position/leap.screen-position.js'
+//CoffeeScript generated from main/screen-position/leap.screen-position.coffee
 /*
 Adds the "screenPosition" method by default to hands and pointables.  This returns a vec3 (an array of length 3)
 with [x,y,z] screen coordinates indicating where the hand is, originating from the bottom left.
