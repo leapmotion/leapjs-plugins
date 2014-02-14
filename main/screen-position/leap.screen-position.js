@@ -28,7 +28,9 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
 
 
 (function() {
-  Leap.plugin('screenPosition', function(options) {
+  var screenPosition;
+
+  screenPosition = function(options) {
     var baseScale, baseVerticalOffset, position, positioningMethods;
     if (options == null) {
       options = {};
@@ -68,6 +70,12 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
         }
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('screenPosition', screenPosition);
+  } else {
+    module.exports.screenPosition = screenPosition;
+  }
 
 }).call(this);

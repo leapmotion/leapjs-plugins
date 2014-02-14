@@ -7,7 +7,9 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 
 (function() {
-  Leap.Controller.plugin('handEntry', function() {
+  var handEntry;
+
+  handEntry = function() {
     var previousHandIds;
     previousHandIds = [];
     previousHandIds.remove = function() {
@@ -55,6 +57,12 @@ Each event also includes the hand object, which will be invalid for the handLost
         return _results;
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('handEntry', handEntry);
+  } else {
+    module.exports.handEntry = handEntry;
+  }
 
 }).call(this);

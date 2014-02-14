@@ -1,6 +1,8 @@
 //CoffeeScript generated from main/hand-hold/leap.hand-hold.coffee
 (function() {
-  Leap.Controller.plugin('handHold', function() {
+  var handHold;
+
+  handHold = function() {
     var extraHandData;
     extraHandData = {};
     return {
@@ -58,6 +60,12 @@
         }
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('handHold', handHold);
+  } else {
+    module.exports.handHold = handHold;
+  }
 
 }).call(this);

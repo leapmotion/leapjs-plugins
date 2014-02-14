@@ -49,26 +49,35 @@ module.exports = (grunt) ->
         }]
 
     usebanner:
-      main:
+      coffeeMessagesMain:
         options:
           banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
         src: "main/**/*.js"
+      coffeeMessagesExtras:
+        options:
+          banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
+        src: "extras/**/*.js"
+
+      licenseMain:
+        options:
+          banner: banner('')
+        src: "main/#{filename}.js"
+      licenseExtras:
+        options:
+          banner: banner('Extra')
+        src: "exras/#{filename}.js"
 
     clean:
       main:
-        src: ['main/leapjs-plugins-0.1.0.js', 'main/leapjs-plugins-0.1.0.min.js']
+        src: ["main/#{filename}.js", "main/#{filename}.min.js"]
       extras:
-        src: ['extras/leapjs-plugins-0.1.0-extras.js', 'extras/leapjs-plugins-0.1.0-extras.min.js']
+        src: ["extras/#{filename}-extras.js", "extras/#{filename}-extras.min.js"]
 
     concat:
       main:
-        options:
-          banner: banner('')
         src: 'main/**/*.js'
         dest: "main/#{filename}.js"
       extras:
-        options:
-          banner: banner('Extra')
         src: 'extras/**/*.js'
         dest: "extras/#{filename}-extras.js"
 
@@ -88,7 +97,16 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
-  grunt.loadNpmTasks "grunt-contrib-uglify"
+  grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-banner'
 
-  grunt.registerTask "default", ["coffee",  "usebanner", "clean", "concat", "uglify"]
+  grunt.registerTask "default", [
+    "coffee",
+    "usebanner:coffeeMessagesMain",
+    "usebanner:coffeeMessagesExtras",
+    "clean",
+    "concat",
+    "usebanner:licenseMain",
+    "usebanner:licenseExtras",
+    "uglify"
+  ]

@@ -1,3 +1,4 @@
+//CoffeeScript generated from extras/proximity-alert/leap.proximity-alert.coffee
 (function() {
   Leap.Controller.plugin('proximityAlert', function(options) {
     var activeOscillator, context, distanceFromSegment, oscillate, panner, playBeep, playContinuous, playingUntil, setPannerPosition, silence;

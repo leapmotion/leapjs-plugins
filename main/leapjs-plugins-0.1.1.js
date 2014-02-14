@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.0 - 2014-02-13    
+ * LeapJS-Plugins  - v0.1.1 - 2014-02-13    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -17,6 +17,7 @@
  * limitations under the License.    
  *    
  */    
+
 //CoffeeScript generated from main/hand-entry/leap.hand-entry.coffee
 /*
 Emits controller events when a hand enters of leaves the frame
@@ -26,7 +27,9 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 
 (function() {
-  Leap.Controller.plugin('handEntry', function() {
+  var handEntry;
+
+  handEntry = function() {
     var previousHandIds;
     previousHandIds = [];
     previousHandIds.remove = function() {
@@ -74,13 +77,21 @@ Each event also includes the hand object, which will be invalid for the handLost
         return _results;
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('handEntry', handEntry);
+  } else {
+    module.exports.handEntry = handEntry;
+  }
 
 }).call(this);
 
 //CoffeeScript generated from main/hand-hold/leap.hand-hold.coffee
 (function() {
-  Leap.Controller.plugin('handHold', function() {
+  var handHold;
+
+  handHold = function() {
     var extraHandData;
     extraHandData = {};
     return {
@@ -138,7 +149,13 @@ Each event also includes the hand object, which will be invalid for the handLost
         }
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('handHold', handHold);
+  } else {
+    module.exports.handHold = handHold;
+  }
 
 }).call(this);
 
@@ -172,7 +189,9 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
 
 
 (function() {
-  Leap.plugin('screenPosition', function(options) {
+  var screenPosition;
+
+  screenPosition = function(options) {
     var baseScale, baseVerticalOffset, position, positioningMethods;
     if (options == null) {
       options = {};
@@ -212,6 +231,12 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
         }
       }
     };
-  });
+  };
+
+  if ((typeof Leap !== 'undefined') && Leap.Controller) {
+    Leap.Controller.plugin('screenPosition', screenPosition);
+  } else {
+    module.exports.screenPosition = screenPosition;
+  }
 
 }).call(this);

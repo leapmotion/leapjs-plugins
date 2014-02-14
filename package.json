@@ -1,8 +1,8 @@
 {
   "name": "leapjs-plugins",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A collection of useful plugins for LeapJS",
-  "main": "index.js",
+  "main": "main/leapjs-plugins-0.1.1.js",
   "dependencies": {},
   "devDependencies": {
     "coffee-script": ">=1.7.1",
