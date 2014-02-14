@@ -1,3 +1,4 @@
+//CoffeeScript generated from main/hand-hold/leap.hand-hold.coffee
 (function() {
   Leap.Controller.plugin('handHold', function() {
     var extraHandData;

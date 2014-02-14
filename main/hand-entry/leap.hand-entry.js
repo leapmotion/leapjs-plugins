@@ -1,3 +1,4 @@
+//CoffeeScript generated from main/hand-entry/leap.hand-entry.coffee
 /*
 Emits controller events when a hand enters of leaves the frame
 "handLost" and "handFound"

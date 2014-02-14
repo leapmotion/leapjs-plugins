@@ -17,8 +17,7 @@
  * limitations under the License.    
  *    
  */    
-
-//Filename: 'main/hand-entry/leap.hand-entry.js'
+//CoffeeScript generated from main/hand-entry/leap.hand-entry.coffee
 /*
 Emits controller events when a hand enters of leaves the frame
 "handLost" and "handFound"
@@ -79,8 +78,7 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 }).call(this);
 
-
-//Filename: 'main/hand-hold/leap.hand-hold.js'
+//CoffeeScript generated from main/hand-hold/leap.hand-hold.coffee
 (function() {
   Leap.Controller.plugin('handHold', function() {
     var extraHandData;
@@ -144,8 +142,7 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 }).call(this);
 
-
-//Filename: 'main/screen-position/leap.screen-position.js'
+//CoffeeScript generated from main/screen-position/leap.screen-position.coffee
 /*
 Adds the "screenPosition" method by default to hands and pointables.  This returns a vec3 (an array of length 3)
 with [x,y,z] screen coordinates indicating where the hand is, originating from the bottom left.
@@ -154,6 +151,12 @@ This method can accept an optional vec3, allowing it to convert any arbitrary ve
 Custom positioning methods can be passed in, allowing different scaling techniques,
 e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)
 Here we scale based upon the interaction box and screen size:
+
+options:
+  scale, scaleX, and scaleY.  They all default to 1.
+  verticalOffset: in pixels.  This number is added to the returned Y value.  Defaults to 0.
+
+
 
 controller.use 'screenPosition', {
   method: (positionVec3)->
@@ -170,16 +173,20 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
 
 (function() {
   Leap.plugin('screenPosition', function(options) {
-    var position, positioningMethods;
+    var baseScale, baseVerticalOffset, position, positioningMethods;
     if (options == null) {
       options = {};
     }
     options.positioning || (options.positioning = 'absolute');
-    options.scale || (options.scale = 8);
-    options.verticalOffset || (options.verticalOffset = -100);
+    options.scale || (options.scale = 1);
+    options.scaleX || (options.scaleX = 1);
+    options.scaleY || (options.scaleY = 1);
+    options.verticalOffset || (options.verticalOffset = 0);
+    baseScale = 6;
+    baseVerticalOffset = -100;
     positioningMethods = {
       absolute: function(positionVec3) {
-        return [(window.innerWidth / 2) + (positionVec3[0] * options.scale), (window.innerHeight / 2) + ((-1 * positionVec3[1] + options.verticalOffset) * options.scale), 0];
+        return [(window.innerWidth / 2) + (positionVec3[0] * baseScale * options.scale * options.scaleX), window.innerHeight + baseVerticalOffset + options.verticalOffset - (positionVec3[1] * baseScale * options.scale * options.scaleY), 0];
       }
     };
     position = function(vec3, memoize) {
