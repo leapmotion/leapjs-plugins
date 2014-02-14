@@ -63,14 +63,6 @@ module.exports = (grunt) ->
         src: 'extras/**/*.js'
         dest: "extras/#{filename}-extras.js"
 
-    browserify:
-      main:
-        src: "main/#{filename}.js"
-        dest: "main/#{filename}.js"
-      extras:
-        src: "main/#{filename}-extras.js"
-        dest: "extras/#{filename}-extras.js"
-
     usebanner:
       main:
         options:
@@ -97,8 +89,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
-  grunt.loadNpmTasks 'grunt-browserify'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-banner'
 
-  grunt.registerTask "default", ["coffee", "clean", "concat", "browserify", "usebanner", "uglify"]
+  grunt.registerTask "default", ["coffee", "clean", "concat", "usebanner", "uglify"]
