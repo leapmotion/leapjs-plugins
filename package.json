@@ -3,13 +3,15 @@
   "version": "0.1.1",
   "description": "A collection of useful plugins for LeapJS",
   "main": "main/leapjs-plugins-0.1.1.js",
+  "dependencies": {},
   "devDependencies": {
     "coffee-script": ">=1.7.1",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-uglify": "~0.3.2",
     "grunt-contrib-coffee": "~0.8.2",
-    "grunt-banner": "~0.2.0",
-    "grunt-contrib-clean": "~0.5.0"
+    "grunt-banner": "git://github.com/pehrlich/grunt-banner.git",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt": "~0.4.2"
   },
   "repository": {
     "type": "git",

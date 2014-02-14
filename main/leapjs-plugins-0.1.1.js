@@ -18,8 +18,7 @@
  *    
  */    
 
-
-//Filename: 'main/hand-entry/leap.hand-entry.js'
+//CoffeeScript generated from main/hand-entry/leap.hand-entry.coffee
 /*
 Emits controller events when a hand enters of leaves the frame
 "handLost" and "handFound"
@@ -88,8 +87,7 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 }).call(this);
 
-
-//Filename: 'main/hand-hold/leap.hand-hold.js'
+//CoffeeScript generated from main/hand-hold/leap.hand-hold.coffee
 (function() {
   var handHold;
 
@@ -161,30 +159,7 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 }).call(this);
 
-
-//Filename: 'main/leapjs-plugins-0.1.0.min.js'
-/*    
- * LeapJS-Plugins  - v0.1.0 - 2014-02-13    
- * http://github.com/leapmotion/leapjs-plugins/    
- *    
- * Copyright 2014 LeapMotion, Inc    
- *    
- * Licensed under the Apache License, Version 2.0 (the "License");    
- * you may not use this file except in compliance with the License.    
- * You may obtain a copy of the License at    
- *    
- *     http://www.apache.org/licenses/LICENSE-2.0    
- *    
- * Unless required by applicable law or agreed to in writing, software    
- * distributed under the License is distributed on an "AS IS" BASIS,    
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.    
- * See the License for the specific language governing permissions and    
- * limitations under the License.    
- *    
- */    
-(function(){Leap.Controller.plugin("handEntry",function(){var a;return a=[],a.remove=function(){for(var a,b,c=arguments,d=c.length;d&&this.length;)for(a=c[--d];-1!==(b=this.indexOf(a));)this.splice(b,1);return this},this.on("deviceDisconnected",function(){var b,c,d,e;for(e=[],c=0,d=a.length;d>c;c++)b=a[c],e.push(this.emit("handLost",this.lastConnectionFrame.hand(b)));return e}),{frame:function(b){var c,d,e,f,g,h,i;for(d=b.hands.map(function(a){return a.id}),e=0,g=a.length;g>e;e++)c=a[e],-1===d.indexOf(c)&&(a.remove(c),this.emit("handLost",b.hand(c)));for(i=[],f=0,h=d.length;h>f;f++)c=d[f],-1===a.indexOf(c)?(a.push(c),i.push(this.emit("handFound",b.hand(c)))):i.push(void 0);return i}}})}).call(this),function(){Leap.Controller.plugin("handHold",function(){var a;return a={},{hand:{data:function(b,c){var d,e,f;if(a[e=this.id]||(a[e]=[]),c)return a[this.id][b]=c;if("[object String]"===toString.call(b))return a[this.id][b];f=[];for(d in b)c=b[d],f.push(void 0===c?delete a[this.id][d]:a[this.id][d]=c);return f},hold:function(a){return a?this.data({holding:a}):this.hold(this.hovering())},holding:function(){return this.data("holding")},release:function(){var a;return a=this.data("holding"),this.data({holding:void 0}),a},hoverFn:function(a){return this.data({getHover:a})},hovering:function(){var a;return(a=this.data("getHover"))?this._hovering||(this._hovering=a.call(this)):void 0}}}})}.call(this),function(){Leap.plugin("screenPosition",function(a){var b,c;return null==a&&(a={}),a.positioning||(a.positioning="absolute"),a.scale||(a.scale=8),a.verticalOffset||(a.verticalOffset=-100),c={absolute:function(b){return[window.innerWidth/2+b[0]*a.scale,window.innerHeight/2+(-1*b[1]+a.verticalOffset)*a.scale,0]}},b=function(b,d){var e;return null==d&&(d=!1),e="function"==typeof a.positioning?a.positioning.call(this,b):c[a.positioning].call(this,b),d&&(this.screenPositionVec3=e),e},{hand:{screenPosition:function(a){return b.call(this,a||this.stabilizedPalmPosition,!a)}},pointable:{screenPosition:function(a){return b.call(this,a||this.stabilizedTipPosition,!a)}}}})}.call(this);
-
-//Filename: 'main/screen-position/leap.screen-position.js'
+//CoffeeScript generated from main/screen-position/leap.screen-position.coffee
 /*
 Adds the "screenPosition" method by default to hands and pointables.  This returns a vec3 (an array of length 3)
 with [x,y,z] screen coordinates indicating where the hand is, originating from the bottom left.
@@ -193,6 +168,12 @@ This method can accept an optional vec3, allowing it to convert any arbitrary ve
 Custom positioning methods can be passed in, allowing different scaling techniques,
 e.g., http://msdn.microsoft.com/en-us/library/windows/hardware/gg463319.aspx (Pointer Ballistics)
 Here we scale based upon the interaction box and screen size:
+
+options:
+  scale, scaleX, and scaleY.  They all default to 1.
+  verticalOffset: in pixels.  This number is added to the returned Y value.  Defaults to 0.
+
+
 
 controller.use 'screenPosition', {
   method: (positionVec3)->
@@ -211,16 +192,20 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
   var screenPosition;
 
   screenPosition = function(options) {
-    var position, positioningMethods;
+    var baseScale, baseVerticalOffset, position, positioningMethods;
     if (options == null) {
       options = {};
     }
     options.positioning || (options.positioning = 'absolute');
-    options.scale || (options.scale = 8);
-    options.verticalOffset || (options.verticalOffset = -100);
+    options.scale || (options.scale = 1);
+    options.scaleX || (options.scaleX = 1);
+    options.scaleY || (options.scaleY = 1);
+    options.verticalOffset || (options.verticalOffset = 0);
+    baseScale = 6;
+    baseVerticalOffset = -100;
     positioningMethods = {
       absolute: function(positionVec3) {
-        return [(window.innerWidth / 2) + (positionVec3[0] * options.scale), (window.innerHeight / 2) + ((-1 * positionVec3[1] + options.verticalOffset) * options.scale), 0];
+        return [(window.innerWidth / 2) + (positionVec3[0] * baseScale * options.scale * options.scaleX), window.innerHeight + baseVerticalOffset + options.verticalOffset - (positionVec3[1] * baseScale * options.scale * options.scaleY), 0];
       }
     };
     position = function(vec3, memoize) {

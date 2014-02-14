@@ -23,6 +23,8 @@ module.exports = (grunt) ->
     \n */
     \n'
 
+# https://github.com/gruntjs/grunt/issues/315
+
   grunt.initConfig
     pkg: grunt.file.readJSON("package.json")
 
@@ -46,6 +48,25 @@ module.exports = (grunt) ->
             task + path.replace('.coffee', '.js')
         }]
 
+    usebanner:
+      coffeeMessagesMain:
+        options:
+          banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
+        src: "main/**/*.js"
+      coffeeMessagesExtras:
+        options:
+          banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
+        src: "extras/**/*.js"
+
+      licenseMain:
+        options:
+          banner: banner('')
+        src: "main/#{filename}.js"
+      licenseExtras:
+        options:
+          banner: banner('Extra')
+        src: "exras/#{filename}.js"
+
     clean:
       main:
         src: ["main/#{filename}.js", "main/#{filename}.min.js"]
@@ -53,25 +74,12 @@ module.exports = (grunt) ->
         src: ["extras/#{filename}-extras.js", "extras/#{filename}-extras.min.js"]
 
     concat:
-      options:
-        process: (src, filepath) ->
-          "\n//Filename: '#{filepath}'\n#{src}"
       main:
         src: 'main/**/*.js'
         dest: "main/#{filename}.js"
       extras:
         src: 'extras/**/*.js'
         dest: "extras/#{filename}-extras.js"
-
-    usebanner:
-      main:
-        options:
-          banner: banner('')
-        src: "main/#{filename}.js"
-      extras:
-        options:
-          banner: banner('Extra')
-        src: "exras/#{filename}.js"
 
     uglify:
       main:
@@ -92,4 +100,13 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-banner'
 
-  grunt.registerTask "default", ["coffee", "clean", "concat", "usebanner", "uglify"]
+  grunt.registerTask "default", [
+    "coffee",
+    "usebanner:coffeeMessagesMain",
+    "usebanner:coffeeMessagesExtras",
+    "clean",
+    "concat",
+    "usebanner:licenseMain",
+    "usebanner:licenseExtras",
+    "uglify"
+  ]
