@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.1 - 2014-02-13    
+ * LeapJS-Plugins  - v0.1.1 - 2014-02-14    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    

@@ -1,6 +1,6 @@
 module.exports = (grunt) ->
 
-  filename = "<%= pkg.name %>-<%= pkg.version %>"
+  filename = "leap-plugins-<%= pkg.version %>"
   banner = (project)->
      '/*
     \n * LeapJS-Plugins ' + project + ' - v<%= pkg.version %> - <%= grunt.template.today(\"yyyy-mm-dd\") %>
