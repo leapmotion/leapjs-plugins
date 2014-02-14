@@ -29,14 +29,21 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON("package.json")
 
     coffee:
-      options:
-        sourceMap: false
-      dynamic_mappings:
+      main:
         files: [{
           expand: true
           cwd: 'main/'
           src: '**/*.coffee'
           dest: 'main/'
+          rename: (task, path, options)->
+            task + path.replace('.coffee', '.js')
+        }]
+      extras:
+        files: [{
+          expand: true
+          cwd: 'extras/'
+          src: '**/*.coffee'
+          dest: 'extras/'
           rename: (task, path, options)->
             task + path.replace('.coffee', '.js')
         }]
