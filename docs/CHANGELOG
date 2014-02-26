@@ -1,0 +1,5 @@
+# 0.4.1
+ - Proximity Alert Plugin
+ - Better Comments on the tops of js files
+ - ScreenPosition now uses a top left origin rather than a bottom right one.
+ - Node support
