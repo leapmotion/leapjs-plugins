@@ -41,7 +41,7 @@ Each event also includes the hand object, which will be invalid for the handLost
           id = previousHandIds[_i];
           if (newValidHandIds.indexOf(id) === -1) {
             previousHandIds.remove(id);
-            this.emit('handLost', frame.hand(id));
+            this.emit('handLost', this.frame(0).hand(id));
           }
         }
         _results = [];

@@ -30,7 +30,8 @@ handEntry = ->
       for id in previousHandIds
         if newValidHandIds.indexOf(id) == -1
           previousHandIds.remove id
-          @emit('handLost', frame.hand(id))
+          # this gets executed before the current frame is added to the history.
+          @emit('handLost', @frame(0).hand(id))
 
       for id in newValidHandIds
         if previousHandIds.indexOf(id) == -1

@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.1 - 2014-02-14    
+ * LeapJS-Plugins  - v0.1.2 - 2014-02-26    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -61,7 +61,7 @@ Each event also includes the hand object, which will be invalid for the handLost
           id = previousHandIds[_i];
           if (newValidHandIds.indexOf(id) === -1) {
             previousHandIds.remove(id);
-            this.emit('handLost', frame.hand(id));
+            this.emit('handLost', this.frame(0).hand(id));
           }
         }
         _results = [];
