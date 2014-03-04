@@ -5,10 +5,10 @@ Each event also includes the hand object, which will be invalid for the handLost
 ###
 
 handEntry = ->
-  previousHandIds = []
+  activeHandIds = []
 
   #http://stackoverflow.com/questions/3954438/remove-item-from-array-by-value
-  `previousHandIds.remove = function() {
+  `activeHandIds.remove = function() {
       var what, a = arguments, L = a.length, ax;
       while (L && this.length) {
           what = a[--L];
@@ -20,22 +20,27 @@ handEntry = ->
   }`
 
   @on "deviceDisconnected",  ->
-    for id in previousHandIds
+    for id in activeHandIds
       @emit('handLost', @lastConnectionFrame.hand(id))
 
   {
     frame: (frame)->
       newValidHandIds = frame.hands.map (hand)-> hand.id
 
-      for id in previousHandIds
-        if newValidHandIds.indexOf(id) == -1
-          previousHandIds.remove id
-          # this gets executed before the current frame is added to the history.
-          @emit('handLost', @frame(0).hand(id))
+      `for (var i = 0, len = activeHandIds.length; i < len; i++){
+        id = activeHandIds[i];
+        if(  newValidHandIds.indexOf(id) == -1){
+          activeHandIds.remove(id)
+          // this gets executed before the current frame is added to the history.
+          this.emit('handLost', this.frame(0).hand(id))
+          i--;
+          len--;
+        }
+      }`
 
       for id in newValidHandIds
-        if previousHandIds.indexOf(id) == -1
-          previousHandIds.push id
+        if activeHandIds.indexOf(id) == -1
+          activeHandIds.push id
           @emit('handFound', frame.hand(id))
   }
 
