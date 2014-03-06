@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.2 - 2014-03-04    
+ * LeapJS-Plugins  - v0.1.2 - 2014-03-05    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -58,6 +58,7 @@ Each event also includes the hand object, which will be invalid for the handLost
           return hand.id;
         });
         for (var i = 0, len = activeHandIds.length; i < len; i++){
+        id = activeHandIds[i];
         if(  newValidHandIds.indexOf(id) == -1){
           activeHandIds.remove(id)
           // this gets executed before the current frame is added to the history.
@@ -202,12 +203,13 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
     options.scale || (options.scale = 1);
     options.scaleX || (options.scaleX = 1);
     options.scaleY || (options.scaleY = 1);
+    options.scaleZ || (options.scaleZ = 1);
     options.verticalOffset || (options.verticalOffset = 0);
     baseScale = 6;
     baseVerticalOffset = -100;
     positioningMethods = {
       absolute: function(positionVec3) {
-        return [(window.innerWidth / 2) + (positionVec3[0] * baseScale * options.scale * options.scaleX), window.innerHeight + baseVerticalOffset + options.verticalOffset - (positionVec3[1] * baseScale * options.scale * options.scaleY), 0];
+        return [(window.innerWidth / 2) + (positionVec3[0] * baseScale * options.scale * options.scaleX), window.innerHeight + baseVerticalOffset + options.verticalOffset - (positionVec3[1] * baseScale * options.scale * options.scaleY), positionVec3[2] * baseScale * options.scale * options.scaleZ];
       }
     };
     position = function(vec3, memoize) {

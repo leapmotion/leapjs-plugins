@@ -38,6 +38,7 @@ Each event also includes the hand object, which will be invalid for the handLost
           return hand.id;
         });
         for (var i = 0, len = activeHandIds.length; i < len; i++){
+        id = activeHandIds[i];
         if(  newValidHandIds.indexOf(id) == -1){
           activeHandIds.remove(id)
           // this gets executed before the current frame is added to the history.
