@@ -44,18 +44,18 @@
           test = _ref1[pose];
           if (test(hand)) {
             if (!hand.data(pose)) {
-              this.emit(pose + '.start', hand);
+              this.emit('pose.' + pose + '.start', hand);
             }
             hand.data(pose, true);
           } else {
             if (hand.data(pose)) {
-              this.emit(pose + '.end', hand);
+              this.emit('pose.' + pose + '.end', hand);
               hand.data(pose, void 0);
             }
           }
         }
         if (hand.data(pose)) {
-          return this.emit(pose + '.move', hand);
+          return this.emit('pose.' + pose + '.move', hand);
         }
       }
     };

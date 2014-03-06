@@ -39,14 +39,14 @@ Leap.Controller.plugin 'poseEvents', (options = {})->
       for pose, test of options.recognizedPoses
         if test hand
           if not hand.data pose
-            this.emit pose+'.start', hand
+            this.emit 'pose.'+pose+'.start', hand
           hand.data pose, true
         else
           if hand.data pose
-            this.emit pose+'.end', hand
+            this.emit 'pose.'+pose+'.end', hand
             hand.data pose, undefined
 
       if hand.data pose
-        this.emit pose+'.move', hand
+        this.emit 'pose.'+pose+'.move', hand
   }
 
