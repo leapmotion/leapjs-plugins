@@ -34,7 +34,7 @@
     _ref = options.poses;
     for (pose in _ref) {
       test = _ref[pose];
-      recognizedPoses[pose] = options.poses[pose];
+      recognizedPoses[pose] = test;
     }
     return {
       hand: function(hand) {

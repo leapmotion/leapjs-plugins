@@ -32,7 +32,7 @@ Leap.Controller.plugin 'poseEvents', (options = {})->
       hand.data 'active' and (finger for finger in hand.fingers if finger.active()).length == 1
 
   for pose, test of options.poses
-    recognizedPoses[pose] = options.poses[pose]
+    recognizedPoses[pose] = test
 
   {
     hand: (hand)->
