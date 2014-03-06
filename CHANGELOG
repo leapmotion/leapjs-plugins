@@ -1,5 +1,6 @@
-# 0.2.2
+# 0.1.2
  - Include lost hand data in handLost event
+ - Add z-depth to screenPosition
 
 # 0.1.1
  - Proximity Alert Plugin
