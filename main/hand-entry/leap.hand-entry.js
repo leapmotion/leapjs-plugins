@@ -10,9 +10,9 @@ Each event also includes the hand object, which will be invalid for the handLost
   var handEntry;
 
   handEntry = function() {
-    var previousHandIds;
-    previousHandIds = [];
-    previousHandIds.remove = function() {
+    var activeHandIds;
+    activeHandIds = [];
+    activeHandIds.remove = function() {
       var what, a = arguments, L = a.length, ax;
       while (L && this.length) {
           what = a[--L];
@@ -25,30 +25,33 @@ Each event also includes the hand object, which will be invalid for the handLost
     this.on("deviceDisconnected", function() {
       var id, _i, _len, _results;
       _results = [];
-      for (_i = 0, _len = previousHandIds.length; _i < _len; _i++) {
-        id = previousHandIds[_i];
+      for (_i = 0, _len = activeHandIds.length; _i < _len; _i++) {
+        id = activeHandIds[_i];
         _results.push(this.emit('handLost', this.lastConnectionFrame.hand(id)));
       }
       return _results;
     });
     return {
       frame: function(frame) {
-        var id, newValidHandIds, _i, _j, _len, _len1, _results;
+        var id, newValidHandIds, _i, _len, _results;
         newValidHandIds = frame.hands.map(function(hand) {
           return hand.id;
         });
-        for (_i = 0, _len = previousHandIds.length; _i < _len; _i++) {
-          id = previousHandIds[_i];
-          if (newValidHandIds.indexOf(id) === -1) {
-            previousHandIds.remove(id);
-            this.emit('handLost', frame.hand(id));
-          }
+        for (var i = 0, len = activeHandIds.length; i < len; i++){
+        id = activeHandIds[i];
+        if(  newValidHandIds.indexOf(id) == -1){
+          activeHandIds.remove(id)
+          // this gets executed before the current frame is added to the history.
+          this.emit('handLost', this.frame(0).hand(id))
+          i--;
+          len--;
         }
+      };
         _results = [];
-        for (_j = 0, _len1 = newValidHandIds.length; _j < _len1; _j++) {
-          id = newValidHandIds[_j];
-          if (previousHandIds.indexOf(id) === -1) {
-            previousHandIds.push(id);
+        for (_i = 0, _len = newValidHandIds.length; _i < _len; _i++) {
+          id = newValidHandIds[_i];
+          if (activeHandIds.indexOf(id) === -1) {
+            activeHandIds.push(id);
             _results.push(this.emit('handFound', frame.hand(id)));
           } else {
             _results.push(void 0);
