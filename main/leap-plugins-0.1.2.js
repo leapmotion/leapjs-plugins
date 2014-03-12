@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.2 - 2014-03-05    
+ * LeapJS-Plugins  - v0.1.2 - 2014-03-12    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -62,7 +62,7 @@ Each event also includes the hand object, which will be invalid for the handLost
         if(  newValidHandIds.indexOf(id) == -1){
           activeHandIds.remove(id)
           // this gets executed before the current frame is added to the history.
-          this.emit('handLost', this.frame(0).hand(id))
+          this.emit('handLost', this.frame(1).hand(id))
           i--;
           len--;
         }

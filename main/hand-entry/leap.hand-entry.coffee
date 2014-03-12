@@ -32,7 +32,7 @@ handEntry = ->
         if(  newValidHandIds.indexOf(id) == -1){
           activeHandIds.remove(id)
           // this gets executed before the current frame is added to the history.
-          this.emit('handLost', this.frame(0).hand(id))
+          this.emit('handLost', this.frame(1).hand(id))
           i--;
           len--;
         }
