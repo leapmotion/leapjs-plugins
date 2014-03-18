@@ -93,12 +93,17 @@ module.exports = (grunt) ->
         src: "extras/#{filename}-extras.js"
         dest: "extras/#{filename}-extras.min.js"
 
+    bump:
+      options:
+        pushTo: 'master'
+
 
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-banner'
+  grunt.loadNpmTasks 'grunt-bump'
 
   grunt.registerTask "default", [
     "coffee",
