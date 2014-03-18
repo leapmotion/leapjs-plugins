@@ -99,6 +99,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-contrib-concat'
   grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-banner'
+  grunt.loadNpmTasks 'grunt-bump'
 
   grunt.registerTask "default", [
     "coffee",
