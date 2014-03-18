@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.3 - 2014-03-12    
+ * LeapJS-Plugins  - v0.1.3 - 2014-03-17    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -83,9 +83,11 @@ Each event also includes the hand object, which will be invalid for the handLost
   };
 
   if ((typeof Leap !== 'undefined') && Leap.Controller) {
-    Leap.Controller.plugin('handEntry', handEntry);
+    Leap.Controller.plugin('screenPosition', screenPosition);
+  } else if (typeof module !== 'undefined') {
+    module.exports.screenPosition = screenPosition;
   } else {
-    module.exports.handEntry = handEntry;
+    throw 'leap.js not included';
   }
 
 }).call(this);
@@ -155,9 +157,11 @@ Each event also includes the hand object, which will be invalid for the handLost
   };
 
   if ((typeof Leap !== 'undefined') && Leap.Controller) {
-    Leap.Controller.plugin('handHold', handHold);
+    Leap.Controller.plugin('screenPosition', screenPosition);
+  } else if (typeof module !== 'undefined') {
+    module.exports.screenPosition = screenPosition;
   } else {
-    module.exports.handHold = handHold;
+    throw 'leap.js not included';
   }
 
 }).call(this);
@@ -239,8 +243,10 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
 
   if ((typeof Leap !== 'undefined') && Leap.Controller) {
     Leap.Controller.plugin('screenPosition', screenPosition);
-  } else {
+  } else if (typeof module !== 'undefined') {
     module.exports.screenPosition = screenPosition;
+  } else {
+    throw 'leap.js not included';
   }
 
 }).call(this);

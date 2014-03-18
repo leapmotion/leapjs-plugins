@@ -63,9 +63,11 @@
   };
 
   if ((typeof Leap !== 'undefined') && Leap.Controller) {
-    Leap.Controller.plugin('handHold', handHold);
+    Leap.Controller.plugin('screenPosition', screenPosition);
+  } else if (typeof module !== 'undefined') {
+    module.exports.screenPosition = screenPosition;
   } else {
-    module.exports.handHold = handHold;
+    throw 'leap.js not included';
   }
 
 }).call(this);

@@ -74,5 +74,7 @@ screenPosition = (options = {})->
 
 if (typeof Leap != 'undefined') && Leap.Controller
   Leap.Controller.plugin 'screenPosition', screenPosition
-else
+else if (typeof module != 'undefined')
   module.exports.screenPosition = screenPosition
+else
+  throw 'leap.js not included'

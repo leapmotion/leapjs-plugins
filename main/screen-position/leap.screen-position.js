@@ -75,8 +75,10 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
 
   if ((typeof Leap !== 'undefined') && Leap.Controller) {
     Leap.Controller.plugin('screenPosition', screenPosition);
-  } else {
+  } else if (typeof module !== 'undefined') {
     module.exports.screenPosition = screenPosition;
+  } else {
+    throw 'leap.js not included';
   }
 
 }).call(this);

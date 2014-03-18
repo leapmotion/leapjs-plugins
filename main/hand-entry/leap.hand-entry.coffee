@@ -47,6 +47,8 @@ handEntry = ->
 
 
 if (typeof Leap != 'undefined') && Leap.Controller
- Leap.Controller.plugin 'handEntry', handEntry
+  Leap.Controller.plugin 'screenPosition', screenPosition
+else if (typeof module != 'undefined')
+  module.exports.screenPosition = screenPosition
 else
-  module.exports.handEntry = handEntry
+  throw 'leap.js not included'
