@@ -6,22 +6,28 @@
 # http://it-ebooks.info/book/2072/
 # http://www.html5rocks.com/en/tutorials/webaudio/games/
 # http://en.wikipedia.org/wiki/Piano_key_frequencies
-Leap.Controller.plugin 'proximityAlert', (options = {})->
-  options.beepFrq ||= 1318.51 # E6
-  options.continuousFrq ||= 1396.91 # F6
-  options.waveType ||= 0 # 0 sine, 1 square, 2 sawtooth, 3 triangle
-  options.beepDuration ||= (distance)-> Math.pow((0.7 - distance), 3) # this returns beep length as a function of proximity
-  options.minBeepDuration ||= 0.02 # when this threshold is crossed, the constant tone will play
+Leap.Controller.plugin 'proximityAlert', (scope = {})->
+  scope.beepFrq ||= 1318.51 # E6
+  scope.continuousFrq ||= 1396.91 # F6
+  scope.waveType ||= 0 # 0 sine, 1 square, 2 sawtooth, 3 triangle
+  scope.beepDuration ||= (distance)-> Math.pow((0.7 - distance), 3) # this returns beep length as a function of proximity
+  scope.minBeepDuration ||= 0.02 # when this threshold is crossed, the constant tone will play
 
   context = new webkitAudioContext()
   panner = context.createPanner()
-  panner.connect(context.destination)
+  masterGain = context.createGain()
+  masterGain.connect(context.destination)
+  panner.connect(masterGain)
+
+  # takes in a value between 0 and 1
+  scope.setVolume = (value)->
+    masterGain.gain.value = value
 
   # this is a wrapper funciton around the web audio api, taking care of some of the more fiddley bits,
   # such as the fact that osciallators can only be used once.
   oscillate = (freq, duration)->
     oscillator = context.createOscillator()
-    oscillator.type = options.waveType
+    oscillator.type = scope.waveType
     oscillator.connect(panner)
     oscillator.frequency.value = freq
     oscillator.start(0)
@@ -99,11 +105,11 @@ Leap.Controller.plugin 'proximityAlert', (options = {})->
           hand.proximity = true
 
           setPannerPosition(hand)
-          duration = options.beepDuration(distance)
-          if duration < options.minBeepDuration
-            playContinuous(options.continuousFrq)
+          duration = scope.beepDuration(distance)
+          if duration < scope.minBeepDuration
+            playContinuous(scope.continuousFrq)
           else
-            playBeep(options.beepFrq, duration)
+            playBeep(scope.beepFrq, duration)
 
           return # for now, only check one proximity at a time.
 
