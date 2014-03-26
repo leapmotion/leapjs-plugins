@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.3 - 2014-03-25    
+ * LeapJS-Plugins  - v0.1.3 - 2014-03-26    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -33,14 +33,14 @@ Each event also includes the hand object, which will be invalid for the handLost
     var activeHandIds;
     activeHandIds = [];
     this.on("deviceDisconnected", function() {
-      var i, id, _i, _len, _results;
-      _results = [];
-      for (i = _i = 0, _len = activeHandIds.length; _i < _len; i = ++_i) {
-        id = activeHandIds[i];
-        activeHandIds.splice(i, 1);
-        _results.push(this.emit('handLost', this.lastConnectionFrame.hand(id)));
-      }
-      return _results;
+      for (var i = 0, len = activeHandIds.length; i < len; i++){
+      id = activeHandIds[i];
+      activeHandIds.splice(i, 1);
+      // this gets executed before the current frame is added to the history.
+      this.emit('handLost', this.lastConnectionFrame.hand(id))
+      i--;
+      len--;
+    };
     });
     return {
       frame: function(frame) {

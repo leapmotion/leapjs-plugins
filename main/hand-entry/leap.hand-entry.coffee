@@ -8,9 +8,15 @@ handEntry = ->
   activeHandIds = []
 
   @on "deviceDisconnected",  ->
-    for id, i in activeHandIds
-      activeHandIds.splice(i, 1)
-      @emit('handLost', @lastConnectionFrame.hand(id))
+    `for (var i = 0, len = activeHandIds.length; i < len; i++){
+      id = activeHandIds[i];
+      activeHandIds.splice(i, 1);
+      // this gets executed before the current frame is added to the history.
+      this.emit('handLost', this.lastConnectionFrame.hand(id))
+      i--;
+      len--;
+    }`
+    return
 
   {
     frame: (frame)->
