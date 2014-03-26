@@ -63,9 +63,9 @@
   };
 
   if ((typeof Leap !== 'undefined') && Leap.Controller) {
-    Leap.Controller.plugin('screenPosition', screenPosition);
+    Leap.Controller.plugin('handHold', handHold);
   } else if (typeof module !== 'undefined') {
-    module.exports.screenPosition = screenPosition;
+    module.exports.handHold = handHold;
   } else {
     throw 'leap.js not included';
   }

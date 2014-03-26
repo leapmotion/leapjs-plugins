@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.3 - 2014-03-17    
+ * LeapJS-Plugins  - v0.1.3 - 2014-03-25    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -32,21 +32,12 @@ Each event also includes the hand object, which will be invalid for the handLost
   handEntry = function() {
     var activeHandIds;
     activeHandIds = [];
-    activeHandIds.remove = function() {
-      var what, a = arguments, L = a.length, ax;
-      while (L && this.length) {
-          what = a[--L];
-          while ((ax = this.indexOf(what)) !== -1) {
-              this.splice(ax, 1);
-          }
-      }
-      return this;
-  };
     this.on("deviceDisconnected", function() {
-      var id, _i, _len, _results;
+      var i, id, _i, _len, _results;
       _results = [];
-      for (_i = 0, _len = activeHandIds.length; _i < _len; _i++) {
-        id = activeHandIds[_i];
+      for (i = _i = 0, _len = activeHandIds.length; _i < _len; i = ++_i) {
+        id = activeHandIds[i];
+        activeHandIds.splice(i, 1);
         _results.push(this.emit('handLost', this.lastConnectionFrame.hand(id)));
       }
       return _results;
@@ -60,7 +51,7 @@ Each event also includes the hand object, which will be invalid for the handLost
         for (var i = 0, len = activeHandIds.length; i < len; i++){
         id = activeHandIds[i];
         if(  newValidHandIds.indexOf(id) == -1){
-          activeHandIds.remove(id)
+          activeHandIds.splice(i, 1);
           // this gets executed before the current frame is added to the history.
           this.emit('handLost', this.frame(1).hand(id))
           i--;
@@ -83,9 +74,9 @@ Each event also includes the hand object, which will be invalid for the handLost
   };
 
   if ((typeof Leap !== 'undefined') && Leap.Controller) {
-    Leap.Controller.plugin('screenPosition', screenPosition);
+    Leap.Controller.plugin('handEntry', handEntry);
   } else if (typeof module !== 'undefined') {
-    module.exports.screenPosition = screenPosition;
+    module.exports.handEntry = handEntry;
   } else {
     throw 'leap.js not included';
   }
@@ -157,9 +148,9 @@ Each event also includes the hand object, which will be invalid for the handLost
   };
 
   if ((typeof Leap !== 'undefined') && Leap.Controller) {
-    Leap.Controller.plugin('screenPosition', screenPosition);
+    Leap.Controller.plugin('handHold', handHold);
   } else if (typeof module !== 'undefined') {
-    module.exports.screenPosition = screenPosition;
+    module.exports.handHold = handHold;
   } else {
     throw 'leap.js not included';
   }
