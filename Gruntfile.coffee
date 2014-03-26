@@ -69,9 +69,9 @@ module.exports = (grunt) ->
 
     clean:
       main:
-        src: ["main/#{filename}.js", "main/#{filename}.min.js"]
+        src: ["main/leap-plugins-*.js"]
       extras:
-        src: ["extras/#{filename}-extras.js", "extras/#{filename}-extras.min.js"]
+        src: ["extras/leap-plugins-*.js"]
 
     concat:
       main:
@@ -98,12 +98,7 @@ module.exports = (grunt) ->
         pushTo: 'master'
 
 
-  grunt.loadNpmTasks 'grunt-contrib-clean'
-  grunt.loadNpmTasks 'grunt-contrib-coffee'
-  grunt.loadNpmTasks 'grunt-contrib-concat'
-  grunt.loadNpmTasks 'grunt-contrib-uglify'
-  grunt.loadNpmTasks 'grunt-banner'
-  grunt.loadNpmTasks 'grunt-bump'
+  require('load-grunt-tasks')(grunt);
 
   grunt.registerTask "default", [
     "coffee",
