@@ -7,21 +7,16 @@ Each event also includes the hand object, which will be invalid for the handLost
 handEntry = ->
   activeHandIds = []
 
-  #http://stackoverflow.com/questions/3954438/remove-item-from-array-by-value
-  `activeHandIds.remove = function() {
-      var what, a = arguments, L = a.length, ax;
-      while (L && this.length) {
-          what = a[--L];
-          while ((ax = this.indexOf(what)) !== -1) {
-              this.splice(ax, 1);
-          }
-      }
-      return this;
-  }`
-
   @on "deviceDisconnected",  ->
-    for id in activeHandIds
-      @emit('handLost', @lastConnectionFrame.hand(id))
+    `for (var i = 0, len = activeHandIds.length; i < len; i++){
+      id = activeHandIds[i];
+      activeHandIds.splice(i, 1);
+      // this gets executed before the current frame is added to the history.
+      this.emit('handLost', this.lastConnectionFrame.hand(id))
+      i--;
+      len--;
+    }`
+    return
 
   {
     frame: (frame)->
@@ -30,7 +25,7 @@ handEntry = ->
       `for (var i = 0, len = activeHandIds.length; i < len; i++){
         id = activeHandIds[i];
         if(  newValidHandIds.indexOf(id) == -1){
-          activeHandIds.remove(id)
+          activeHandIds.splice(i, 1);
           // this gets executed before the current frame is added to the history.
           this.emit('handLost', this.frame(1).hand(id))
           i--;
@@ -47,6 +42,8 @@ handEntry = ->
 
 
 if (typeof Leap != 'undefined') && Leap.Controller
- Leap.Controller.plugin 'handEntry', handEntry
-else
+  Leap.Controller.plugin 'handEntry', handEntry
+else if (typeof module != 'undefined')
   module.exports.handEntry = handEntry
+else
+  throw 'leap.js not included'
