@@ -3,6 +3,11 @@ versionCheck = (scope)->
   scope.requiredProtocolVerion ||= 6
   scope.disconnect ||= true
 
+  if (typeof Leap != 'undefined') && Leap.Controller
+    if Leap.version.minor < 5 && Leap.version.dot < 4
+      console.warn("LeapJS Version Check plugin incompatible with LeapJS pre 0.4.4")
+
+
   @on 'ready', ->
     required = scope.requiredProtocolVerion
     current = @connection.opts.requestProtocolVersion

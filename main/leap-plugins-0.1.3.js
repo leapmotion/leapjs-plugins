@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.3 - 2014-03-27    
+ * LeapJS-Plugins  - v0.1.3 - 2014-04-01    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -253,6 +253,11 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
     scope.alert || (scope.alert = false);
     scope.requiredProtocolVerion || (scope.requiredProtocolVerion = 6);
     scope.disconnect || (scope.disconnect = true);
+    if ((typeof Leap !== 'undefined') && Leap.Controller) {
+      if (Leap.version.minor < 5 && Leap.version.dot < 4) {
+        console.warn("LeapJS Version Check plugin incompatible with LeapJS pre 0.4.4");
+      }
+    }
     this.on('ready', function() {
       var current, required;
       required = scope.requiredProtocolVerion;

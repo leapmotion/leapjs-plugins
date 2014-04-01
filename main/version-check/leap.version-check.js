@@ -6,6 +6,11 @@
     scope.alert || (scope.alert = false);
     scope.requiredProtocolVerion || (scope.requiredProtocolVerion = 6);
     scope.disconnect || (scope.disconnect = true);
+    if ((typeof Leap !== 'undefined') && Leap.Controller) {
+      if (Leap.version.minor < 5 && Leap.version.dot < 4) {
+        console.warn("LeapJS Version Check plugin incompatible with LeapJS pre 0.4.4");
+      }
+    }
     this.on('ready', function() {
       var current, required;
       required = scope.requiredProtocolVerion;
