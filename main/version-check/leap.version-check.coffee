@@ -1,6 +1,6 @@
 versionCheck = (scope)->
   scope.alert ||= false
-  scope.requiredProtocolVerion ||= 6
+  scope.requiredProtocolVersion ||= 6
   scope.disconnect ||= true
 
   if (typeof Leap != 'undefined') && Leap.Controller
@@ -9,7 +9,7 @@ versionCheck = (scope)->
 
 
   @on 'ready', ->
-    required = scope.requiredProtocolVerion
+    required = scope.requiredProtocolVersion
     current = @connection.opts.requestProtocolVersion
 
     if current < required
