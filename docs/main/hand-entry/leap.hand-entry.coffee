@@ -5,42 +5,45 @@ Each event also includes the hand object, which will be invalid for the handLost
 ###
 
 handEntry = ->
-  previousHandIds = []
-
-  #http://stackoverflow.com/questions/3954438/remove-item-from-array-by-value
-  `previousHandIds.remove = function() {
-      var what, a = arguments, L = a.length, ax;
-      while (L && this.length) {
-          what = a[--L];
-          while ((ax = this.indexOf(what)) !== -1) {
-              this.splice(ax, 1);
-          }
-      }
-      return this;
-  }`
+  activeHandIds = []
 
   @on "deviceDisconnected",  ->
-    for id in previousHandIds
-      @emit('handLost', @lastConnectionFrame.hand(id))
+    `for (var i = 0, len = activeHandIds.length; i < len; i++){
+      id = activeHandIds[i];
+      activeHandIds.splice(i, 1);
+      // this gets executed before the current frame is added to the history.
+      this.emit('handLost', this.lastConnectionFrame.hand(id))
+      i--;
+      len--;
+    }`
+    return
 
   {
     frame: (frame)->
       newValidHandIds = frame.hands.map (hand)-> hand.id
 
-      for id in previousHandIds
-        if newValidHandIds.indexOf(id) == -1
-          previousHandIds.remove id
-          @emit('handLost', @lastConnectionFrame.hand(id))
+      `for (var i = 0, len = activeHandIds.length; i < len; i++){
+        id = activeHandIds[i];
+        if(  newValidHandIds.indexOf(id) == -1){
+          activeHandIds.splice(i, 1);
+          // this gets executed before the current frame is added to the history.
+          this.emit('handLost', this.frame(1).hand(id))
+          i--;
+          len--;
+        }
+      }`
 
       for id in newValidHandIds
-        if previousHandIds.indexOf(id) == -1
-          previousHandIds.push id
+        if activeHandIds.indexOf(id) == -1
+          activeHandIds.push id
           @emit('handFound', frame.hand(id))
   }
 
 
 
 if (typeof Leap != 'undefined') && Leap.Controller
- Leap.Controller.plugin 'handEntry', handEntry
-else
+  Leap.Controller.plugin 'handEntry', handEntry
+else if (typeof module != 'undefined')
   module.exports.handEntry = handEntry
+else
+  throw 'leap.js not included'

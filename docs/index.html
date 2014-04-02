@@ -7,15 +7,15 @@
   <title>LeapJS-Plugins by Leap Motion</title>
 
   <head profile="http://www.w3.org/2005/10/profile">
-  <link rel="icon"  type="image/ico" href="http://leapmotion.github.io/leapjs-plugins/docs/images/favicon.ico">
+  <link rel="icon"  type="image/ico" href="/images/favicon.ico">
 
-  <link rel="stylesheet" href="http://leapmotion.github.io/leapjs-plugins/docs/stylesheets/styles.css">
-  <link rel="stylesheet" href="http://leapmotion.github.io/leapjs-plugins/docs/stylesheets/pygment_trac.css">
-  <link rel="stylesheet" href="http://leapmotion.github.io/leapjs-plugins/docs/stylesheets/bootstrap.min.css">
+  <link rel="stylesheet" href="/stylesheets/styles.css">
+  <link rel="stylesheet" href="/stylesheets/pygment_trac.css">
+  <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <script type="text/javascript" src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/leap.js"></script>
-  <script type="text/javascript" src="http://leapmotion.github.io/leapjs-plugins/docs/main/leapjs-plugins-0.1.1.js"></script>
-  <script src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/jquery-1.10.2.min.js"></script>
+  <script type="text/javascript" src="/javascripts/leap.js"></script>
+  <script type="text/javascript" src="/main/leapjs-plugins-0.1.1.js"></script>
+  <script src="/javascripts/jquery-1.10.2.min.js"></script>
 
   <!--[if lt IE 9]>
   <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -26,12 +26,12 @@
     <div class="wrapper">
       <header>
         <div style="text-align: center">
-          <a href="http://leapmotion.github.io/leapjs-plugins/docs">
-            <img src="http://leapmotion.github.io/leapjs-plugins/docs/images/logo.png" class="logo"/>
+          <a href="">
+            <img src="/images/logo.png" class="logo"/>
           </a>
         </div>
         <h1>
-          <a href="http://leapmotion.github.io/leapjs-plugins/docs">
+          <a href="">
             LeapJS Plugins
           </a>
         </h1>
@@ -50,6 +50,9 @@
           </li>
           <li>
             <a href="#screen-position">Screen Position</a>
+          </li>
+          <li>
+            <a href="#version-check">Version Check</a>
           </li>
         </ul>
 
@@ -541,11 +544,54 @@ controller
 
 </section>
 
+<section>
+  <a name="version-check"></a>
+  
+<h2 id="version-check">Version Check</h2>
+<p><a class="view-source" href="https://github.com/leapmotion/leapjs-plugins/tree/master/main/version-check" target="_blank">View Source</a></p>
+
+<p>This plugin is used to confirm a minimum LeapJS protocol version.  For an application or plugin which requires functionality specific to a minimum protocol, include and configure this plugin.</p>
+
+<p>When a device is ready, it will check the protocol version and if outdated emit <code>versionCheck.outdated</code> from the controller with data e.g., <code>{current: 5, required: 6, disconnect: true}</code>.</p>
+
+<h2 id="options">Options</h2>
+
+<ul>
+  <li>
+    <p><strong><code>disconnect</code></strong> <code>[boolean true]</code> If out of date, the controller will be disconnected, preventing any frames from being<br />
+ received, unless the disconnect option is set to false.</p>
+  </li>
+  <li>
+    <p><strong><code>requiredProtocolVersion</code></strong> <code>[integer 6]</code> The required protocol version.</p>
+  </li>
+  <li>
+    <p><strong><code>alert</code></strong> <code>[boolean false]</code> If out of date, show an alert dialog with the following message: “Your Leap Software version is out of date.  Visit http://www.leapmotion.com/setup to update”</p>
+  </li>
+</ul>
+
+<h2 id="usage">Usage</h2>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  <span style="color:#777">// from an app</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">versionCheck</span><span style="color:#710">'</span></span>)
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  <span style="color:#777">// from a plugin:</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  <span style="color:#963">this</span>.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">versionCheck</span><span style="color:#710">'</span></span>)
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  <span style="color:#777">// while specifying options</span>
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  <span style="color:#963">this</span>.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">versionCheck</span><span style="color:#710">'</span></span>, {<span style="color:#606">requiredProtocolVersion</span>: <span style="color:#00D">6</span>})
+</pre></div>
+</div>
+</div>
+
+
+</section>
+
 
 
     </div>
-    <script src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/scale.fix.js"></script>
-    <script src="http://leapmotion.github.io/leapjs-plugins/docs/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/scale.fix.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
 
 
 </body><script type="text/javascript">var new_nav = new function() {};var x;var old_navigator = window.navigator;for (x in navigator) {if (typeof navigator[x] == 'function') {eval("new_nav." + x + " = function() { return old_navigator." + x + "();};");} else {eval("new_nav." + x + " = navigator." + x + ";");}}new_nav.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10";new_nav.vendor = "Apple, Inc.";new_nav.platform = "MacIntel";window.navigator = new_nav;</script></html>

@@ -1,4 +1,3 @@
-//CoffeeScript generated from main/hand-entry/leap.hand-entry.coffee
 /*
 Emits controller events when a hand enters of leaves the frame
 "handLost" and "handFound"
@@ -10,45 +9,39 @@ Each event also includes the hand object, which will be invalid for the handLost
   var handEntry;
 
   handEntry = function() {
-    var previousHandIds;
-    previousHandIds = [];
-    previousHandIds.remove = function() {
-      var what, a = arguments, L = a.length, ax;
-      while (L && this.length) {
-          what = a[--L];
-          while ((ax = this.indexOf(what)) !== -1) {
-              this.splice(ax, 1);
-          }
-      }
-      return this;
-  };
+    var activeHandIds;
+    activeHandIds = [];
     this.on("deviceDisconnected", function() {
-      var id, _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = previousHandIds.length; _i < _len; _i++) {
-        id = previousHandIds[_i];
-        _results.push(this.emit('handLost', this.lastConnectionFrame.hand(id)));
-      }
-      return _results;
+      for (var i = 0, len = activeHandIds.length; i < len; i++){
+      id = activeHandIds[i];
+      activeHandIds.splice(i, 1);
+      // this gets executed before the current frame is added to the history.
+      this.emit('handLost', this.lastConnectionFrame.hand(id))
+      i--;
+      len--;
+    };
     });
     return {
       frame: function(frame) {
-        var id, newValidHandIds, _i, _j, _len, _len1, _results;
+        var id, newValidHandIds, _i, _len, _results;
         newValidHandIds = frame.hands.map(function(hand) {
           return hand.id;
         });
-        for (_i = 0, _len = previousHandIds.length; _i < _len; _i++) {
-          id = previousHandIds[_i];
-          if (newValidHandIds.indexOf(id) === -1) {
-            previousHandIds.remove(id);
-            this.emit('handLost', this.lastConnectionFrame.hand(id));
-          }
+        for (var i = 0, len = activeHandIds.length; i < len; i++){
+        id = activeHandIds[i];
+        if(  newValidHandIds.indexOf(id) == -1){
+          activeHandIds.splice(i, 1);
+          // this gets executed before the current frame is added to the history.
+          this.emit('handLost', this.frame(1).hand(id))
+          i--;
+          len--;
         }
+      };
         _results = [];
-        for (_j = 0, _len1 = newValidHandIds.length; _j < _len1; _j++) {
-          id = newValidHandIds[_j];
-          if (previousHandIds.indexOf(id) === -1) {
-            previousHandIds.push(id);
+        for (_i = 0, _len = newValidHandIds.length; _i < _len; _i++) {
+          id = newValidHandIds[_i];
+          if (activeHandIds.indexOf(id) === -1) {
+            activeHandIds.push(id);
             _results.push(this.emit('handFound', frame.hand(id)));
           } else {
             _results.push(void 0);
@@ -61,8 +54,10 @@ Each event also includes the hand object, which will be invalid for the handLost
 
   if ((typeof Leap !== 'undefined') && Leap.Controller) {
     Leap.Controller.plugin('handEntry', handEntry);
-  } else {
+  } else if (typeof module !== 'undefined') {
     module.exports.handEntry = handEntry;
+  } else {
+    throw 'leap.js not included';
   }
 
 }).call(this);

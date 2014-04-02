@@ -1,4 +1,3 @@
-//CoffeeScript generated from main/hand-hold/leap.hand-hold.coffee
 (function() {
   var handHold;
 
@@ -64,8 +63,10 @@
 
   if ((typeof Leap !== 'undefined') && Leap.Controller) {
     Leap.Controller.plugin('handHold', handHold);
-  } else {
+  } else if (typeof module !== 'undefined') {
     module.exports.handHold = handHold;
+  } else {
+    throw 'leap.js not included';
   }
 
 }).call(this);
