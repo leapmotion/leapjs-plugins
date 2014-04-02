@@ -31,6 +31,7 @@ screenPosition = (options = {})->
   options.scale  ||= 1
   options.scaleX ||= 1
   options.scaleY ||= 1
+  options.scaleZ ||= 1
   options.verticalOffset ||= 0 # pixels
   baseScale = 6
   baseVerticalOffset = -100
@@ -41,7 +42,7 @@ screenPosition = (options = {})->
         (window.innerWidth / 2) + (positionVec3[0] * baseScale * options.scale * options.scaleX),
         window.innerHeight + baseVerticalOffset + options.verticalOffset -
                                   (positionVec3[1] * baseScale * options.scale * options.scaleY),
-        0
+        (positionVec3[2] * baseScale * options.scale * options.scaleZ)
       ]
   }
 
@@ -73,5 +74,7 @@ screenPosition = (options = {})->
 
 if (typeof Leap != 'undefined') && Leap.Controller
   Leap.Controller.plugin 'screenPosition', screenPosition
-else
+else if (typeof module != 'undefined')
   module.exports.screenPosition = screenPosition
+else
+  throw 'leap.js not included'
