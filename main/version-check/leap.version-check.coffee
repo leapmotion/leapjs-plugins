@@ -15,21 +15,17 @@ versionCheck = (scope)->
     if current < required
       console.warn "Protocol Version too old. v#{required} required, v#{current} available."
 
+      if scope.disconnect
+        @disconnect()
+
+      if scope.alert
+        alert("Your Leap Software version is out of date.  Visit http://www.leapmotion.com/setup to update")
+
       @emit('versionCheck.outdated', {
         required: required
         current: current
         disconnect: scope.disconnect
       })
-
-      if scope.disconnect
-        # due to LeapJS implementation details, a call to disconnect within 1000ms of connection will result in
-        # automatic reconnection.  We disable this behavior below.
-        # https://github.com/leapmotion/leapjs/blob/master/lib/connection/base.js#L64
-        clearInterval(@connection.reconnectionTimer)
-        @disconnect()
-
-      if scope.alert
-        alert("Your Leap Software version is out of date.  Visit http://www.leapmotion.com/setup to update")
 
   {}
   
