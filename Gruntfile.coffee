@@ -1,5 +1,8 @@
 module.exports = (grunt) ->
 
+  fs = require('fs');
+
+
   filename = "leap-plugins-<%= pkg.version %>"
   banner = (project)->
      '/*
@@ -51,11 +54,21 @@ module.exports = (grunt) ->
     usebanner:
       coffeeMessagesMain:
         options:
-          banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
+          banner: (file) ->
+            coffeePath = file.replace('.js', '.coffee')
+            if fs.existsSync(coffeePath)
+              "//CoffeeScript generated from #{coffeePath}"
+            else
+              ''
         src: "main/**/*.js"
       coffeeMessagesExtras:
         options:
-          banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
+          banner: (file) ->
+            coffeePath = file.replace('.js', '.coffee')
+            if fs.existsSync(coffeePath)
+              "//CoffeeScript generated from #{coffeePath}"
+            else
+              ''
         src: "extras/**/*.js"
 
       licenseMain:
