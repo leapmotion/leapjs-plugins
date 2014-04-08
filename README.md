@@ -3,6 +3,18 @@ LeapJS Plugins
 
 This repository holds a collection of independent plugins which extend the functionality of LeapJS itself.
 
+**`leap-plugins.js`** is a collection of amazing plugins to get you started quickly.
+
+ - **Hand Entry** Emit events when a hand enters of leaves the field of view.
+ - **Hand Hold** Attach user-data to frame objects, such as hands or fingers.
+ - **Screen Position** Get the on-screen position of any point in Leap-space.
+ - **Version Check** Ensure a minimum protocol version when running your app.
+ - **Playback** Demo or test your app run with pre-recorded frames.
+
+**`leap-plugins-extras.js`** explores what can be done with LeapJS Plugins.
+
+ - **Proximity Alert** Explore the interaction box with audio feedback.
+
 ## Usage
 
 Include LeapJS >= 0.4.0 and either javascript file of an individual plugin or a collection.
@@ -28,6 +40,7 @@ See [hand-entry](http://leapmotion.github.io/leapjs-plugins/docs/index.html#hand
 Contributing
 ===============
 
+ - See README_DOCS for building the documentation (its one command!).
  - Make a fork, name your branch, add your plugin or fix.
  - Add your name, email, and github account to the CONTRIBUTORS.txt list, thereby agreeing to the terms and conditions of the Contributor License Agreement.
  - Open a Pull Request. If your information is not in the CONTRIBUTORS file, your pull request will not be reviewed.
