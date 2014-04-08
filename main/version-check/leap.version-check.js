@@ -12,14 +12,16 @@
       }
     }
     this.on('ready', function() {
-      var current, required;
+      var current, message, required;
       required = scope.requiredProtocolVersion;
       current = this.connection.opts.requestProtocolVersion;
       if (current < required) {
-        console.warn("Protocol Version too old. v" + required + " required, v" + current + " available.");
+        message = "Protocol Version too old. v" + required + " required, v" + current + " available.";
         if (scope.disconnect) {
           this.disconnect();
+          message += " Disconnecting.";
         }
+        console.warn(message);
         if (scope.alert) {
           alert("Your Leap Software version is out of date.  Visit http://www.leapmotion.com/setup to update");
         }
