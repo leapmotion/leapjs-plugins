@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.4 - 2014-04-07    
+ * LeapJS-Plugins  - v0.1.4 - 2014-04-08    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -156,6 +156,9 @@ Each event also includes the hand object, which will be invalid for the handLost
   }
 
 }).call(this);
+
+
+
 
 
 
@@ -1156,7 +1159,7 @@ Each event also includes the hand object, which will be invalid for the handLost
     var requiredProtocolVersion = scope.requiredProtocolVersion;
 
     var overlay = scope.overlay;
-    if (overlay === undefined) {
+    if (overlay === undefined && document.body) {
       overlay = document.createElement('div');
       document.body.appendChild(overlay);
       overlay.style.width = '100%';
@@ -1347,14 +1350,16 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
       }
     }
     this.on('ready', function() {
-      var current, required;
+      var current, message, required;
       required = scope.requiredProtocolVersion;
       current = this.connection.opts.requestProtocolVersion;
       if (current < required) {
-        console.warn("Protocol Version too old. v" + required + " required, v" + current + " available.");
+        message = "Protocol Version too old. v" + required + " required, v" + current + " available.";
         if (scope.disconnect) {
           this.disconnect();
+          message += " Disconnecting.";
         }
+        console.warn(message);
         if (scope.alert) {
           alert("Your Leap Software version is out of date.  Visit http://www.leapmotion.com/setup to update");
         }
