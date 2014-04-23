@@ -15,6 +15,11 @@ This repository holds a collection of independent plugins which extend the funct
 
  - **Proximity Alert** Explore the interaction box with audio feedback.
 
+## Download
+
+<script src="//js.leapmotion.com/leap-plugins-0.1.4.js"></script>
+<script src="//js.leapmotion.com/leap-plugins-0.1.4.min.js"></script>
+
 ## Usage
 
 Include LeapJS >= 0.4.0 and either javascript file of an individual plugin or a collection.
