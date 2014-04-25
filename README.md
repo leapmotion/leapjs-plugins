@@ -9,7 +9,7 @@ This repository holds a collection of independent plugins which extend the funct
  - **Hand Hold** Save data on to hands or fingers which will be persisted between frames.
  - **Screen Position** Get the on-screen position of any point in Leap-space.
  - **Version Check** Ensure a minimum protocol version when running your app.
- - **Playback** Demo or test your app run with pre-recorded frames.
+ - **Playback** Record hand-data from the Leap, compress it, and use it to animate your app.
 
 **`leap-plugins-extras.js`** explores what can be done with LeapJS Plugins.
 
