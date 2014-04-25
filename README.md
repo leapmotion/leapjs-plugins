@@ -6,7 +6,7 @@ This repository holds a collection of independent plugins which extend the funct
 **`leap-plugins.js`** is a collection of amazing plugins to get you started quickly.
 
  - **Hand Entry** Emit events when a hand enters of leaves the field of view.
- - **Hand Hold** Attach user-data to frame objects, such as hands or fingers.
+ - **Hand Hold** Save data on to hands or fingers which will be persisted between frames.
  - **Screen Position** Get the on-screen position of any point in Leap-space.
  - **Version Check** Ensure a minimum protocol version when running your app.
  - **Playback** Demo or test your app run with pre-recorded frames.
