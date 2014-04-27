@@ -3,30 +3,37 @@
   var handHold;
 
   handHold = function() {
-    var extraHandData;
-    extraHandData = {};
-    return {
-      hand: {
-        data: function(hashOrKey, value) {
-          var key, _name, _results;
-          extraHandData[_name = this.id] || (extraHandData[_name] = []);
-          if (value) {
-            return extraHandData[this.id][hashOrKey] = value;
-          } else if (toString.call(hashOrKey) === '[object String]') {
-            return extraHandData[this.id][hashOrKey];
+    var dataMethod, frameObjectData;
+    frameObjectData = {};
+    dataMethod = function(hashOrKey, value) {
+      var key, objectData, _name;
+      objectData = frameObjectData[_name = this.id] || (frameObjectData[_name] = []);
+      if (value && (value["default"] === void 0)) {
+        return objectData[hashOrKey] = value;
+      } else if (toString.call(hashOrKey) === '[object String]') {
+        if (!objectData[hashOrKey] && (value && value["default"])) {
+          return objectData[hashOrKey] = value["default"];
+        } else {
+          return objectData[hashOrKey];
+        }
+      } else {
+        for (key in hashOrKey) {
+          value = hashOrKey[key];
+          if (value === void 0) {
+            delete objectData[key];
           } else {
-            _results = [];
-            for (key in hashOrKey) {
-              value = hashOrKey[key];
-              if (value === void 0) {
-                _results.push(delete extraHandData[this.id][key]);
-              } else {
-                _results.push(extraHandData[this.id][key] = value);
-              }
-            }
-            return _results;
+            objectData[key] = value;
           }
-        },
+        }
+        return hashOrKey;
+      }
+    };
+    return {
+      pointable: {
+        data: dataMethod
+      },
+      hand: {
+        data: dataMethod,
         hold: function(object) {
           if (object) {
             return this.data({
