@@ -34,7 +34,6 @@ Leap.Controller.plugin 'handSplay', (scope = {})->
       hand.data('handSplay.splay', avgPalmDot)
       hand.data('handSplay.splayedFingers', straightenedFingerCount)
 
-      # todo: in skeletal, we get back finger type of thumb, and can set fingerActiveCount back to 2
       if avgPalmDot > scope.splayThreshold || straightenedFingerCount >= scope.requiredFingers
         unless hand.data('handSplay.splayed')
           hand.data('handSplay.splayed': true)
