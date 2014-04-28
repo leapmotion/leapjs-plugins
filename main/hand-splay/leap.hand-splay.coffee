@@ -1,15 +1,18 @@
 # measures how spread out and flat a hand is
 # fires 'handSplay' and 'handUnsplay' events from the controller
+#
+# Two items are made accessible through hand.data
+# hand.data('handSplay.splay') returns the fractional splay amount, 0 to 1
+# hand.data('handSplay.splayed') returns a boolean: whether the hand is considered splayed or not
 
 Leap.Controller.plugin 'handSplay', (scope = {})->
-  scope.splayThreshold ||= 0.75
-  
+  scope.splayThreshold  ||= 0.65
+  scope.requiredFingers ||= 4
+
   @use('handHold')
 
   {
     hand: (hand)->
-      return if hand.timeVisible == 0
-
       palmDot = null
       avgPalmDot = 0
       straightenedFingerCount = 0
@@ -17,9 +20,9 @@ Leap.Controller.plugin 'handSplay', (scope = {})->
       # set base data, find minimum
       for finger in hand.fingers
         palmDot = Leap.vec3.dot( hand.direction, finger.direction )
-        avgPalmDot += finger.palmDot
+        avgPalmDot += palmDot
         
-        if @palmDot > scope.splayThreshold
+        if palmDot > scope.splayThreshold
           straightenedFingerCount++ 
 
       # v1 tracking backwards compatibility
@@ -28,14 +31,18 @@ Leap.Controller.plugin 'handSplay', (scope = {})->
 
       avgPalmDot /= 5
 
+      hand.data('handSplay.splay', avgPalmDot)
+      hand.data('handSplay.splayedFingers', straightenedFingerCount)
+
       # todo: in skeletal, we get back finger type of thumb, and can set fingerActiveCount back to 2
-      if avgPalmDot > scope.splayThreshold || straightenedFingerCount > 2
-        unless hand.data('splayed')
-          hand.data(splayed: true)
+      if avgPalmDot > scope.splayThreshold || straightenedFingerCount >= scope.requiredFingers
+        unless hand.data('handSplay.splayed')
+          hand.data('handSplay.splayed': true)
           @emit('handSplay', hand)
-            
+
       else
-        if hand.data('splayed')
+        if hand.data('handSplay.splayed')
           @emit('handUnsplay', hand)
-          hand.data(splayed: false)
+          hand.data('handSplay.splayed': false)
+
   }
