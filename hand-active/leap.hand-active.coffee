@@ -1,52 +1,41 @@
-# relies on hand-holding plugin
-# returns a clutch parameter, which shows % figner extension.
-# fires off a finger extended event on 100%.
-# returns activity state of each finger
-# if any figer is active, the hand is active
+# measures how spread out and flat a hand is
+# fires 'handSplay' and 'handUnsplay' events from the controller
 
-Leap.Controller.plugin 'handActive', (options)->
-  options ||= {}
-  options.activeThreshold = 0.75
+Leap.Controller.plugin 'handSplay', (scope = {})->
+  scope.splayThreshold ||= 0.75
+  
+  @use('handHold')
 
   {
-    finger: {
-      active: ->
-        return @_active if @_active
-
-        @palmDot = Leap.vec3.dot(@hand().direction, @direction)
-        @_active = @palmDot > options.activeThreshold
-        return @_active
-
-    }
     hand: (hand)->
       return if hand.timeVisible == 0
 
+      palmDot = null
       avgPalmDot = 0
+      straightenedFingerCount = 0
 
-      fingerActiveCount = 0
-
-      # set base data, find miniumum
+      # set base data, find minimum
       for finger in hand.fingers
-        fingerActiveCount += 1 if finger.active()
+        palmDot = Leap.vec3.dot( hand.direction, finger.direction )
         avgPalmDot += finger.palmDot
+        
+        if @palmDot > scope.splayThreshold
+          straightenedFingerCount++ 
 
-      # hack - we don't always have 5 fingers due to skeletal compatability mode,
-      # so we treat them as orthogonal by default
-      hand.avgPalmDot += 0.5 * (5 - hand.fingers.length)
+      # v1 tracking backwards compatibility
+      # missing fingers treated as mid-curl
+      avgPalmDot += 0.5 * (5 - hand.fingers.length)
 
-      hand.avgPalmDot = hand.avgPalmDot / 5
+      avgPalmDot /= 5
 
       # todo: in skeletal, we get back finger type of thumb, and can set fingerActiveCount back to 2
-      if hand.avgPalmDot > options.activeThreshold || fingerActiveCount > 2
-        if hand.data('hasBeenSeenInactive')
-          unless hand.data('active')
-            hand.data(active: true)
-            @emit('handActive', hand)
+      if avgPalmDot > scope.splayThreshold || straightenedFingerCount > 2
+        unless hand.data('splayed')
+          hand.data(splayed: true)
+          @emit('handSplay', hand)
+            
       else
-        hand.data('hasBeenSeenInactive', true)
-        if hand.data('active')
-          @emit('handInactive', hand)
-          hand.data(active: false)
-
-      hand.active = hand.data('active')
+        if hand.data('splayed')
+          @emit('handUnsplay', hand)
+          hand.data(splayed: false)
   }
