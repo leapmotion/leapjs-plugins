@@ -1,0 +1,6 @@
+{
+  "name": "leapjs-plugins-test",
+  "dependencies": {
+    "leapjs": "git://github.com/leapmotion/leapjs.git#0.4.1"
+  }
+}

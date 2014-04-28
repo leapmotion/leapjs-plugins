@@ -1,0 +1,12 @@
+# 0.1.3
+ - Compatibility with leapjs 0.4.2  (plugin pipeline now on animationFrames)
+
+# 0.1.2
+ - Include lost hand data in handLost event
+ - Add z-depth to screenPosition
+
+# 0.1.1
+ - Proximity Alert Plugin
+ - Better Comments on the tops of js files
+ - ScreenPosition now uses a top left origin rather than a bottom right one.
+ - Node support
