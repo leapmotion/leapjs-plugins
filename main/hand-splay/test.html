@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>Hand Splay</title>
+    <script src="//js.leapmotion.com/leap-0.6.0-beta2.min.js"></script>
+    <script src="../hand-hold/leap.hand-hold.js"></script>
+    <script src="leap.hand-splay.js"></script>
+
+    <script type="text/javascript">
+      Leap.loop({
+        hand: function(hand){
+          document.getElementById('out').innerHTML = hand.data('handSplay.splay').toPrecision(2);
+        }
+      })
+        .use('handSplay')
+        .on('handSplay', function(hand){
+
+            console.log('splay',
+                    hand.data('handSplay.splay') > Leap.loopController.plugins.handSplay.splayThreshold,
+                    hand.data('handSplay.splayedFingers') >= Leap.loopController.plugins.handSplay.requiredFingers
+            );
+
+            // use timer to log quickly-flipping-back-and-forth
+            console.time('splay')
+        })
+        .on('handUnsplay', function(hand){
+
+            console.log('unsplay',
+                    hand.data('handSplay.splay') > Leap.loopController.plugins.handSplay.splayThreshold,
+                    hand.data('handSplay.splayedFingers') >= Leap.loopController.plugins.handSplay.requiredFingers
+            );
+
+            console.timeEnd('splay')
+        });
+    </script>
+  </head>
+
+  <body>
+  <div id="out"></div>
+  </body>
+</html>
