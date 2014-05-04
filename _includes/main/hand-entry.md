@@ -4,11 +4,21 @@
 
 ## Usage
 
+Fires controller events when a hand enters or leaves the frame.
+
 ```js
   controller.use('handEntry')
 ```
 
-Fires controller events when a hand enters or leaves the frame.
+```js
+Leap.loop(function(frame){
+})
+.use('handEntry')
+.on('handFound', function(hand){
+   // ...
+});
+```
+
 
 ## Events
 
@@ -18,7 +28,7 @@ Triggered from the controller.  This passes in the Hand object.
 
 ```js
   controller.on('handFound',
-    function(hand){console.log( 'hand found', hand }
+    function(hand){console.log( 'hand found', hand ); }
   )
 ```
 
@@ -30,6 +40,8 @@ This event is also triggered for every hand present when the device is disconnec
 
 ```js
   controller.on('handLost',
-    function(hand){console.log( 'hand lost', hand }
+    function(hand){console.log( 'hand lost', hand ); }
   )
 ```
+
+

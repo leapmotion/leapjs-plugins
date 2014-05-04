@@ -105,13 +105,24 @@ var controller = new Leap.Controller();
 
 <h2 id="usage">Usage</h2>
 
+<p>Fires controller events when a hand enters or leaves the frame.</p>
+
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">handEntry</span><span style="color:#710">'</span></span>)
 </pre></div>
 </div>
 </div>
 
-<p>Fires controller events when a hand enters or leaves the frame.</p>
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Leap.loop(<span style="color:#080;font-weight:bold">function</span>(frame){
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>})
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">handEntry</span><span style="color:#710">'</span></span>)
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>.on(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">handFound</span><span style="color:#710">'</span></span>, <span style="color:#080;font-weight:bold">function</span>(hand){
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>   <span style="color:#777">// ...</span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>});
+</pre></div>
+</div>
+</div>
 
 <h2 id="events">Events</h2>
 
@@ -121,7 +132,7 @@ var controller = new Leap.Controller();
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  controller.on(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">handFound</span><span style="color:#710">'</span></span>,
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    <span style="color:#080;font-weight:bold">function</span>(hand){console.log( <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">hand found</span><span style="color:#710">'</span></span>, hand }
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    <span style="color:#080;font-weight:bold">function</span>(hand){console.log( <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">hand found</span><span style="color:#710">'</span></span>, hand ); }
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>  )
 </pre></div>
 </div>
@@ -135,7 +146,7 @@ var controller = new Leap.Controller();
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  controller.on(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">handLost</span><span style="color:#710">'</span></span>,
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    <span style="color:#080;font-weight:bold">function</span>(hand){console.log( <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">hand lost</span><span style="color:#710">'</span></span>, hand }
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    <span style="color:#080;font-weight:bold">function</span>(hand){console.log( <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">hand lost</span><span style="color:#710">'</span></span>, hand ); }
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>  )
 </pre></div>
 </div>
@@ -432,8 +443,8 @@ Here we scale based upon the interaction box and screen size:</p>
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    <span style="color:#06B;font-weight:bold">positioning</span>: <span style="color:#080;font-weight:bold">function</span>(positionVec3){
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      <span style="color:#777">// Arguments for Leap.vec3 are (out, a, b)</span>
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      [
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        Leap.vec3.subtract(positionVec3, positionVec3, <span style="color:#963">this</span>.frame.interactionBox.center)
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        Leap.vec3.divide(positionVec3, positionVec3, <span style="color:#963">this</span>.frame.interactionBox.size)
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        Leap.vec3.subtract(positionVec3, positionVec3, <span style="color:#950">this</span>.frame.interactionBox.center)
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        Leap.vec3.divide(positionVec3, positionVec3, <span style="color:#950">this</span>.frame.interactionBox.size)
 <span class="line-numbers"><a href="#n11" name="n11">11</a></span>        Leap.vec3.multiply(positionVec3, positionVec3, [window.innerWidth, window.innerHeight, <span style="color:#00D">0</span>])
 <span class="line-numbers"><a href="#n12" name="n12">12</a></span>      ]
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>    }
@@ -579,10 +590,10 @@ controller
 <span class="line-numbers"><a href="#n2" name="n2">2</a></span>  controller.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">versionCheck</span><span style="color:#710">'</span></span>)
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>
 <span class="line-numbers"><a href="#n4" name="n4">4</a></span>  <span style="color:#777">// from a plugin:</span>
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  <span style="color:#963">this</span>.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">versionCheck</span><span style="color:#710">'</span></span>)
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  <span style="color:#950">this</span>.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">versionCheck</span><span style="color:#710">'</span></span>)
 <span class="line-numbers"><a href="#n6" name="n6">6</a></span>
 <span class="line-numbers"><a href="#n7" name="n7">7</a></span>  <span style="color:#777">// while specifying options</span>
-<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  <span style="color:#963">this</span>.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">versionCheck</span><span style="color:#710">'</span></span>, {<span style="color:#606">requiredProtocolVersion</span>: <span style="color:#00D">6</span>})
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  <span style="color:#950">this</span>.use(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">versionCheck</span><span style="color:#710">'</span></span>, {<span style="color:#606">requiredProtocolVersion</span>: <span style="color:#00D">6</span>})
 </pre></div>
 </div>
 </div>
