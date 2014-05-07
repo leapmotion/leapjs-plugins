@@ -8,8 +8,10 @@ handHold = ->
 
     if value
       dict[hashOrKey] = value
+
     else if(toString.call(hashOrKey) == '[object String]')
       return dict[hashOrKey]
+
     else
       for key, value of hashOrKey
         if value == undefined
@@ -18,6 +20,23 @@ handHold = ->
           dict[key] = value
   {
     hand: {
+      # like jQuery: accepts a hash to set, or a key and value to set, or a key to read.
+      #
+      # set:
+      # hand.data('color', 'blue')
+      # -> 'blue'
+      #
+      # get:
+      # hand.data('color')
+      # -> 'blue'
+      #
+      # use defaults:
+      # otherHand.data('color', {default: 'green'})
+      # -> 'green'
+      #
+      # value will be stored after first call with default:
+      # otherHand.data('color')
+      # -> 'green'
       data: (hashOrKey, value)->
         dataFn('h', hashOrKey, value)
       ,
