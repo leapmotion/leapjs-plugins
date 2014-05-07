@@ -3,29 +3,33 @@
   var handHold;
 
   handHold = function() {
-    var extraHandData;
-    extraHandData = {};
+    var dataFn, interFrameData;
+    interFrameData = {};
+    dataFn = function(prefix, hashOrKey, value) {
+      var dict, key, _name, _results;
+      interFrameData[_name = prefix + this.id] || (interFrameData[_name] = []);
+      dict = interFrameData[prefix + this.id];
+      if (value) {
+        return dict[hashOrKey] = value;
+      } else if (toString.call(hashOrKey) === '[object String]') {
+        return dict[hashOrKey];
+      } else {
+        _results = [];
+        for (key in hashOrKey) {
+          value = hashOrKey[key];
+          if (value === void 0) {
+            _results.push(delete dict[key]);
+          } else {
+            _results.push(dict[key] = value);
+          }
+        }
+        return _results;
+      }
+    };
     return {
       hand: {
         data: function(hashOrKey, value) {
-          var key, _name, _results;
-          extraHandData[_name = this.id] || (extraHandData[_name] = []);
-          if (value) {
-            return extraHandData[this.id][hashOrKey] = value;
-          } else if (toString.call(hashOrKey) === '[object String]') {
-            return extraHandData[this.id][hashOrKey];
-          } else {
-            _results = [];
-            for (key in hashOrKey) {
-              value = hashOrKey[key];
-              if (value === void 0) {
-                _results.push(delete extraHandData[this.id][key]);
-              } else {
-                _results.push(extraHandData[this.id][key] = value);
-              }
-            }
-            return _results;
-          }
+          return dataFn('h', hashOrKey, value);
         },
         hold: function(object) {
           if (object) {
@@ -57,6 +61,11 @@
           if (getHover = this.data('getHover')) {
             return this._hovering || (this._hovering = getHover.call(this));
           }
+        }
+      },
+      pointable: {
+        data: function(hashOrKey, value) {
+          return dataFn('p', hashOrKey, value);
         }
       }
     };

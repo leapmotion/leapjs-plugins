@@ -1,21 +1,26 @@
 handHold = ->
-  extraHandData = {}
+  interFrameData = {}
+
+  # like jQuery: accepts a hash to set, or a key and value to set, or a key to read.
+  dataFn = (prefix, hashOrKey, value)->
+    interFrameData[prefix + @id] ||= []
+    dict = interFrameData[prefix + @id]
+
+    if value
+      dict[hashOrKey] = value
+    else if(toString.call(hashOrKey) == '[object String]')
+      return dict[hashOrKey]
+    else
+      for key, value of hashOrKey
+        if value == undefined
+          delete dict[key]
+        else
+          dict[key] = value
   {
     hand: {
-      # like jQuery: accepts a hash to set, or a key and value to set, or a key to read.
       data: (hashOrKey, value)->
-        extraHandData[@id] ||= []
-
-        if value
-          extraHandData[@id][hashOrKey] = value
-        else if(toString.call(hashOrKey) == '[object String]')
-          return extraHandData[@id][hashOrKey]
-        else
-          for key, value of hashOrKey
-            if value == undefined
-              delete extraHandData[@id][key]
-            else
-              extraHandData[@id][key] = value
+        dataFn('h', hashOrKey, value)
+      ,
 
       # Give the hand an object to hold, which will be returned by .holding()
       # if no object is passed, the hand will try and hold whatever it is hovering over.
@@ -43,6 +48,10 @@ handHold = ->
         if getHover = @data('getHover')
           @_hovering ||= getHover.call(this)
 
+    }
+    pointable: {
+      data: (hashOrKey, value)->
+        dataFn('p', hashOrKey, value)
     }
   }
 
