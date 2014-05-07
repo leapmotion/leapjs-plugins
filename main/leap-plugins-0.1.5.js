@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.5 - 2014-05-06    
+ * LeapJS-Plugins  - v0.1.5 - 2014-05-07    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -114,7 +114,7 @@ Each event also includes the hand object, which will be invalid for the handLost
     return {
       hand: {
         data: function(hashOrKey, value) {
-          return dataFn('h', hashOrKey, value);
+          return dataFn.call(this, 'h', hashOrKey, value);
         },
         hold: function(object) {
           if (object) {
@@ -150,7 +150,7 @@ Each event also includes the hand object, which will be invalid for the handLost
       },
       pointable: {
         data: function(hashOrKey, value) {
-          return dataFn('p', hashOrKey, value);
+          return dataFn.call(this, 'p', hashOrKey, value);
         }
       }
     };

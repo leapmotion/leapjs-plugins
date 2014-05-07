@@ -38,7 +38,7 @@ handHold = ->
       # otherHand.data('color')
       # -> 'green'
       data: (hashOrKey, value)->
-        dataFn('h', hashOrKey, value)
+        dataFn.call(this, 'h', hashOrKey, value)
       ,
 
       # Give the hand an object to hold, which will be returned by .holding()
@@ -70,7 +70,7 @@ handHold = ->
     }
     pointable: {
       data: (hashOrKey, value)->
-        dataFn('p', hashOrKey, value)
+        dataFn.call(this, 'p', hashOrKey, value)
     }
   }
 

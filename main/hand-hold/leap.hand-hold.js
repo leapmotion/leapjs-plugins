@@ -29,7 +29,7 @@
     return {
       hand: {
         data: function(hashOrKey, value) {
-          return dataFn('h', hashOrKey, value);
+          return dataFn.call(this, 'h', hashOrKey, value);
         },
         hold: function(object) {
           if (object) {
@@ -65,7 +65,7 @@
       },
       pointable: {
         data: function(hashOrKey, value) {
-          return dataFn('p', hashOrKey, value);
+          return dataFn.call(this, 'p', hashOrKey, value);
         }
       }
     };
