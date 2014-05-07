@@ -1,3 +1,15 @@
+# 0.1.5
+ - Allow hand-hold to accept default values
+ - Upgrade playback to v0.2.0, now with better animations and 60% better file compression
+ - Playback will no longer crash when used in the header
+ - Version check has a more descriptive warning
+
+# 0.1.4
+ - Add playback
+ - Add Version check plugin
+ - Fix issue where multiple hands in frame on device-disconnect would misfire handLost
+ - Fix issue in hand-entry where handFound would not fire after reconnect
+
 # 0.1.3
  - Compatibility with leapjs 0.4.2  (plugin pipeline now on animationFrames)
 
