@@ -9,7 +9,7 @@
       var dict, key, _name, _results;
       interFrameData[_name = prefix + this.id] || (interFrameData[_name] = []);
       dict = interFrameData[prefix + this.id];
-      if (value) {
+      if (value !== void 0) {
         return dict[hashOrKey] = value;
       } else if (toString.call(hashOrKey) === '[object String]') {
         return dict[hashOrKey];
