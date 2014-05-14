@@ -9,7 +9,7 @@ handHold = ->
     if value != undefined
       dict[hashOrKey] = value
 
-    else if(toString.call(hashOrKey) == '[object String]')
+    else if( ({}).toString.call(hashOrKey) == '[object String]')
 
       return dict[hashOrKey]
 

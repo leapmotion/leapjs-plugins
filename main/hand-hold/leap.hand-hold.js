@@ -11,7 +11,7 @@
       dict = interFrameData[prefix + this.id];
       if (value !== void 0) {
         return dict[hashOrKey] = value;
-      } else if (toString.call(hashOrKey) === '[object String]') {
+      } else if ({}.toString.call(hashOrKey) === '[object String]') {
         return dict[hashOrKey];
       } else {
         _results = [];
