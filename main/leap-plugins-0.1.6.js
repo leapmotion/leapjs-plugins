@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.5 - 2014-05-09    
+ * LeapJS-Plugins  - v0.1.6 - 2014-05-12    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -168,8 +168,9 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 
 
+
 /*                    
- * LeapJS Playback - v0.2.0 - 2014-05-05                    
+ * LeapJS Playback - v0.2.1 - 2014-05-12                    
  * http://github.com/leapmotion/leapjs-playback/                    
  *                    
  * Copyright 2014 LeapMotion, Inc                    
@@ -899,6 +900,7 @@ function Recording (options){
   this.packingStructure = [
     'id',
     'timestamp',
+    // this should be replace/upgraded with a whitelist instead of a blacklist.
     // leaving out r,s,y, and gestures
     {hands: [[
       'id',
@@ -907,7 +909,10 @@ function Recording (options){
       'palmNormal',
       'palmPosition',
       'palmVelocity',
-      'stabilizedPalmPosition'
+      'stabilizedPalmPosition',
+      'pinchStrength',
+      'grabStrength',
+      'confidence'
       // leaving out r, s, t, sphereCenter, sphereRadius
     ]]},
     {pointables: [[
@@ -919,10 +924,12 @@ function Recording (options){
       'tipPosition',
       'tipVelocity',
       'tool',
+      'carpPosition',
       'mcpPosition',
       'pipPosition',
       'dipPosition',
-      'tipPosition'
+      'btipPosition',
+      'bases'
       // leaving out touchDistance, touchZone
     ]]},
     {interactionBox: [
@@ -999,6 +1006,10 @@ Recording.prototype = {
     }
   },
 
+  cloneCurrentFrame: function(){
+    return JSON.parse(JSON.stringify(this.currentFrame()));
+  },
+
 
   // this method would be well-moved to its own object/class -.-
   // for every point, lerp as appropriate
@@ -1010,8 +1021,9 @@ Recording.prototype = {
         nextFrame = this.nextFrame(),
         handProps   = ['palmPosition', 'stabilizedPalmPosition', 'sphereCenter', 'direction', 'palmNormal', 'palmVelocity'],
         fingerProps = ['mcpPosition', 'pipPosition', 'dipPosition', 'tipPosition', 'direction'],
-        frameData = JSON.parse(JSON.stringify(currentFrame)),
+        frameData = this.cloneCurrentFrame(),
         numHands = frameData.hands.length,
+        numPointables = frameData.pointables.length,
         len1 = handProps.length,
         len2 = fingerProps.length,
         prop, hand, pointable;
@@ -1023,6 +1035,10 @@ Recording.prototype = {
         prop = handProps[j];
 
         if (!currentFrame.hands[i][prop]){
+          continue;
+        }
+
+        if (!nextFrame.hands[i]){
           continue;
         }
 
@@ -1038,13 +1054,17 @@ Recording.prototype = {
 
     }
 
-    for ( i = 0; i < 5; i++){
+    for ( i = 0; i < numPointables; i++){
       pointable = frameData.pointables[i];
 
       for ( j = 0; j < len2; j++){
         prop = fingerProps[j];
 
         if (!currentFrame.pointables[i][prop]){
+          continue;
+        }
+
+        if (!nextFrame.hands[i]){
           continue;
         }
 
@@ -1115,7 +1135,6 @@ Recording.prototype = {
   },
 
 
-  // flag
   setMetaData: function () {
 
     var newMetaData = {
@@ -1361,9 +1380,9 @@ Recording.prototype = {
   // optional callback once frames are loaded, will have a context of player
   loadFrameData: function (callback) {
     var xhr = new XMLHttpRequest(),
-        url = this.options.url;
-
-    var recording = this;
+        url = this.url,
+        recording = this,
+        contentLength = 0;
 
     xhr.onreadystatechange = function () {
       if (xhr.readyState === xhr.DONE) {
@@ -1380,6 +1399,20 @@ Recording.prototype = {
         }
       }
     };
+
+    xhr.addEventListener('progress', function(oEvent){
+
+      if ( recording.options.loadProgress ) {
+
+        if (oEvent.lengthComputable) {
+          var percentComplete = oEvent.loaded / oEvent.total;
+          recording.options.loadProgress( recording, percentComplete, oEvent );
+        }
+
+      }
+
+    });
+
     this.loading = true;
 
     xhr.open("GET", url, true);
@@ -1387,15 +1420,8 @@ Recording.prototype = {
   },
 
   finishLoad: function(responseData, callback){
-//    if (player.recording != recording){
-//      // setRecording has been re-called before the ajax has returned
-//      player.controller.emit('playback.ajax:aborted', player);
-//      return
-//    }
-//
-//    // can't assign to responseText
-//    var responseData = xhr.responseText;
-    var url = this.options.url;
+
+    var url = this.url;
 
     if (url.split('.')[url.split('.').length - 1] == 'lz') {
       responseData = this.decompress(responseData);
@@ -1407,19 +1433,14 @@ Recording.prototype = {
       responseData.frames = this.unPackFrameData(responseData.frames);
     }
 
-    this.setFrames(responseData.frames);
     this.metadata = responseData.metadata;
 
     console.log('Recording loaded:', this.metadata);
 
-//            for (var key in responseData) {
-//              recording[key] = responseData[key]
-//            }
-
     this.loading = false;
 
     if (callback) {
-      callback.call(this);
+      callback.call(this, responseData.frames);
     }
 
   }
@@ -1445,6 +1466,8 @@ Recording.prototype = {
     this.controller.connection.on('ready', function () {
       player.setupProtocols();
     });
+
+    this.userHasControl = false;
 
 
     if (options.recording) {
@@ -1482,11 +1505,6 @@ Recording.prototype = {
 
         player.sendFrameAt(timestamp || performance.now());
 
-        // flag - removed currentFrameIndex
-//        if (!player.options.loop && (player.currentFrameIndex > player.frameIndex)) {
-//          player.pause();
-//        }
-
         requestAnimationFrame(player.stepFrameLoop);
       };
 
@@ -1508,10 +1526,17 @@ Recording.prototype = {
 
           if (player.pauseOnHand) {
             if (data.hands.length > 0) {
+              player.userHasControl = true;
+              player.controller.emit('playback.userTakeControl');
               player.setGraphic();
               player.idle();
             } else if (data.hands.length == 0) {
-              player.setGraphic('wave');
+              if (player.userHasControl) {
+                player.userHasControl = false;
+                player.controller.emit('playback.userReleaseControl');
+                player.setGraphic('wave');
+              }
+
             }
           }
 
@@ -1586,7 +1611,6 @@ Recording.prototype = {
 
     },
 
-    // flag
     sendFrame: function(frameData){
       if (!frameData) throw "Frame data not provided";
 
@@ -1628,7 +1652,7 @@ Recording.prototype = {
       // todo: we should change this idle state to paused or leave it as playback with a pause flag
       // state should correspond always to protocol handler (through a setter)?
       this.state = 'idle';
-      if (this.overlay) this.hideOverlay();
+      this.hideOverlay();
       this.controller.emit('playback.pause', this);
     },
 
@@ -1659,7 +1683,8 @@ Recording.prototype = {
 
     // if there is existing frame data, sends a frame with nothing in it
     clear: function () {
-      var finalFrame = this.recording.currentFrame();
+      if (!this.recording || this.recording.blank()) return;
+      var finalFrame = this.recording.cloneCurrentFrame();
       finalFrame.hands = [];
       finalFrame.fingers = [];
       finalFrame.pointables = [];
@@ -1732,10 +1757,10 @@ Recording.prototype = {
       // Would be better to check controller.streaming() in showOverlay, but that method doesn't exist, yet.
       this.setGraphic('wave');
       if (frameData.hands.length > 0) {
-        this.recording.addFrame(frameData)
-        this.hideOverlay()
+        this.recording.addFrame(frameData);
+        this.hideOverlay();
       } else if ( !this.recording.blank() ) {
-        this.finishRecording()
+        this.finishRecording();
       }
     },
 
@@ -1746,7 +1771,19 @@ Recording.prototype = {
     setRecording: function (options) {
       var player = this;
 
-      var loadComplete = function () {
+      // otherwise, the animation loop may try and play non-existant frames:
+      this.pause();
+
+      // this is called on the context of the recording
+      var loadComplete = function (frames) {
+
+        this.setFrames(frames);
+
+        if (player.recording != this){
+          console.log('recordings changed during load');
+          return
+        }
+
         // it would be better to use streamingCount here, but that won't be in until 0.5.0+
         // For now, it just flashes for a moment until the first frame comes through with a hand on it.
         // if (autoPlay && (controller.streamingCount == 0 || pauseOnHand)) {
@@ -1760,33 +1797,37 @@ Recording.prototype = {
         player.controller.emit('playback.recordingSet', this);
       };
 
-      if (options instanceof Recording){
+      this.recording = options;
 
-        console.log('recording given');
-        this.recording = options;
+      // Here we turn the existing argument in to a recording
+      // this allows frames to be added to the existing object via ajax
+      // saving ajax requests
+      if (!(options instanceof Recording)){
 
-      }else{
-
-        options.timeBetweenLoops = this.options.timeBetweenLoops;
-        options.loop = this.options.loop;
-
-        this.recording = new Recording(options);
-
+        this.recording.__proto__ = Recording.prototype;
+        Recording.call(this.recording, {
+          timeBetweenLoops: this.options.timeBetweenLoops,
+          loop:             this.options.loop,
+          loadProgress: function(recording, percentage, oEvent){
+            player.controller.emit('playback.ajax:progress', recording, percentage, oEvent);
+          }
+        });
 
       }
 
 
       if ( this.recording.loaded() ) {
 
-        loadComplete.call(this.recording);
+        loadComplete.call(this.recording, this.recording.frameData);
 
       } else if (options.url) {
 
-        player.controller.emit('playback.ajax:begin', player);
+        this.controller.emit('playback.ajax:begin', this, this.recording);
 
-        this.recording.loadFrameData(function(){
-          loadComplete.call(this);
-          player.controller.emit('playback.ajax:complete', player);
+        // called in the context of the recording
+        this.recording.loadFrameData(function(frames){
+          loadComplete.call(this, frames);
+          player.controller.emit('playback.ajax:complete', player, this);
         });
 
       }
@@ -1797,12 +1838,14 @@ Recording.prototype = {
 
 
     hideOverlay: function () {
+      if (!this.overlay) return;
       this.overlay.style.display = 'none';
     },
 
 
     // Accepts either "connect", "wave", or undefined.
     setGraphic: function (graphicName) {
+      if (!this.overlay) return;
       if (this.graphicName == graphicName) return;
 
       this.graphicName = graphicName;
