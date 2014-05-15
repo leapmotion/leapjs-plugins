@@ -21,8 +21,8 @@ This repository holds a collection of independent plugins which extend the funct
 
 ## Download
 
-> &lt;script src="//js.leapmotion.com/leap-plugins-0.1.4.js"&gt;&lt;/script&gt;
-<br/> &lt;script src="//js.leapmotion.com/leap-plugins-0.1.4.min.js"&gt;&lt;/script&gt;
+> &lt;script src="//js.leapmotion.com/leap-plugins-0.1.6.js"&gt;&lt;/script&gt;
+<br/> &lt;script src="//js.leapmotion.com/leap-plugins-0.1.6.min.js"&gt;&lt;/script&gt;
 
 ## Usage
 
