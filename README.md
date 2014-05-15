@@ -14,7 +14,6 @@ This repository holds a collection of independent plugins which extend the funct
 **`leap-plugins-extras.js`** explores what can be done with LeapJS Plugins.
 
  - **[Proximity Alert](http://labs.leapmotion.com/proximity-alert-building-audio-feedback-with-a-new-leapjs-plugin/)** Explore the interaction box with audio feedback.
- - 
  
 **Other libraries** 
  - **[Rigged Hand](https://github.com/leapmotion/leapjs-rigged-hand)** Easily add virtual 3d hands to any web page with THREE.js.
