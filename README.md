@@ -20,7 +20,7 @@ This repository holds a collection of independent plugins which extend the funct
 
 ## Download
 
-[developer.leapmotion.com/downloads/javascript](https://developer.leapmotion.com/downloads/javascript)
+[developer.leapmotion.com/downloads/javascript#plugins](https://developer.leapmotion.com/downloads/javascript#plugins)
 
 ## Usage
 
