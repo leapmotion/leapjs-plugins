@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.6 - 2014-05-14    
+ * LeapJS-Plugins  - v0.1.6 - 2014-06-23    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -165,6 +165,7 @@ Each event also includes the hand object, which will be invalid for the handLost
   }
 
 }).call(this);
+
 
 
 
@@ -2062,12 +2063,12 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
     return {
       hand: {
         screenPosition: function(vec3) {
-          return position.call(this, vec3 || this.stabilizedPalmPosition, !vec3);
+          return position.call(this, vec3 || this.palmPosition, !vec3);
         }
       },
       pointable: {
         screenPosition: function(vec3) {
-          return position.call(this, vec3 || this.stabilizedTipPosition, !vec3);
+          return position.call(this, vec3 || this.tipPosition, !vec3);
         }
       }
     };
