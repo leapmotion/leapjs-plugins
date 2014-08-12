@@ -1303,8 +1303,7 @@ Recording.prototype = {
 
 
     if (options.recording) {
-      // string check via underscore.js
-      if (toString.call(options.recording) == '[object String]') {
+      if (Object.prototype.toString.call(options.recording) == '[object String]') {
         options.recording = {
           url: options.recording
         }
