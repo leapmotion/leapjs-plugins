@@ -1,3 +1,10 @@
+# 0.1.6.1
+ - A couple of fixes for ie-compatibility with playback and hand-hold plugins
+ - Screen position now uses palm/tip position in by default, rather than their stabalized counterparts
+
+# 0.1.6
+ - Fix issue where hand data would incorrectly stash data, or values could not be nulled
+
 # 0.1.5
  - Allow hand-hold to accept default values
  - Upgrade playback to v0.2.0, now with better animations and 60% better file compression

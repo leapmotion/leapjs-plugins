@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.6 - 2014-06-23    
+ * LeapJS-Plugins  - v0.1.6.1 - 2014-08-22    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -1472,8 +1472,7 @@ Recording.prototype = {
 
 
     if (options.recording) {
-      // string check via underscore.js
-      if (toString.call(options.recording) == '[object String]') {
+      if (Object.prototype.toString.call(options.recording) == '[object String]') {
         options.recording = {
           url: options.recording
         }
