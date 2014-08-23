@@ -9,9 +9,9 @@
       var dict, key, _name, _results;
       interFrameData[_name = prefix + this.id] || (interFrameData[_name] = []);
       dict = interFrameData[prefix + this.id];
-      if (value) {
+      if (value !== void 0) {
         return dict[hashOrKey] = value;
-      } else if (toString.call(hashOrKey) === '[object String]') {
+      } else if ({}.toString.call(hashOrKey) === '[object String]') {
         return dict[hashOrKey];
       } else {
         _results = [];
@@ -29,7 +29,7 @@
     return {
       hand: {
         data: function(hashOrKey, value) {
-          return dataFn('h', hashOrKey, value);
+          return dataFn.call(this, 'h', hashOrKey, value);
         },
         hold: function(object) {
           if (object) {
@@ -65,7 +65,7 @@
       },
       pointable: {
         data: function(hashOrKey, value) {
-          return dataFn('p', hashOrKey, value);
+          return dataFn.call(this, 'p', hashOrKey, value);
         }
       }
     };

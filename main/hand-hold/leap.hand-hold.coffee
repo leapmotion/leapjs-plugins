@@ -6,10 +6,13 @@ handHold = ->
     interFrameData[prefix + @id] ||= []
     dict = interFrameData[prefix + @id]
 
-    if value
+    if value != undefined
       dict[hashOrKey] = value
-    else if(toString.call(hashOrKey) == '[object String]')
+
+    else if( ({}).toString.call(hashOrKey) == '[object String]')
+
       return dict[hashOrKey]
+
     else
       for key, value of hashOrKey
         if value == undefined
@@ -18,8 +21,25 @@ handHold = ->
           dict[key] = value
   {
     hand: {
+      # like jQuery: accepts a hash to set, or a key and value to set, or a key to read.
+      #
+      # set:
+      # hand.data('color', 'blue')
+      # -> 'blue'
+      #
+      # get:
+      # hand.data('color')
+      # -> 'blue'
+      #
+      # use defaults:
+      # otherHand.data('color', {default: 'green'})
+      # -> 'green'
+      #
+      # value will be stored after first call with default:
+      # otherHand.data('color')
+      # -> 'green'
       data: (hashOrKey, value)->
-        dataFn('h', hashOrKey, value)
+        dataFn.call(this, 'h', hashOrKey, value)
       ,
 
       # Give the hand an object to hold, which will be returned by .holding()
@@ -51,7 +71,7 @@ handHold = ->
     }
     pointable: {
       data: (hashOrKey, value)->
-        dataFn('p', hashOrKey, value)
+        dataFn.call(this, 'p', hashOrKey, value)
     }
   }
 

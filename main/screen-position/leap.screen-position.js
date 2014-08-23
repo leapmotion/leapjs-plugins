@@ -62,12 +62,12 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
     return {
       hand: {
         screenPosition: function(vec3) {
-          return position.call(this, vec3 || this.stabilizedPalmPosition, !vec3);
+          return position.call(this, vec3 || this.palmPosition, !vec3);
         }
       },
       pointable: {
         screenPosition: function(vec3) {
-          return position.call(this, vec3 || this.stabilizedTipPosition, !vec3);
+          return position.call(this, vec3 || this.tipPosition, !vec3);
         }
       }
     };
