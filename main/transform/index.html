@@ -7,11 +7,26 @@
   <style>
     body{
       margin: 0;
+      font-family: Helvetica;
     }
     canvas{
       pointer-events: none;
     }
+    input{
+      cursor: pointer;
+    }
+    #connect-leap{
+      bottom: 0;
+      top: auto !important;
+    }
   </style>
+
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.min.js"></script>
+  <script src="//js.leapmotion.com/leap-0.6.2.js"></script>
+  <script src="../leap-plugins-0.1.6.1.js"></script>
+  <script src="console.js"></script>
+  <script src="leap.rigged-hand-0.1.5pre.js"></script>
 
 </head>
 <body>
@@ -27,73 +42,35 @@
 <p>
   Parameters can be either static objects or methods which transform on every frame.
 </p>
-
-
-<button onclick="toggleRotate();">Toggle Rotate</button>
-<button onclick="togglePosition();">Toggle Position</button>
-<button onclick="toggleScale();">Toggle Scale</button>
 <p>
-  Rotates Y by Math.PI / 2
-</p>
-<p>
-  Moves position by Z -= 400;
+  In this way, you can then transform individual hands based upon their id.
 </p>
 
+<br/>
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.min.js"></script>
-<script src="//js.leapmotion.com/leap-0.6.0-beta2.js"></script>
-<script src="../leap-plugins-0.1.6.1.js"></script>
-<script src="//js.leapmotion.com/leap.rigged-hand-0.1.1.js"></script>
+<div style="float: left;">
+  <label>Rotation: <span id="rotationOutput">0</span>π</label><br/>
+  <input id="rotationInput" type="range" min="-1" max="1" value="0" step="0.001">
+</div>
+
+<div style="float: left;">
+  <label>Z Position: <span id="positionOutput">0</span></label><br/>
+  <input id="positionInput" type="range" min="-1000" max="300" value="0" step="1">
+</div>
+
+<div style="float: left;">
+  <label>Scale: <span id="scaleOutput">1</span></label><br/>
+  <input id="scaleInput" type="range" min="0.1" max="1" value="1" step="0.01">
+  <!-- note - there seems to be a strange issue with THREEjs sections of the hand disappearing for scales larger than 1.
+       Scale set as an option for the riggedHand will cause the issue.  -->
+</div>
+
 
 </body>
 
 
 
 <script>
-
-  Leap.loop({
-    hand: function (hand) {
-
-      cube.position.fromArray(hand.palmPosition);
-
-      renderer.render(scene, camera);
-
-    }
-  })
-  // note that transform must be _before_ rigged hand
-  .use('transform')
-  .use('riggedHand', {
-    scale: 1
-  })
-  .connect();
-
-  window.transformPlugin = Leap.loopController.plugins.transform;
-
-  window.toggleRotate = function(){
-    if (transformPlugin.quaternion){
-      transformPlugin.quaternion = null;
-    }else{
-      transformPlugin.quaternion = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, Math.PI / 2, 0));
-    }
-  };
-
-  window.togglePosition = function(){
-    if (transformPlugin.position){
-      transformPlugin.position = null;
-    }else{
-      transformPlugin.position = (new THREE.Vector3(0,0,-400));
-    }
-  };
-
-  window.toggleScale = function(){
-    if (transformPlugin.scale){
-      transformPlugin.scale = null;
-    }else{
-      transformPlugin.scale = (new THREE.Vector3(0.5,0.5,0.5));
-    }
-  };
-
-
   // all units in mm
   var initScene = function () {
     window.scene = new THREE.Scene();
@@ -119,8 +96,8 @@
     pointLight.lookAt(new THREE.Vector3(0, 0, 0));
     window.scene.add(pointLight);
 
-    window.camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 1, 1000);
-    window.camera.position.fromArray([0, 0, 300]);
+    window.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+    window.camera.position.fromArray([0, 160, 400]);
     window.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     window.addEventListener('resize', function () {
@@ -135,30 +112,57 @@
     scene.add(camera);
 
 
-    var geometry = new THREE.CubeGeometry(60, 90, 20);
-    var material = new THREE.MeshPhongMaterial({color: 0x0000FF});
-    window.cube = new THREE.Mesh(geometry, material);
-    cube.position.set(0,0,0);
-    cube.castShadow = true;
-    cube.receiveShadow = true;
-//    scene.add(cube);
-
-
-
     renderer.render(scene, camera);
   };
 
   initScene();
 
-  var rotateCube = function(){
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.02;
-    renderer.render(scene, camera);
 
-    window.requestAnimationFrame(rotateCube);
+
+
+  Leap.loop()
+  // note that transform must be _before_ rigged hand
+  .use('transform', {
+    quaternion: new THREE.Quaternion,
+    position: new THREE.Vector3,
+    scale: new THREE.Vector3(1,1,1)
+  })
+  .use('playback', {recording: 'leap-playback-recording-110fps.json.lz'})
+  .use('riggedHand', {
+    dotsMode: true,
+    parent: scene,
+    renderFn: function(){
+      renderer.render(scene, camera);
+    }
+
+  })
+  .connect();
+
+  window.transformPlugin = Leap.loopController.plugins.transform;
+
+  document.getElementById('rotationInput').oninput = function(e){
+    var value = e.target.value;
+    transformPlugin.quaternion.setFromEuler(
+        new THREE.Euler(0, Math.PI * parseFloat(value,10) , 0)
+    );
+    document.getElementById('rotationOutput').innerHTML = value;
   };
 
-  rotateCube();
+  document.getElementById('positionInput').oninput = function(e){
+    var value = e.target.value;
+    transformPlugin.position.set(
+        0,0,parseInt(value, 10)
+    );
+    document.getElementById('positionOutput').innerHTML = value;
+  };
+
+  document.getElementById('scaleInput').oninput = function(e){
+    var value = parseFloat(e.target.value,10);
+    transformPlugin.scale.set(
+        value, value, value
+    );
+    document.getElementById('scaleOutput').innerHTML = value;
+  };
 
 </script>
 

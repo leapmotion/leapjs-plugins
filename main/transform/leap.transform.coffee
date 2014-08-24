@@ -6,9 +6,11 @@
 # transform: a THREE.Matrix4 directly.  This can be either an array of 16-length, or a THREE.matrix4
 # quaternion:  a THREE.Quaternion,
 
+
 Leap.plugin 'transform', (scope = {})->
   noop = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
   _matrix = new THREE.Matrix4
+
 
   scope.getMatrix = (hand)->
     if scope.transform
@@ -47,14 +49,14 @@ Leap.plugin 'transform', (scope = {})->
   # implicitly appends 1 to the vec3s, applying both translation and rotation
   transformPositions = (matrix, vec3s...)->
     for vec3 in vec3s
-      Leap.vec3.transformMat4(vec3, vec3, matrix)
-      
-      
-  transformMat4Implicit0 =  (out, a, m) ->
+      if vec3 # some recordings may not have all fields
+        Leap.vec3.transformMat4(vec3, vec3, matrix)
+
+  transformMat4Implicit0 = (out, a, m) ->
     x = a[0]
-    y = a[1] 
+    y = a[1]
     z = a[2]
-  
+
     out[0] = m[0] * x + m[4] * y + m[8]  * z
     out[1] = m[1] * x + m[5] * y + m[9]  * z
     out[2] = m[2] * x + m[6] * y + m[10] * z
@@ -63,7 +65,8 @@ Leap.plugin 'transform', (scope = {})->
   # appends 0 to the vec3s, applying only rotation
   transformDirections = (matrix, vec3s...)->
     for vec3 in vec3s
-      transformMat4Implicit0(vec3, vec3, matrix)
+      if vec3 # some recordings may not have all fields
+        transformMat4Implicit0(vec3, vec3, matrix)
 
 
   {
@@ -88,6 +91,7 @@ Leap.plugin 'transform', (scope = {})->
       for finger in hand.fingers
         transformPositions(
           matrix,
+          finger.carpPosition,
           finger.mcpPosition,
           finger.pipPosition,
           finger.dipPosition,
