@@ -43,6 +43,17 @@ See [hand-entry](http://leapmotion.github.io/leapjs-plugins/docs/index.html#hand
  - See [making plugins](http://github.com/leapmotion/leapjs/wiki/plugins) on the leapjs wiki.
 
 
+## Examples
+
+Examples are available on the [developer gallery](http://developer.leapmotion.com/gallery/tags/javascript) live editor
+and in subfolders here of individual plugins.
+
+To run them on localhost, you'll need a web server to resolve asset paths.
+
+```bash
+> python -m SimpleHTTPServer
+```
+
 
 Contributing
 ===============
