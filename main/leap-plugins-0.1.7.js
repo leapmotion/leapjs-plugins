@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.6.1 - 2014-08-26    
+ * LeapJS-Plugins  - v0.1.7 - 2014-08-26    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -165,6 +165,7 @@ Each event also includes the hand object, which will be invalid for the handLost
   }
 
 }).call(this);
+
 
 
 /*

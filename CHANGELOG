@@ -1,3 +1,8 @@
+# 0.1.7
+ - Transform plugin
+ - resumeOnHandLost option added to playback
+ - Fix an issue in playback which would cause the "connect leap" icon to be displayed incorrectly.
+
 # 0.1.6.1
  - A couple of fixes for ie-compatibility with playback and hand-hold plugins
  - Screen position now uses palm/tip position in by default, rather than their stabalized counterparts
