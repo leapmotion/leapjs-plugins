@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.6.1 - 2014-08-22    
+ * LeapJS-Plugins  - v0.1.6.1 - 2014-08-26    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -53,7 +53,7 @@ Each event also includes the hand object, which will be invalid for the handLost
         if(  newValidHandIds.indexOf(id) == -1){
           activeHandIds.splice(i, 1);
           // this gets executed before the current frame is added to the history.
-          this.emit('handLost', this.frame(1).hand(id))
+          this.emit('handLost', this.frame(1).hand(id));
           i--;
           len--;
         }
@@ -165,10 +165,6 @@ Each event also includes the hand object, which will be invalid for the handLost
   }
 
 }).call(this);
-
-
-
-
 
 
 /*
@@ -1533,7 +1529,7 @@ Recording.prototype = {
               player.setGraphic();
               player.idle();
             } else if (data.hands.length == 0) {
-              if (player.userHasControl) {
+              if (player.userHasControl && player.resumeOnHandLost) {
                 player.userHasControl = false;
                 player.controller.emit('playback.userReleaseControl');
                 player.setGraphic('wave');
@@ -1748,7 +1744,7 @@ Recording.prototype = {
       this.controller.connection.removeAllListeners('frame');
       this.controller.connection.on('frame', function (frame) {
         // resume play when hands are removed:
-        if (player.autoPlay && player.state == 'idle' && frame.hands.length == 0) {
+        if (player.resumeOnHandLost && player.autoPlay && player.state == 'idle' && frame.hands.length == 0) {
           player.play();
         }
 
@@ -1886,6 +1882,7 @@ Recording.prototype = {
   // - overlay: [boolean or DOM element] Whether or not to show the overlay: "Connect your Leap Motion Controller"
   //            if a DOM element is passed, that will be shown/hidden instead of the default message.
   // - pauseOnHand: [boolean true] Whether to stop playback when a hand is in field of view
+  // - resumeOnHandLost: [boolean true] Whether to resume playback after the hand leaves the frame
   // - requiredProtocolVersion: clients connected with a lower protocol number will not be able to take control of the
   // - timeBetweenLoops: [number, ms] delay between looping playback
   // controller with their device.  This option, if set, ovverrides autoPlay
@@ -1897,6 +1894,9 @@ Recording.prototype = {
 
     var pauseOnHand = scope.pauseOnHand;
     if (pauseOnHand === undefined) pauseOnHand = true;
+
+    var resumeOnHandLost = scope.resumeOnHandLost;
+    if (resumeOnHandLost === undefined) resumeOnHandLost = true;
 
     var timeBetweenLoops = scope.timeBetweenLoops;
     if (timeBetweenLoops === undefined) timeBetweenLoops = 50;
@@ -1945,6 +1945,7 @@ Recording.prototype = {
     // this is the controller
     scope.player.overlay = overlay;
     scope.player.pauseOnHand = pauseOnHand;
+    scope.player.resumeOnHandLost = resumeOnHandLost;
     scope.player.requiredProtocolVersion = requiredProtocolVersion;
     scope.player.autoPlay = autoPlay;
 
