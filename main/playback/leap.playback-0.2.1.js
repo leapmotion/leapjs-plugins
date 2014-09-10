@@ -1,4 +1,5 @@
 
+
 /*
  * LeapJS Playback - v0.2.1 - 2014-05-14
  * http://github.com/leapmotion/leapjs-playback/
@@ -1627,7 +1628,7 @@ Recording.prototype = {
 
         if (player.autoPlay) {
           player.play();
-          if (player.pauseOnHand && !controller.streaming() ) {
+          if (player.pauseOnHand && !player.controller.streaming() ) {
             player.setGraphic('connect');
           }
         }

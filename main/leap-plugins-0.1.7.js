@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.7 - 2014-08-26    
+ * LeapJS-Plugins  - v0.1.7 - 2014-09-09    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -1796,7 +1796,7 @@ Recording.prototype = {
 
         if (player.autoPlay) {
           player.play();
-          if (player.pauseOnHand && !controller.streaming() ) {
+          if (player.pauseOnHand && !player.controller.streaming() ) {
             player.setGraphic('connect');
           }
         }
