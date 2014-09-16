@@ -3,29 +3,31 @@
   var handHold;
 
   handHold = function() {
-    var dataMethod, frameObjectData;
-    frameObjectData = {};
-    dataMethod = function(hashOrKey, value) {
-      var key, objectData, _name;
-      objectData = frameObjectData[_name = this.id] || (frameObjectData[_name] = []);
-      if (value && (value["default"] === void 0)) {
-        return objectData[hashOrKey] = value;
-      } else if (toString.call(hashOrKey) === '[object String]') {
-        if (!objectData[hashOrKey] && (value && value["default"])) {
-          return objectData[hashOrKey] = value["default"];
+    var dataFn, interFrameData;
+    interFrameData = {};
+    dataFn = function(prefix, hashOrKey, value) {
+      var dict, key, _name, _results;
+      interFrameData[_name = prefix + this.id] || (interFrameData[_name] = []);
+      dict = interFrameData[prefix + this.id];
+      if (value !== void 0) {
+        return dict[hashOrKey] = value;
+      } else if ({}.toString.call(hashOrKey) === '[object String]') {
+        if (!dict[hashOrKey] && (value && value["default"])) {
+          return dict[hashOrKey] = value["default"];
         } else {
-          return objectData[hashOrKey];
+          return dict[hashOrKey];
         }
       } else {
+        _results = [];
         for (key in hashOrKey) {
           value = hashOrKey[key];
           if (value === void 0) {
-            delete objectData[key];
+            _results.push(delete dict[key]);
           } else {
-            objectData[key] = value;
+            _results.push(dict[key] = value);
           }
         }
-        return hashOrKey;
+        return _results;
       }
     };
     return {
@@ -33,7 +35,9 @@
         data: dataMethod
       },
       hand: {
-        data: dataMethod,
+        data: function(hashOrKey, value) {
+          return dataFn.call(this, 'h', hashOrKey, value);
+        },
         hold: function(object) {
           if (object) {
             return this.data({
@@ -64,6 +68,11 @@
           if (getHover = this.data('getHover')) {
             return this._hovering || (this._hovering = getHover.call(this));
           }
+        }
+      },
+      pointable: {
+        data: function(hashOrKey, value) {
+          return dataFn.call(this, 'p', hashOrKey, value);
         }
       }
     };

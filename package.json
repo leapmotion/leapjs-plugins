@@ -1,12 +1,13 @@
 {
   "name": "leapjs-plugins",
-  "version": "0.1.4",
+  "version": "0.1.7",
   "description": "A collection of useful plugins for LeapJS",
-  "main": "main/leapjs-plugins-0.1.3.js",
+  "main": "main/leapjs-plugins-0.7.js",
   "dependencies": {},
   "devDependencies": {
     "coffee-script": ">=1.7.1",
     "execSync": "^1.0.1-pre",
+    "grunt-string-replace": "~0.2.7",
     "grunt": "~0.4.2",
     "grunt-banner": "git://github.com/pehrlich/grunt-banner.git",
     "grunt-bump": "0.0.13",

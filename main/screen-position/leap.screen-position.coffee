@@ -63,11 +63,11 @@ screenPosition = (options = {})->
     hand: {
       # screenPosition will use the stabilized position by default, or allow any array of [x,y,z] to be passed in.
       screenPosition: (vec3)->
-        position.call(@, vec3 || @stabilizedPalmPosition, !vec3)
+        position.call(@, vec3 || @palmPosition, !vec3)
     }
     pointable: {
       screenPosition: (vec3)->
-        position.call(@, vec3 || @stabilizedTipPosition, !vec3)
+        position.call(@, vec3 || @tipPosition, !vec3)
     }
   }
 

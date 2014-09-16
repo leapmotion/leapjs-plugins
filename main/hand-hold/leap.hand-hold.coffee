@@ -1,38 +1,29 @@
 handHold = ->
-  # holds keys of <handId> or <handId>-<pointableId>
-  frameObjectData = {}
+  interFrameData = {}
 
-  dataMethod = (hashOrKey, value)->
-    # fingerIDs and handIDs don't overlap
-    objectData = frameObjectData[@id] ||= []
+  # like jQuery: accepts a hash to set, or a key and value to set, or a key to read.
+  dataFn = (prefix, hashOrKey, value)->
+    interFrameData[prefix + @id] ||= []
+    dict = interFrameData[prefix + @id]
 
-    if value && (value.default == undefined)
+    if value != undefined
+      dict[hashOrKey] = value
 
-      objectData[hashOrKey] = value
+    else if( ({}).toString.call(hashOrKey) == '[object String]')
 
-    # .call here allows robustness for objects without toString.
-    else if(toString.call(hashOrKey) == '[object String]')
+      if !dict[hashOrKey] && (value && value.default)
+         return dict[hashOrKey] = value.default
+       else
+         return dict[hashOrKey]
 
-      if !objectData[hashOrKey] && (value && value.default)
-        return objectData[hashOrKey] = value.default
-      else
-        return objectData[hashOrKey]
-
-    else # object passed in to be set
-
+    else
       for key, value of hashOrKey
         if value == undefined
-          delete objectData[key]
+          delete dict[key]
         else
-          objectData[key] = value
-
-      return hashOrKey
+          dict[key] = value
 
   {
-    pointable: {
-      data: dataMethod
-    }
-
     hand: {
       # like jQuery: accepts a hash to set, or a key and value to set, or a key to read.
       #
@@ -51,7 +42,9 @@ handHold = ->
       # value will be stored after first call with default:
       # otherHand.data('color')
       # -> 'green'
-      data: dataMethod
+      data: (hashOrKey, value)->
+        dataFn.call(this, 'h', hashOrKey, value)
+      ,
 
       # Give the hand an object to hold, which will be returned by .holding()
       # if no object is passed, the hand will try and hold whatever it is hovering over.
@@ -80,7 +73,10 @@ handHold = ->
           @_hovering ||= getHover.call(this)
 
     }
-
+    pointable: {
+      data: (hashOrKey, value)->
+        dataFn.call(this, 'p', hashOrKey, value)
+    }
   }
 
 if (typeof Leap != 'undefined') && Leap.Controller

@@ -5,15 +5,22 @@ This repository holds a collection of independent plugins which extend the funct
 
 **`leap-plugins.js`** is a collection of amazing plugins to get you started quickly.
 
- - **Hand Entry** Emit events when a hand enters of leaves the field of view.
- - **Hand Hold** Attach user-data to frame objects, such as hands or fingers.
- - **Screen Position** Get the on-screen position of any point in Leap-space.
- - **Version Check** Ensure a minimum protocol version when running your app.
- - **Playback** Demo or test your app run with pre-recorded frames.
+ - **[Hand Entry](http://leapmotion.github.io/leapjs-plugins/docs/#hand-entry)** Emit events when a hand enters of leaves the field of view.
+ - **[Hand Hold](http://leapmotion.github.io/leapjs-plugins/docs/#hand-hold)** Save data on to hands or fingers which will be persisted between frames.
+ - **[Screen Position](http://leapmotion.github.io/leapjs-plugins/docs/#screen-position)** Get the on-screen position of any point in Leap-space.
+ - **[Version Check](http://leapmotion.github.io/leapjs-plugins/docs/#version-check)** Ensure a minimum protocol version when running your app.
+ - **[Playback](http://leapmotion.github.io/leapjs-plugins/docs/#playback)** Record hand-data from the Leap, compress it, and use it to animate your app.
 
 **`leap-plugins-extras.js`** explores what can be done with LeapJS Plugins.
 
- - **Proximity Alert** Explore the interaction box with audio feedback.
+ - **[Proximity Alert](http://labs.leapmotion.com/proximity-alert-building-audio-feedback-with-a-new-leapjs-plugin/)** Explore the interaction box with audio feedback.
+ 
+**Other libraries** 
+ - **[Rigged Hand](https://github.com/leapmotion/leapjs-rigged-hand)** Easily add virtual 3d hands to any web page with THREE.js.
+
+## Download
+
+[developer.leapmotion.com/downloads/javascript#plugins](https://developer.leapmotion.com/downloads/javascript#plugins)
 
 ## Usage
 
@@ -35,6 +42,17 @@ See [hand-entry](http://leapmotion.github.io/leapjs-plugins/docs/index.html#hand
  - Each plugin is individually documented, with demo, on the gh-pages [docs site](http://leapmotion.github.io/leapjs-plugins/docs/).
  - See [making plugins](http://github.com/leapmotion/leapjs/wiki/plugins) on the leapjs wiki.
 
+
+## Examples
+
+Examples are available on the [developer gallery](http://developer.leapmotion.com/gallery/tags/javascript) live editor
+and in subfolders here of individual plugins.
+
+To run them on localhost, you'll need a web server to resolve asset paths.
+
+```bash
+> python -m SimpleHTTPServer
+```
 
 
 Contributing

@@ -33,7 +33,7 @@ Each event also includes the hand object, which will be invalid for the handLost
         if(  newValidHandIds.indexOf(id) == -1){
           activeHandIds.splice(i, 1);
           // this gets executed before the current frame is added to the history.
-          this.emit('handLost', this.frame(1).hand(id))
+          this.emit('handLost', this.frame(1).hand(id));
           i--;
           len--;
         }

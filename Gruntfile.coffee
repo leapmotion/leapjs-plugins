@@ -39,6 +39,27 @@ module.exports = (grunt) ->
 
   grunt.initConfig
     pkg: grunt.file.readJSON("package.json")
+    
+    'string-replace':
+      main:
+        files: {
+          'main/': 'main/**/*.html'
+          './':    'bower.json'
+        }
+        options: {
+          replacements: [
+            # bower.json
+            {
+              pattern: /"version": ".*"/,
+              replacement: '"version": "<%= pkg.version %>"'
+            },
+            # examples
+            {
+              pattern: /leap-plugins.*\.js/,
+              replacement: filename + '.js'
+            }
+          ]
+        }
 
     coffee:
       main:
@@ -123,6 +144,7 @@ module.exports = (grunt) ->
   require('load-grunt-tasks')(grunt);
 
   grunt.registerTask "default", [
+    "string-replace",
     "coffee",
     "usebanner:coffeeMessagesMain",
     "usebanner:coffeeMessagesExtras",
