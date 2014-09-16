@@ -12,7 +12,11 @@
       if (value !== void 0) {
         return dict[hashOrKey] = value;
       } else if ({}.toString.call(hashOrKey) === '[object String]') {
-        return dict[hashOrKey];
+        if (!dict[hashOrKey] && (value && value["default"])) {
+          return dict[hashOrKey] = value["default"];
+        } else {
+          return dict[hashOrKey];
+        }
       } else {
         _results = [];
         for (key in hashOrKey) {
@@ -27,6 +31,9 @@
       }
     };
     return {
+      pointable: {
+        data: dataMethod
+      },
       hand: {
         data: function(hashOrKey, value) {
           return dataFn.call(this, 'h', hashOrKey, value);

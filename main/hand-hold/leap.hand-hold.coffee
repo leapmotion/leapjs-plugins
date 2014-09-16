@@ -11,7 +11,10 @@ handHold = ->
 
     else if( ({}).toString.call(hashOrKey) == '[object String]')
 
-      return dict[hashOrKey]
+      if !dict[hashOrKey] && (value && value.default)
+         return dict[hashOrKey] = value.default
+       else
+         return dict[hashOrKey]
 
     else
       for key, value of hashOrKey
@@ -19,6 +22,7 @@ handHold = ->
           delete dict[key]
         else
           dict[key] = value
+
   {
     hand: {
       # like jQuery: accepts a hash to set, or a key and value to set, or a key to read.

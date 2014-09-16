@@ -2,8 +2,17 @@ module.exports = (grunt) ->
 
   fs = require('fs');
 
+  sh = require('execSync');
 
   filename = "leap-plugins-<%= pkg.version %>"
+
+  result = sh.exec('git rev-parse --abbrev-ref HEAD')
+  if result.code == 0
+    branch = result.stdout.replace('\n', '')
+    console.log 'branch:', branch
+    unless branch == 'master'
+      filename += "-#{branch}"
+
   banner = (project)->
      '/*
     \n * LeapJS-Plugins ' + project + ' - v<%= pkg.version %> - <%= grunt.template.today(\"yyyy-mm-dd\") %>

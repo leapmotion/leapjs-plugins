@@ -6,14 +6,15 @@
   "dependencies": {},
   "devDependencies": {
     "coffee-script": ">=1.7.1",
+    "execSync": "^1.0.1-pre",
+    "grunt-string-replace": "~0.2.7",
+    "grunt": "~0.4.2",
+    "grunt-banner": "git://github.com/pehrlich/grunt-banner.git",
+    "grunt-bump": "0.0.13",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-coffee": "~0.8.2",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-uglify": "~0.3.2",
-    "grunt-contrib-coffee": "~0.8.2",
-    "grunt-string-replace": "~0.2.7",
-    "grunt-banner": "git://github.com/pehrlich/grunt-banner.git",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt": "~0.4.2",
-    "grunt-bump": "0.0.13",
     "load-grunt-tasks": "~0.4.0"
   },
   "repository": {
