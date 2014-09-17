@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.7 - 2014-09-09    
+ * LeapJS-Plugins  - v0.1.7 - 2014-09-17    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -165,6 +165,7 @@ Each event also includes the hand object, which will be invalid for the handLost
   }
 
 }).call(this);
+
 
 
 
@@ -2168,7 +2169,7 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           finger = _ref[_i];
-          transformPositions(matrix, finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.tipPosition);
+          transformPositions(matrix, finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.distal.nextJoint, finger.tipPosition);
           _results.push(transformDirections(matrix, finger.direction));
         }
         return _results;

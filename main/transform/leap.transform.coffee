@@ -97,6 +97,7 @@ Leap.plugin 'transform', (scope = {})->
           finger.mcpPosition,
           finger.pipPosition,
           finger.dipPosition,
+          finger.distal.nextJoint,
           finger.tipPosition
         )
         transformDirections(
