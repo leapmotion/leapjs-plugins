@@ -1,6 +1,16 @@
-var LeapDataPlotter, TimeSeries;
+// this allows RequireJS without necessitating it.
+// see http://bob.yexley.net/umd-javascript-that-runs-anywhere/
+(function (root, factory) {
 
-(function () {
+  if (typeof define === "function" && define.amd) {
+    define([], factory);
+  } else {
+    root.LeapDataPlotter = factory();
+  }
+
+}(this, function () {
+
+  var LeapDataPlotter, TimeSeries;
 
   var colors = ['#900', '#090', '#009', '#990', '#909', '#099'];
   var colorIndex = 0;
@@ -205,5 +215,6 @@ var LeapDataPlotter, TimeSeries;
     this.max = max;
   }
 
+  return LeapDataPlotter;
 
-}());
+}));
