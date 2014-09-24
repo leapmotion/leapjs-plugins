@@ -1,5 +1,8 @@
 module.exports = (grunt) ->
 
+  fs = require('fs');
+
+
   filename = "leap-plugins-<%= pkg.version %>"
   banner = (project)->
      '/*
@@ -27,6 +30,27 @@ module.exports = (grunt) ->
 
   grunt.initConfig
     pkg: grunt.file.readJSON("package.json")
+    
+    'string-replace':
+      main:
+        files: {
+          'main/': 'main/**/*.html'
+          './':    'bower.json'
+        }
+        options: {
+          replacements: [
+            # bower.json
+            {
+              pattern: /"version": ".*"/,
+              replacement: '"version": "<%= pkg.version %>"'
+            },
+            # examples
+            {
+              pattern: /leap-plugins.*\.js/,
+              replacement: filename + '.js'
+            }
+          ]
+        }
 
     coffee:
       main:
@@ -51,11 +75,21 @@ module.exports = (grunt) ->
     usebanner:
       coffeeMessagesMain:
         options:
-          banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
+          banner: (file) ->
+            coffeePath = file.replace('.js', '.coffee')
+            if fs.existsSync(coffeePath)
+              "//CoffeeScript generated from #{coffeePath}"
+            else
+              ''
         src: "main/**/*.js"
       coffeeMessagesExtras:
         options:
-          banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
+          banner: (file) ->
+            coffeePath = file.replace('.js', '.coffee')
+            if fs.existsSync(coffeePath)
+              "//CoffeeScript generated from #{coffeePath}"
+            else
+              ''
         src: "extras/**/*.js"
 
       licenseMain:
@@ -109,6 +143,7 @@ module.exports = (grunt) ->
   require('load-grunt-tasks')(grunt);
 
   grunt.registerTask "default", [
+    "string-replace",
     "coffee",
 #    "usebanner:coffeeMessagesMain",
 #    "usebanner:coffeeMessagesExtras",

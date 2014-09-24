@@ -13,10 +13,13 @@ versionCheck = (scope)->
     current = @connection.opts.requestProtocolVersion
 
     if current < required
-      console.warn "Protocol Version too old. v#{required} required, v#{current} available."
+      message = "Protocol Version too old. v#{required} required, v#{current} available."
 
       if scope.disconnect
         @disconnect()
+        message += " Disconnecting."
+
+      console.warn message
 
       if scope.alert
         alert("Your Leap Software version is out of date.  Visit http://www.leapmotion.com/setup to update")
