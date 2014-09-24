@@ -11,9 +11,9 @@ This repository holds a collection of independent plugins which extend the funct
  - **[Version Check](http://leapmotion.github.io/leapjs-plugins/docs/#version-check)** Ensure a minimum protocol version when running your app.
  - **[Playback](http://leapmotion.github.io/leapjs-plugins/docs/#playback)** Record hand-data from the Leap, compress it, and use it to animate your app.
 
-**`leap-plugins-extras.js`** explores what can be done with LeapJS Plugins.
+**`leap-plugins-utils.js`** explores what can be done with LeapJS Plugins.
 
- - **[LeapDataPlotter](http://leapmotion.github.io/leapjs-plugins/extras/data-plotter/)** Allows super trivial plotting of streaming data.
+ - **[LeapDataPlotter](http://leapmotion.github.io/leapjs-plugins/utils/data-plotter/)** Allows super trivial plotting of streaming data.
  
 **Other libraries** 
  - **[Rigged Hand](https://github.com/leapmotion/leapjs-rigged-hand)** Easily add virtual 3d hands to any web page with THREE.js.
