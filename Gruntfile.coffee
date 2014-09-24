@@ -62,12 +62,12 @@ module.exports = (grunt) ->
           rename: (task, path, options)->
             task + path.replace('.coffee', '.js')
         }]
-      extras:
+      utils:
         files: [{
           expand: true
-          cwd: 'extras/'
+          cwd: 'util/'
           src: '**/*.coffee'
-          dest: 'extras/'
+          dest: 'utils/'
           rename: (task, path, options)->
             task + path.replace('.coffee', '.js')
         }]
@@ -82,7 +82,7 @@ module.exports = (grunt) ->
             else
               ''
         src: "main/**/*.js"
-      coffeeMessagesExtras:
+      coffeeMessagesUtils:
         options:
           banner: (file) ->
             coffeePath = file.replace('.js', '.coffee')
@@ -90,13 +90,13 @@ module.exports = (grunt) ->
               "//CoffeeScript generated from #{coffeePath}"
             else
               ''
-        src: "extras/**/*.js"
+        src: "utils/**/*.js"
 
       licenseMain:
         options:
           banner: banner('')
         src: "main/#{filename}.js"
-      licenseExtras:
+      licenseUtils:
         options:
           banner: banner('Extra')
         src: "exras/#{filename}.js"
@@ -104,16 +104,16 @@ module.exports = (grunt) ->
     clean:
       main:
         src: ["main/leap-plugins-*.js"]
-      extras:
-        src: ["extras/leap-plugins-*.js"]
+      utils:
+        src: ["utils/leap-plugins-*.js"]
 
     concat:
       main:
         src: 'main/**/*.js'
         dest: "main/#{filename}.js"
-      extras:
-        src: 'extras/**/*.js'
-        dest: "extras/#{filename}-extras.js"
+      utils:
+        src: 'utils/**/*.js'
+        dest: "utils/#{filename}-utils.js"
 
     browserify:
       main:
@@ -129,11 +129,11 @@ module.exports = (grunt) ->
            banner: banner('')
         src: "main/#{filename}.js"
         dest: "main/#{filename}.min.js"
-      extras:
+      utils:
         options:
           banner: banner('Extra')
-        src: "extras/#{filename}-extras.js"
-        dest: "extras/#{filename}-extras.min.js"
+        src: "utils/#{filename}-utils.js"
+        dest: "utils/#{filename}-utils.min.js"
 
     bump:
       options:
@@ -145,11 +145,11 @@ module.exports = (grunt) ->
   grunt.registerTask "default", [
     "string-replace",
     "coffee",
-#    "usebanner:coffeeMessagesMain",
-#    "usebanner:coffeeMessagesExtras",
+    "usebanner:coffeeMessagesMain",
+    "usebanner:coffeeMessagesUtils",
     "clean",
     "concat",
     "usebanner:licenseMain",
-    "usebanner:licenseExtras",
+    "usebanner:licenseUtils",
     "uglify"
   ]
