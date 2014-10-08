@@ -110,7 +110,7 @@
 
 <pre>
 <code style="width: 500px;">
-  // call this once per page
+  // call this once per page, after the DOM is ready.
   window.plotter = new LeapDataPlotter();
 
 
@@ -132,7 +132,7 @@
     });
 
 
-    // call these once per frame
+    // call this once per frame
     plotter.update()
 
   });
