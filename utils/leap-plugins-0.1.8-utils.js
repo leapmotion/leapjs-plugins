@@ -1,7 +1,5 @@
 
 
-
-
 // this allows RequireJS without necessitating it.
 // see http://bob.yexley.net/umd-javascript-that-runs-anywhere/
 (function (root, factory) {

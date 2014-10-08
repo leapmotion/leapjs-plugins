@@ -1,3 +1,8 @@
+# 0.1.8
+ - Add LeapDataPlotter utility
+ - Fix issue where bone tip position would not be transformed.
+ - Fix issue where playback would require globally accessible controller.
+
 # 0.1.7
  - Transform plugin
  - resumeOnHandLost option added to playback
