@@ -12,7 +12,10 @@ Each event also includes the hand object, which will be invalid for the handLost
   handEntry = function() {
     var activeHandIds;
     activeHandIds = [];
-    this.on("deviceDisconnected", function() {
+    if (Leap.version.major === 0 && Leap.version.minor < 5) {
+      console.warn("The hand entry plugin requires LeapJS 0.5.0 or newer.");
+    }
+    this.on("deviceStopped", function() {
       for (var i = 0, len = activeHandIds.length; i < len; i++){
       id = activeHandIds[i];
       activeHandIds.splice(i, 1);

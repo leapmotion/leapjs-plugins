@@ -1,4 +1,7 @@
 
+
+
+
 // this allows RequireJS without necessitating it.
 // see http://bob.yexley.net/umd-javascript-that-runs-anywhere/
 (function (root, factory) {
@@ -83,17 +86,22 @@
   // - name: name of the plot
   // - precision: how many decimals to show (for max, min, current value)
   LeapDataPlotter.prototype.plot = function (id, data, opts) {
+    console.assert(data, "No plotting data received");
+
     if (data.length) {
 
       for (var i = 0, c = 120; i < data.length; i++, c=++c>122?97:c) {
-        this.getTimeSeries( id + '.' + String.fromCharCode(c), opts ).push( data[i] );
+        this.getTimeSeries( id + '.' + String.fromCharCode(c), opts )
+          .push( data[i], {pointColor: opts.pointColor} );
       }
 
     } else {
 
-      this.getTimeSeries(id, opts).push(data);
+      this.getTimeSeries(id, opts)
+        .push(data, {pointColor: opts.pointColor});
 
     }
+
   }
 
   LeapDataPlotter.prototype.getTimeSeries = function (id, opts) {
@@ -150,7 +158,6 @@
     this.y = opts.y || 0;
     this.precision = opts.precision || 5;
     this.units = opts.units || '';
-    console.log('widht received', opts.width);
     this.width = opts.width || 1000;
     this.height = opts.height || 50;
     this.length = opts.length || 600;
@@ -161,14 +168,26 @@
     this.max = -Infinity;
     this.min = Infinity;
     this.data = [];
+    this.pointColors = [];
   }
 
-  TimeSeries.prototype.push = function (value) {
+  TimeSeries.prototype.push = function (value, opts) {
     this.data.push(value);
 
     if (this.data.length >= this.length) {
       this.data.shift();
     }
+
+    if (opts && opts.pointColor){
+      this.pointColors.push(opts.pointColor);
+
+      // note: this can get out of sync if a point color is not set for every point.
+      if (this.pointColors.length >= this.length) {
+        this.pointColors.shift();
+      }
+    }
+
+    return this;
   }
 
   TimeSeries.prototype.draw = function (context) {
@@ -197,6 +216,12 @@
         context.beginPath();
       } else {
         context.lineTo(i * xScale, (d - self.min) * yScale);
+        if (self.pointColors[i] && (self.pointColors[i] != self.pointColors[i - 1]) ){
+          context.stroke();
+          context.strokeStyle = self.pointColors[i];
+          context.beginPath();
+          context.lineTo(i * xScale, (d - self.min) * yScale);
+        }
       }
     });
     context.stroke();
