@@ -89,7 +89,6 @@ Leap.plugin 'transform', (scope = {})->
         hand.palmVelocity,
       )
 
-      # todo: add bone bases when they enter the API.
       for finger in hand.fingers
         transformPositions(
           matrix,
@@ -104,5 +103,19 @@ Leap.plugin 'transform', (scope = {})->
           matrix,
           finger.direction
         )
+
+        # recalculate lengths
+        len = Leap.vec3.create()
+        Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition)
+        finger.metacarpal.length = Leap.vec3.length(len)
+
+        Leap.vec3.sub(len, finger.pipPosition, finger.mcpPosition)
+        finger.proximal.length = Leap.vec3.length(len)
+
+        Leap.vec3.sub(len, finger.dipPosition, finger.pipPosition)
+        finger.medial.length = Leap.vec3.length(len)
+
+        Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition)
+        finger.distal.length = Leap.vec3.length(len)
 
   }
