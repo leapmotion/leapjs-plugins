@@ -172,7 +172,6 @@ Each event also includes the hand object, which will be invalid for the handLost
 
 
 
-
 /*
  * LeapJS Playback - v0.2.1 - 2014-05-14
  * http://github.com/leapmotion/leapjs-playback/
@@ -2115,6 +2114,9 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
           _matrix.makeRotationFromQuaternion(typeof scope.quaternion === 'function' ? scope.quaternion(hand) : scope.quaternion);
         }
         if (scope.scale) {
+          if (!isNaN(scope.scale)) {
+            scope.scale = new THREE.Vector3(scope.scale, scope.scale, scope.scale);
+          }
           _matrix.scale(typeof scope.scale === 'function' ? scope.scale(hand) : scope.scale);
         }
         if (scope.position) {

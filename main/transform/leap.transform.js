@@ -24,6 +24,9 @@
           _matrix.makeRotationFromQuaternion(typeof scope.quaternion === 'function' ? scope.quaternion(hand) : scope.quaternion);
         }
         if (scope.scale) {
+          if (!isNaN(scope.scale)) {
+            scope.scale = new THREE.Vector3(scope.scale, scope.scale, scope.scale);
+          }
           _matrix.scale(typeof scope.scale === 'function' ? scope.scale(hand) : scope.scale);
         }
         if (scope.position) {

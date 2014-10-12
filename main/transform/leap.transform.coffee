@@ -6,7 +6,7 @@
 # transform: a THREE.Matrix4 directly.  This can be either an array of 16-length, or a THREE.matrix4
 # quaternion:  a THREE.Quaternion
 # position:  a THREE.Vector3
-# scale:  a THREE.Vector3
+# scale:  a THREE.Vector3 or a number.
 
 
 Leap.plugin 'transform', (scope = {})->
@@ -32,6 +32,9 @@ Leap.plugin 'transform', (scope = {})->
         )
 
       if scope.scale
+        if !isNaN(scope.scale)
+          scope.scale = new THREE.Vector3(scope.scale, scope.scale, scope.scale)
+
         _matrix.scale(
           if typeof scope.scale == 'function'      then scope.scale(hand)      else scope.scale
         )
