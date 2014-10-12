@@ -85,6 +85,8 @@
   LeapDataPlotter.prototype.plot = function (id, data, opts) {
     console.assert(data, "No plotting data received");
 
+    opts || (opts = {});
+
     if (data.length) {
 
       for (var i = 0, c = 120; i < data.length; i++, c=++c>122?97:c) {
