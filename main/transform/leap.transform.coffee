@@ -103,60 +103,65 @@ Leap.plugin 'transform', (scope = {})->
       if vec3 # some recordings may not have all fields
         transformMat4Implicit0(vec3, vec3, matrix)
 
+  transformWithMatrices = (hand, positionTransform, directionTransform) ->
+    transformPositions(
+      positionTransform,
+      hand.palmPosition,
+      hand.stabilizedPalmPosition,
+      hand.sphereCenter,
+      hand.arm.nextJoint,
+      hand.arm.prevJoint
+    )
+
+    transformDirections(
+      directionTransform,
+      hand.direction,
+      hand.palmNormal,
+      hand.palmVelocity,
+      hand.arm.basis[0],
+      hand.arm.basis[1],
+      hand.arm.basis[2]
+    )
+
+    for finger in hand.fingers
+      transformPositions(
+        positionTransform,
+        finger.carpPosition,
+        finger.mcpPosition,
+        finger.pipPosition,
+        finger.dipPosition,
+        finger.distal.nextJoint,
+        finger.tipPosition
+      )
+      transformDirections(
+        directionTransform,
+        finger.direction,
+        finger.metacarpal.basis[0],
+        finger.metacarpal.basis[1],
+        finger.metacarpal.basis[2],
+        finger.proximal.basis[0],
+        finger.proximal.basis[1],
+        finger.proximal.basis[2],
+        finger.medial.basis[0],
+        finger.medial.basis[1],
+        finger.medial.basis[2],
+        finger.distal.basis[0],
+        finger.distal.basis[1],
+        finger.distal.basis[2]
+      )
+
 
   {
     hand: (hand)->
-      positionTransform = scope.getPositionTransform(hand)
 
-      # used for unit vectors, has no scale
-      directionTransform = scope.getDirectionTransform(hand)
+      transformWithMatrices(hand, scope.getPositionTransform(hand), scope.getDirectionTransform(hand))
 
-      transformPositions(
-        positionTransform,
-        hand.palmPosition,
-        hand.stabilizedPalmPosition,
-        hand.sphereCenter,
-        hand.arm.nextJoint,
-        hand.arm.prevJoint
-      )
+      if scope.effectiveParent
+        # as long as parent doesn't have scale, we're good -.-
+        transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.matrixWorld.elements)
 
-      transformDirections(
-        directionTransform,
-        hand.direction,
-        hand.palmNormal,
-        hand.palmVelocity,
-        hand.arm.basis[0],
-        hand.arm.basis[1],
-        hand.arm.basis[2]
-      )
-
+      len = null
       for finger in hand.fingers
-        transformPositions(
-          positionTransform,
-          finger.carpPosition,
-          finger.mcpPosition,
-          finger.pipPosition,
-          finger.dipPosition,
-          finger.distal.nextJoint,
-          finger.tipPosition
-        )
-        transformDirections(
-          directionTransform,
-          finger.direction,
-          finger.metacarpal.basis[0],
-          finger.metacarpal.basis[1],
-          finger.metacarpal.basis[2],
-          finger.proximal.basis[0],
-          finger.proximal.basis[1],
-          finger.proximal.basis[2],
-          finger.medial.basis[0],
-          finger.medial.basis[1],
-          finger.medial.basis[2],
-          finger.distal.basis[0],
-          finger.distal.basis[1],
-          finger.distal.basis[2]
-        )
-
         # recalculate lengths
         len = Leap.vec3.create()
         Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition)
