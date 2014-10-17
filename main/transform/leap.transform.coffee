@@ -11,10 +11,12 @@
 
 Leap.plugin 'transform', (scope = {})->
   noop = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-  _matrix = new THREE.Matrix4
+  _positionTransform = new THREE.Matrix4
+  _directionTransform = new THREE.Matrix4
 
 
-  scope.getMatrix = (hand)->
+  # no scale
+  scope.getDirectionTransform = (hand)->
     if scope.transform
       matrix = if typeof scope.transform == 'function' then scope.transform(hand) else scope.transform
 
@@ -24,10 +26,38 @@ Leap.plugin 'transform', (scope = {})->
         return matrix
 
     else if scope.position || scope.quaternion || scope.scale
-      _matrix.set.apply(_matrix, noop)
+      _directionTransform.set.apply(_directionTransform, noop)
 
       if scope.quaternion
-        _matrix.makeRotationFromQuaternion(
+        _directionTransform.makeRotationFromQuaternion(
+          if typeof scope.quaternion == 'function' then scope.quaternion(hand) else scope.quaternion
+        )
+
+      if scope.position
+        _directionTransform.setPosition(
+          if typeof scope.position == 'function'   then scope.position(hand)   else scope.position
+        )
+
+      return _directionTransform.elements
+
+    else
+      return noop
+
+
+  scope.getPositionTransform = (hand)->
+    if scope.transform
+      matrix = if typeof scope.transform == 'function' then scope.transform(hand) else scope.transform
+
+      if window['THREE'] && matrix instanceof THREE.Matrix4
+        return matrix.elements
+      else
+        return matrix
+
+    else if scope.position || scope.quaternion || scope.scale
+      _positionTransform.set.apply(_positionTransform, noop)
+
+      if scope.quaternion
+        _positionTransform.makeRotationFromQuaternion(
           if typeof scope.quaternion == 'function' then scope.quaternion(hand) else scope.quaternion
         )
 
@@ -35,16 +65,16 @@ Leap.plugin 'transform', (scope = {})->
         if !isNaN(scope.scale)
           scope.scale = new THREE.Vector3(scope.scale, scope.scale, scope.scale)
 
-        _matrix.scale(
+        _positionTransform.scale(
           if typeof scope.scale == 'function'      then scope.scale(hand)      else scope.scale
         )
 
       if scope.position
-        _matrix.setPosition(
+        _positionTransform.setPosition(
           if typeof scope.position == 'function'   then scope.position(hand)   else scope.position
         )
 
-      return _matrix.elements
+      return _positionTransform.elements
 
     else
       return noop
@@ -76,17 +106,20 @@ Leap.plugin 'transform', (scope = {})->
 
   {
     hand: (hand)->
-      matrix = scope.getMatrix(hand)
+      positionTransform = scope.getPositionTransform(hand)
+
+      # used for unit vectors, has no scale
+      directionTransform = scope.getDirectionTransform(hand)
 
       transformPositions(
-        matrix,
+        positionTransform,
         hand.palmPosition,
         hand.stabilizedPalmPosition,
         hand.sphereCenter,
       )
 
       transformDirections(
-        matrix,
+        directionTransform,
         hand.direction,
         hand.palmNormal,
         hand.palmVelocity,
@@ -94,13 +127,17 @@ Leap.plugin 'transform', (scope = {})->
 
       for finger in hand.fingers
         transformPositions(
-          matrix,
+          positionTransform,
           finger.carpPosition,
           finger.mcpPosition,
           finger.pipPosition,
           finger.dipPosition,
           finger.distal.nextJoint,
-          finger.tipPosition,
+          finger.tipPosition
+        )
+        transformDirections(
+          directionTransform,
+          finger.direction,
           finger.metacarpal.basis[0],
           finger.metacarpal.basis[1],
           finger.metacarpal.basis[2],
@@ -113,10 +150,6 @@ Leap.plugin 'transform', (scope = {})->
           finger.distal.basis[0],
           finger.distal.basis[1],
           finger.distal.basis[2]
-        )
-        transformDirections(
-          matrix,
-          finger.direction
         )
 
         # recalculate lengths
