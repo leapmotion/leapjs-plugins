@@ -116,6 +116,8 @@ Leap.plugin 'transform', (scope = {})->
         hand.palmPosition,
         hand.stabilizedPalmPosition,
         hand.sphereCenter,
+        hand.arm.nextJoint,
+        hand.arm.prevJoint
       )
 
       transformDirections(
@@ -123,6 +125,9 @@ Leap.plugin 'transform', (scope = {})->
         hand.direction,
         hand.palmNormal,
         hand.palmVelocity,
+        hand.arm.basis[0],
+        hand.arm.basis[1],
+        hand.arm.basis[2]
       )
 
       for finger in hand.fingers
@@ -165,5 +170,8 @@ Leap.plugin 'transform', (scope = {})->
 
         Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition)
         finger.distal.length = Leap.vec3.length(len)
+
+      Leap.vec3.sub(len, hand.arm.prevJoint, hand.arm.nextJoint)
+      hand.arm.length = Leap.vec3.length(len)
 
   }

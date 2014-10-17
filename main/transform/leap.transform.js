@@ -100,13 +100,12 @@
     };
     return {
       hand: function(hand) {
-        var directionTransform, finger, len, positionTransform, _i, _len, _ref, _results;
+        var directionTransform, finger, len, positionTransform, _i, _len, _ref;
         positionTransform = scope.getPositionTransform(hand);
         directionTransform = scope.getDirectionTransform(hand);
-        transformPositions(positionTransform, hand.palmPosition, hand.stabilizedPalmPosition, hand.sphereCenter);
-        transformDirections(directionTransform, hand.direction, hand.palmNormal, hand.palmVelocity);
+        transformPositions(positionTransform, hand.palmPosition, hand.stabilizedPalmPosition, hand.sphereCenter, hand.arm.nextJoint, hand.arm.prevJoint);
+        transformDirections(directionTransform, hand.direction, hand.palmNormal, hand.palmVelocity, hand.arm.basis[0], hand.arm.basis[1], hand.arm.basis[2]);
         _ref = hand.fingers;
-        _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           finger = _ref[_i];
           transformPositions(positionTransform, finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.distal.nextJoint, finger.tipPosition);
@@ -119,9 +118,10 @@
           Leap.vec3.sub(len, finger.dipPosition, finger.pipPosition);
           finger.medial.length = Leap.vec3.length(len);
           Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition);
-          _results.push(finger.distal.length = Leap.vec3.length(len));
+          finger.distal.length = Leap.vec3.length(len);
         }
-        return _results;
+        Leap.vec3.sub(len, hand.arm.prevJoint, hand.arm.nextJoint);
+        return hand.arm.length = Leap.vec3.length(len);
       }
     };
   });
