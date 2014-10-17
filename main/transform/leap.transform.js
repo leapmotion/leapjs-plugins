@@ -85,7 +85,7 @@
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           finger = _ref[_i];
-          transformPositions(matrix, finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.distal.nextJoint, finger.tipPosition);
+          transformPositions(matrix, finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.distal.nextJoint, finger.tipPosition, finger.metacarpal.basis[0], finger.metacarpal.basis[1], finger.metacarpal.basis[2], finger.proximal.basis[0], finger.proximal.basis[1], finger.proximal.basis[2], finger.medial.basis[0], finger.medial.basis[1], finger.medial.basis[2], finger.distal.basis[0], finger.distal.basis[1], finger.distal.basis[2]);
           transformDirections(matrix, finger.direction);
           len = Leap.vec3.create();
           Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition);

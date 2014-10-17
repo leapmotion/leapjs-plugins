@@ -100,7 +100,19 @@ Leap.plugin 'transform', (scope = {})->
           finger.pipPosition,
           finger.dipPosition,
           finger.distal.nextJoint,
-          finger.tipPosition
+          finger.tipPosition,
+          finger.metacarpal.basis[0],
+          finger.metacarpal.basis[1],
+          finger.metacarpal.basis[2],
+          finger.proximal.basis[0],
+          finger.proximal.basis[1],
+          finger.proximal.basis[2],
+          finger.medial.basis[0],
+          finger.medial.basis[1],
+          finger.medial.basis[2],
+          finger.distal.basis[0],
+          finger.distal.basis[1],
+          finger.distal.basis[2]
         )
         transformDirections(
           matrix,
