@@ -1,0 +1,64 @@
+<html>
+<head>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.js"></script>
+  <script src="//js.leapmotion.com/leap-0.6.3.js"></script>
+  <script src="//js.leapmotion.com/leap-plugins-0.1.8.js"></script>
+  <script src="lib/OrbitControls.js"></script>
+
+  <script src="leap.bone-hand.js"></script>
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
+
+</head>
+<body>
+
+</body>
+
+<script>
+
+  // Set up plugins
+
+  Leap.loop()
+      .use('boneHand', {
+        targetEl: document.body,
+        opacity: 0.3,
+        jointColor: new THREE.Color(0xffffff),
+        arm: false
+      });
+
+
+  // Set up scene
+
+  var scene = Leap.loopController.plugins.boneHand.scene;
+  var camera = Leap.loopController.plugins.boneHand.camera;
+
+  var plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(80,80),
+    new THREE.MeshPhongMaterial({wireframe: false})
+  );
+
+
+  plane.scale.set(2,2,2);
+  plane.position.set(0,200,-100);
+
+  camera.lookAt( plane.position );
+
+  var lineGeometry = new THREE.Geometry();
+  lineGeometry.vertices.push( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, -300 ) );
+
+  scene.add(plane);
+
+  var axisHelper = new THREE.AxisHelper( 100 );
+  scene.add( axisHelper );
+
+  var controls = new THREE.OrbitControls( camera );
+
+
+
+</script>
+
+</html>
