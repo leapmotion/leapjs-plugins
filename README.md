@@ -10,6 +10,7 @@ This repository holds a collection of independent plugins which extend the funct
  - **[Screen Position](http://leapmotion.github.io/leapjs-plugins/docs/#screen-position)** Get the on-screen position of any point in Leap-space.
  - **[Version Check](http://leapmotion.github.io/leapjs-plugins/docs/#version-check)** Ensure a minimum protocol version when running your app.
  - **[Playback](http://leapmotion.github.io/leapjs-plugins/docs/#playback)** Record hand-data from the Leap, compress it, and use it to animate your app.
+ - **[Transform](http://leapmotion.github.io/leapjs-plugins/main/transform/)** Translate, rotate, and scale Leap Motion data. Easily.
 
 **`leap-plugins-utils.js`** explores what can be done with LeapJS Plugins.
 
@@ -58,7 +59,8 @@ To run them on localhost, you'll need a web server to resolve asset paths.
 Contributing
 ===============
 
- - See README_DOCS for building the documentation (its one command!).
+#### Read up on [Making Plugins](https://github.com/leapmotion/leapjs/wiki/Plugins#plugin-development), then:
+
  - Make a fork, name your branch, add your plugin or fix.
  - Add your name, email, and github account to the CONTRIBUTORS.txt list, thereby agreeing to the terms and conditions of the Contributor License Agreement.
  - Open a Pull Request. If your information is not in the CONTRIBUTORS file, your pull request will not be reviewed.

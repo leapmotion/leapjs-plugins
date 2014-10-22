@@ -109,7 +109,7 @@ module.exports = (grunt) ->
 
     concat:
       main:
-        src: 'main/**/*.js'
+        src: 'main/*/*.js'
         dest: "main/#{filename}.js"
       utils:
         src: 'utils/**/*.js'

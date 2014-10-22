@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.7 - 2014-09-23    
+ * LeapJS-Plugins  - v0.1.8 - 2014-10-21    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -18,6 +18,217 @@
  *    
  */    
 
+//CoffeeScript generated from main/bone-hand/leap.bone-hand.coffee
+(function() {
+  var baseBoneRotation, boneColor, boneHand, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, scope;
+
+  scope = null;
+
+  initScene = function(targetEl) {
+    var camera, directionalLight, height, render, renderer, width;
+    scope.scene = new THREE.Scene();
+    scope.renderer = renderer = new THREE.WebGLRenderer({
+      alpha: true
+    });
+    width = window.innerWidth;
+    height = window.innerHeight;
+    renderer.setClearColor(0x000000, 0);
+    renderer.setSize(width, height);
+    renderer.domElement.className = "leap-boneHand";
+    targetEl.appendChild(renderer.domElement);
+    directionalLight = directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(0, 0.5, 1);
+    scope.scene.add(directionalLight);
+    directionalLight = directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(0.5, -0.5, -1);
+    scope.scene.add(directionalLight);
+    directionalLight = directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(-0.5, 0, -0.2);
+    scope.scene.add(directionalLight);
+    scope.camera = camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
+    camera.position.fromArray([0, 300, 500]);
+    camera.lookAt(new THREE.Vector3(0, 160, 0));
+    scope.scene.add(camera);
+    renderer.render(scope.scene, camera);
+    window.addEventListener('resize', function() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+      return renderer.render(scope.scene, camera);
+    }, false);
+    render = function() {
+      renderer.render(scope.scene, camera);
+      return window.requestAnimationFrame(render);
+    };
+    return render();
+  };
+
+  baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0));
+
+  jointColor = (new THREE.Color).setHex(0x5daa00);
+
+  boneColor = (new THREE.Color).setHex(0xffffff);
+
+  boneScale = 1 / 6;
+
+  jointScale = 1 / 5;
+
+  boneRadius = null;
+
+  jointRadius = null;
+
+  material = null;
+
+  boneHand = function(hand) {
+    var armBones, armMesh, armTopAndBottomRotation, boneXOffset, halfArmLength, i, _i, _j;
+    if (!scope.scene) {
+      return;
+    }
+    hand.fingers.forEach(function(finger) {
+      var boneMeshes, jointMesh, jointMeshes;
+      boneMeshes = finger.data("boneMeshes");
+      jointMeshes = finger.data("jointMeshes");
+      if (!boneMeshes) {
+        boneMeshes = [];
+        jointMeshes = [];
+        material = !isNaN(scope.opacity) ? new THREE.MeshPhongMaterial({
+          transparent: true,
+          opacity: scope.opacity
+        }) : new THREE.MeshPhongMaterial();
+        boneRadius = hand.middleFinger.proximal.length * boneScale;
+        jointRadius = hand.middleFinger.proximal.length * jointScale;
+        if (!finger.bones) {
+          console.warn("error, no bones on", hand.id);
+          return;
+        }
+        finger.bones.forEach(function(bone) {
+          var boneMesh, jointMesh;
+          boneMesh = new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, bone.length, 32), material.clone());
+          boneMesh.material.color.copy(boneColor);
+          scope.scene.add(boneMesh);
+          boneMeshes.push(boneMesh);
+          jointMesh = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone());
+          jointMesh.material.color.copy(jointColor);
+          scope.scene.add(jointMesh);
+          return jointMeshes.push(jointMesh);
+        });
+        jointMesh = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone());
+        jointMesh.material.color.copy(jointColor);
+        scope.scene.add(jointMesh);
+        jointMeshes.push(jointMesh);
+        finger.data("boneMeshes", boneMeshes);
+        finger.data("jointMeshes", jointMeshes);
+      }
+      boneMeshes.forEach(function(mesh, i) {
+        var bone;
+        bone = finger.bones[i];
+        mesh.position.fromArray(bone.center());
+        mesh.setRotationFromMatrix((new THREE.Matrix4).fromArray(bone.matrix()));
+        return mesh.quaternion.multiply(baseBoneRotation);
+      });
+      return jointMeshes.forEach(function(mesh, i) {
+        var bone;
+        bone = finger.bones[i];
+        if (bone) {
+          return mesh.position.fromArray(bone.prevJoint);
+        } else {
+          bone = finger.bones[i - 1];
+          return mesh.position.fromArray(bone.nextJoint);
+        }
+      });
+    });
+    if (scope.arm) {
+      armMesh = hand.data('armMesh');
+      if (!armMesh) {
+        armMesh = new THREE.Object3D;
+        scope.scene.add(armMesh);
+        hand.data('armMesh', armMesh);
+        boneXOffset = (hand.arm.width / 2) - (boneRadius / 2);
+        halfArmLength = hand.arm.length / 2;
+        armBones = [];
+        for (i = _i = 0; _i <= 3; i = ++_i) {
+          armBones.push(new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, (i < 2 ? hand.arm.length : hand.arm.width), 32), material.clone()));
+          armBones[i].material.color.copy(boneColor);
+          armMesh.add(armBones[i]);
+        }
+        armBones[0].position.setX(boneXOffset);
+        armBones[1].position.setX(-boneXOffset);
+        armBones[2].position.setY(halfArmLength);
+        armBones[3].position.setY(-halfArmLength);
+        armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0, Math.PI / 2));
+        armBones[2].quaternion.multiply(armTopAndBottomRotation);
+        armBones[3].quaternion.multiply(armTopAndBottomRotation);
+        armBones = [];
+        for (i = _j = 0; _j <= 3; i = ++_j) {
+          armBones.push(new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone()));
+          armBones[i].material.color.copy(jointColor);
+          armMesh.add(armBones[i]);
+        }
+        armBones[0].position.set(-boneXOffset, halfArmLength, 0);
+        armBones[1].position.set(boneXOffset, halfArmLength, 0);
+        armBones[2].position.set(boneXOffset, -halfArmLength, 0);
+        armBones[3].position.set(-boneXOffset, -halfArmLength, 0);
+      }
+      armMesh.position.fromArray(hand.arm.center());
+      armMesh.setRotationFromMatrix((new THREE.Matrix4).fromArray(hand.arm.matrix()));
+      return armMesh.quaternion.multiply(baseBoneRotation);
+    }
+  };
+
+  boneHandLost = function(hand) {
+    var armMesh;
+    hand.fingers.forEach(function(finger) {
+      var boneMeshes, jointMeshes;
+      boneMeshes = finger.data("boneMeshes");
+      jointMeshes = finger.data("jointMeshes");
+      if (!boneMeshes) {
+        return;
+      }
+      boneMeshes.forEach(function(mesh) {
+        return scope.scene.remove(mesh);
+      });
+      jointMeshes.forEach(function(mesh) {
+        return scope.scene.remove(mesh);
+      });
+      finger.data({
+        boneMeshes: null
+      });
+      return finger.data({
+        jointMeshes: null
+      });
+    });
+    if (scope.arm) {
+      armMesh = hand.data('armMesh');
+      scope.scene.remove(armMesh);
+      return hand.data('armMesh', null);
+    }
+  };
+
+  Leap.plugin('boneHand', function(options) {
+    if (options == null) {
+      options = {};
+    }
+    scope = options;
+    scope.boneScale && (boneScale = scope.boneScale);
+    scope.jointScale && (jointScale = scope.jointScale);
+    scope.boneColor && (boneColor = scope.boneColor);
+    scope.jointColor && (jointColor = scope.jointColor);
+    this.use('handEntry');
+    this.use('handHold');
+    if (scope.scene === void 0) {
+      console.assert(scope.targetEl);
+      initScene(scope.targetEl);
+    }
+    this.on('handLost', boneHandLost);
+    return {
+      hand: boneHand
+    };
+  });
+
+}).call(this);
+
 //CoffeeScript generated from main/hand-entry/leap.hand-entry.coffee
 /*
 Emits controller events when a hand enters of leaves the frame
@@ -32,7 +243,10 @@ Each event also includes the hand object, which will be invalid for the handLost
   handEntry = function() {
     var activeHandIds;
     activeHandIds = [];
-    this.on("deviceDisconnected", function() {
+    if (Leap.version.major === 0 && Leap.version.minor < 5) {
+      console.warn("The hand entry plugin requires LeapJS 0.5.0 or newer.");
+    }
+    this.on("deviceStopped", function() {
       for (var i = 0, len = activeHandIds.length; i < len; i++){
       id = activeHandIds[i];
       activeHandIds.splice(i, 1);
@@ -165,6 +379,8 @@ Each event also includes the hand object, which will be invalid for the handLost
   }
 
 }).call(this);
+
+
 
 
 
@@ -2090,13 +2306,14 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
   var __slice = [].slice;
 
   Leap.plugin('transform', function(scope) {
-    var noop, transformDirections, transformMat4Implicit0, transformPositions, _matrix;
+    var noop, transformDirections, transformMat4Implicit0, transformPositions, transformWithMatrices, _directionTransform, _positionTransform;
     if (scope == null) {
       scope = {};
     }
     noop = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    _matrix = new THREE.Matrix4;
-    scope.getMatrix = function(hand) {
+    _positionTransform = new THREE.Matrix4;
+    _directionTransform = new THREE.Matrix4;
+    scope.getDirectionTransform = function(hand) {
       var matrix;
       if (scope.transform) {
         matrix = typeof scope.transform === 'function' ? scope.transform(hand) : scope.transform;
@@ -2106,17 +2323,42 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
           return matrix;
         }
       } else if (scope.position || scope.quaternion || scope.scale) {
-        _matrix.set.apply(_matrix, noop);
+        _directionTransform.set.apply(_directionTransform, noop);
         if (scope.quaternion) {
-          _matrix.makeRotationFromQuaternion(typeof scope.quaternion === 'function' ? scope.quaternion(hand) : scope.quaternion);
-        }
-        if (scope.scale) {
-          _matrix.scale(typeof scope.scale === 'function' ? scope.scale(hand) : scope.scale);
+          _directionTransform.makeRotationFromQuaternion(typeof scope.quaternion === 'function' ? scope.quaternion(hand) : scope.quaternion);
         }
         if (scope.position) {
-          _matrix.setPosition(typeof scope.position === 'function' ? scope.position(hand) : scope.position);
+          _directionTransform.setPosition(typeof scope.position === 'function' ? scope.position(hand) : scope.position);
         }
-        return _matrix.elements;
+        return _directionTransform.elements;
+      } else {
+        return noop;
+      }
+    };
+    scope.getPositionTransform = function(hand) {
+      var matrix;
+      if (scope.transform) {
+        matrix = typeof scope.transform === 'function' ? scope.transform(hand) : scope.transform;
+        if (window['THREE'] && matrix instanceof THREE.Matrix4) {
+          return matrix.elements;
+        } else {
+          return matrix;
+        }
+      } else if (scope.position || scope.quaternion || scope.scale) {
+        _positionTransform.set.apply(_positionTransform, noop);
+        if (scope.quaternion) {
+          _positionTransform.makeRotationFromQuaternion(typeof scope.quaternion === 'function' ? scope.quaternion(hand) : scope.quaternion);
+        }
+        if (scope.scale) {
+          if (!isNaN(scope.scale)) {
+            scope.scale = new THREE.Vector3(scope.scale, scope.scale, scope.scale);
+          }
+          _positionTransform.scale(typeof scope.scale === 'function' ? scope.scale(hand) : scope.scale);
+        }
+        if (scope.position) {
+          _positionTransform.setPosition(typeof scope.position === 'function' ? scope.position(hand) : scope.position);
+        }
+        return _positionTransform.elements;
       } else {
         return noop;
       }
@@ -2159,20 +2401,42 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
       }
       return _results;
     };
+    transformWithMatrices = function(hand, positionTransform, directionTransform) {
+      var finger, _i, _len, _ref, _results;
+      transformPositions(positionTransform, hand.palmPosition, hand.stabilizedPalmPosition, hand.sphereCenter, hand.arm.nextJoint, hand.arm.prevJoint);
+      transformDirections(directionTransform, hand.direction, hand.palmNormal, hand.palmVelocity, hand.arm.basis[0], hand.arm.basis[1], hand.arm.basis[2]);
+      _ref = hand.fingers;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        finger = _ref[_i];
+        transformPositions(positionTransform, finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.distal.nextJoint, finger.tipPosition);
+        _results.push(transformDirections(directionTransform, finger.direction, finger.metacarpal.basis[0], finger.metacarpal.basis[1], finger.metacarpal.basis[2], finger.proximal.basis[0], finger.proximal.basis[1], finger.proximal.basis[2], finger.medial.basis[0], finger.medial.basis[1], finger.medial.basis[2], finger.distal.basis[0], finger.distal.basis[1], finger.distal.basis[2]));
+      }
+      return _results;
+    };
     return {
       hand: function(hand) {
-        var finger, matrix, _i, _len, _ref, _results;
-        matrix = scope.getMatrix(hand);
-        transformPositions(matrix, hand.palmPosition, hand.stabilizedPalmPosition, hand.sphereCenter);
-        transformDirections(matrix, hand.direction, hand.palmNormal, hand.palmVelocity);
+        var finger, len, _i, _len, _ref;
+        transformWithMatrices(hand, scope.getPositionTransform(hand), scope.getDirectionTransform(hand));
+        if (scope.effectiveParent) {
+          transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.matrixWorld.elements);
+        }
+        len = null;
         _ref = hand.fingers;
-        _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           finger = _ref[_i];
-          transformPositions(matrix, finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.distal.nextJoint, finger.tipPosition);
-          _results.push(transformDirections(matrix, finger.direction));
+          len = Leap.vec3.create();
+          Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition);
+          finger.metacarpal.length = Leap.vec3.length(len);
+          Leap.vec3.sub(len, finger.pipPosition, finger.mcpPosition);
+          finger.proximal.length = Leap.vec3.length(len);
+          Leap.vec3.sub(len, finger.dipPosition, finger.pipPosition);
+          finger.medial.length = Leap.vec3.length(len);
+          Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition);
+          finger.distal.length = Leap.vec3.length(len);
         }
-        return _results;
+        Leap.vec3.sub(len, hand.arm.prevJoint, hand.arm.nextJoint);
+        return hand.arm.length = Leap.vec3.length(len);
       }
     };
   });

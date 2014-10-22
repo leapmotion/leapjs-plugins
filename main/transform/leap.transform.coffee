@@ -6,15 +6,17 @@
 # transform: a THREE.Matrix4 directly.  This can be either an array of 16-length, or a THREE.matrix4
 # quaternion:  a THREE.Quaternion
 # position:  a THREE.Vector3
-# scale:  a THREE.Vector3
+# scale:  a THREE.Vector3 or a number.
 
 
 Leap.plugin 'transform', (scope = {})->
   noop = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-  _matrix = new THREE.Matrix4
+  _positionTransform = new THREE.Matrix4
+  _directionTransform = new THREE.Matrix4
 
 
-  scope.getMatrix = (hand)->
+  # no scale
+  scope.getDirectionTransform = (hand)->
     if scope.transform
       matrix = if typeof scope.transform == 'function' then scope.transform(hand) else scope.transform
 
@@ -24,24 +26,55 @@ Leap.plugin 'transform', (scope = {})->
         return matrix
 
     else if scope.position || scope.quaternion || scope.scale
-      _matrix.set.apply(_matrix, noop)
+      _directionTransform.set.apply(_directionTransform, noop)
 
       if scope.quaternion
-        _matrix.makeRotationFromQuaternion(
+        _directionTransform.makeRotationFromQuaternion(
+          if typeof scope.quaternion == 'function' then scope.quaternion(hand) else scope.quaternion
+        )
+
+      if scope.position
+        _directionTransform.setPosition(
+          if typeof scope.position == 'function'   then scope.position(hand)   else scope.position
+        )
+
+      return _directionTransform.elements
+
+    else
+      return noop
+
+
+  scope.getPositionTransform = (hand)->
+    if scope.transform
+      matrix = if typeof scope.transform == 'function' then scope.transform(hand) else scope.transform
+
+      if window['THREE'] && matrix instanceof THREE.Matrix4
+        return matrix.elements
+      else
+        return matrix
+
+    else if scope.position || scope.quaternion || scope.scale
+      _positionTransform.set.apply(_positionTransform, noop)
+
+      if scope.quaternion
+        _positionTransform.makeRotationFromQuaternion(
           if typeof scope.quaternion == 'function' then scope.quaternion(hand) else scope.quaternion
         )
 
       if scope.scale
-        _matrix.scale(
+        if !isNaN(scope.scale)
+          scope.scale = new THREE.Vector3(scope.scale, scope.scale, scope.scale)
+
+        _positionTransform.scale(
           if typeof scope.scale == 'function'      then scope.scale(hand)      else scope.scale
         )
 
       if scope.position
-        _matrix.setPosition(
+        _positionTransform.setPosition(
           if typeof scope.position == 'function'   then scope.position(hand)   else scope.position
         )
 
-      return _matrix.elements
+      return _positionTransform.elements
 
     else
       return noop
@@ -70,39 +103,80 @@ Leap.plugin 'transform', (scope = {})->
       if vec3 # some recordings may not have all fields
         transformMat4Implicit0(vec3, vec3, matrix)
 
+  transformWithMatrices = (hand, positionTransform, directionTransform) ->
+    transformPositions(
+      positionTransform,
+      hand.palmPosition,
+      hand.stabilizedPalmPosition,
+      hand.sphereCenter,
+      hand.arm.nextJoint,
+      hand.arm.prevJoint
+    )
+
+    transformDirections(
+      directionTransform,
+      hand.direction,
+      hand.palmNormal,
+      hand.palmVelocity,
+      hand.arm.basis[0],
+      hand.arm.basis[1],
+      hand.arm.basis[2]
+    )
+
+    for finger in hand.fingers
+      transformPositions(
+        positionTransform,
+        finger.carpPosition,
+        finger.mcpPosition,
+        finger.pipPosition,
+        finger.dipPosition,
+        finger.distal.nextJoint,
+        finger.tipPosition
+      )
+      transformDirections(
+        directionTransform,
+        finger.direction,
+        finger.metacarpal.basis[0],
+        finger.metacarpal.basis[1],
+        finger.metacarpal.basis[2],
+        finger.proximal.basis[0],
+        finger.proximal.basis[1],
+        finger.proximal.basis[2],
+        finger.medial.basis[0],
+        finger.medial.basis[1],
+        finger.medial.basis[2],
+        finger.distal.basis[0],
+        finger.distal.basis[1],
+        finger.distal.basis[2]
+      )
+
 
   {
     hand: (hand)->
-      matrix = scope.getMatrix(hand)
 
-      transformPositions(
-        matrix,
-        hand.palmPosition,
-        hand.stabilizedPalmPosition,
-        hand.sphereCenter,
-      )
+      transformWithMatrices(hand, scope.getPositionTransform(hand), scope.getDirectionTransform(hand))
 
-      transformDirections(
-        matrix,
-        hand.direction,
-        hand.palmNormal,
-        hand.palmVelocity,
-      )
+      if scope.effectiveParent
+        # as long as parent doesn't have scale, we're good -.-
+        transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.matrixWorld.elements)
 
-      # todo: add bone bases when they enter the API.
+      len = null
       for finger in hand.fingers
-        transformPositions(
-          matrix,
-          finger.carpPosition,
-          finger.mcpPosition,
-          finger.pipPosition,
-          finger.dipPosition,
-          finger.distal.nextJoint,
-          finger.tipPosition
-        )
-        transformDirections(
-          matrix,
-          finger.direction
-        )
+        # recalculate lengths
+        len = Leap.vec3.create()
+        Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition)
+        finger.metacarpal.length = Leap.vec3.length(len)
+
+        Leap.vec3.sub(len, finger.pipPosition, finger.mcpPosition)
+        finger.proximal.length = Leap.vec3.length(len)
+
+        Leap.vec3.sub(len, finger.dipPosition, finger.pipPosition)
+        finger.medial.length = Leap.vec3.length(len)
+
+        Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition)
+        finger.distal.length = Leap.vec3.length(len)
+
+      Leap.vec3.sub(len, hand.arm.prevJoint, hand.arm.nextJoint)
+      hand.arm.length = Leap.vec3.length(len)
 
   }
