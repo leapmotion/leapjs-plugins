@@ -1,5 +1,5 @@
 # Allows arbitrary transforms to be easily applied to hands in the Leap Frame
-# This plugin doesn't require THREE.js, but will accept THREE.js Quaternions
+# This requires THREE.js
 
 # configuration:
 # if transform is set, all other properties will be ignored
@@ -10,15 +10,18 @@
 
 
 Leap.plugin 'transform', (scope = {})->
-  noop = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-  _positionTransform = new THREE.Matrix4
+  noop = [
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
+  ]
   _directionTransform = new THREE.Matrix4
 
-
   # no scale
-  scope.getDirectionTransform = (hand)->
-    if scope.transform
-      matrix = if typeof scope.transform == 'function' then scope.transform(hand) else scope.transform
+  scope.getTransform = (hand)->
+    if scope.matrix
+      matrix = if typeof scope.matrix == 'function' then scope.matrix(hand) else scope.matrix
 
       if window['THREE'] && matrix instanceof THREE.Matrix4
         return matrix.elements
@@ -44,41 +47,11 @@ Leap.plugin 'transform', (scope = {})->
       return noop
 
 
-  scope.getPositionTransform = (hand)->
-    if scope.transform
-      matrix = if typeof scope.transform == 'function' then scope.transform(hand) else scope.transform
+  scope.getScale  = (hand)->
+    if !isNaN(scope.scale)
+      scope.scale = new THREE.Vector3(scope.scale, scope.scale, scope.scale)
 
-      if window['THREE'] && matrix instanceof THREE.Matrix4
-        return matrix.elements
-      else
-        return matrix
-
-    else if scope.position || scope.quaternion || scope.scale
-      _positionTransform.set.apply(_positionTransform, noop)
-
-      if scope.quaternion
-        _positionTransform.makeRotationFromQuaternion(
-          if typeof scope.quaternion == 'function' then scope.quaternion(hand) else scope.quaternion
-        )
-
-      if scope.scale
-        if !isNaN(scope.scale)
-          scope.scale = new THREE.Vector3(scope.scale, scope.scale, scope.scale)
-
-        _positionTransform.scale(
-          if typeof scope.scale == 'function'      then scope.scale(hand)      else scope.scale
-        )
-
-      if scope.position
-        _positionTransform.setPosition(
-          if typeof scope.position == 'function'   then scope.position(hand)   else scope.position
-        )
-
-      return _positionTransform.elements
-
-    else
-      return noop
-
+    return if typeof scope.scale == 'function'      then scope.scale(hand)      else scope.scale
 
 
   # implicitly appends 1 to the vec3s, applying both translation and rotation
@@ -103,18 +76,10 @@ Leap.plugin 'transform', (scope = {})->
       if vec3 # some recordings may not have all fields
         transformMat4Implicit0(vec3, vec3, matrix)
 
-  transformWithMatrices = (hand, positionTransform, directionTransform) ->
-    transformPositions(
-      positionTransform,
-      hand.palmPosition,
-      hand.stabilizedPalmPosition,
-      hand.sphereCenter,
-      hand.arm.nextJoint,
-      hand.arm.prevJoint
-    )
-
+  # expects a hand, an array mat4 and an array scale.
+  transformWithMatrices = (hand, transform, scale) ->
     transformDirections(
-      directionTransform,
+      transform,
       hand.direction,
       hand.palmNormal,
       hand.palmVelocity,
@@ -124,17 +89,8 @@ Leap.plugin 'transform', (scope = {})->
     )
 
     for finger in hand.fingers
-      transformPositions(
-        positionTransform,
-        finger.carpPosition,
-        finger.mcpPosition,
-        finger.pipPosition,
-        finger.dipPosition,
-        finger.distal.nextJoint,
-        finger.tipPosition
-      )
       transformDirections(
-        directionTransform,
+        transform,
         finger.direction,
         finger.metacarpal.basis[0],
         finger.metacarpal.basis[1],
@@ -150,15 +106,42 @@ Leap.plugin 'transform', (scope = {})->
         finger.distal.basis[2]
       )
 
+    Leap.glMatrix.mat4.scale(transform, transform, scale)
+
+    transformPositions(
+      transform,
+      hand.palmPosition,
+      hand.stabilizedPalmPosition,
+      hand.sphereCenter,
+      hand.arm.nextJoint,
+      hand.arm.prevJoint
+    )
+
+    for finger in hand.fingers
+      transformPositions(
+        transform,
+        finger.carpPosition,
+        finger.mcpPosition,
+        finger.pipPosition,
+        finger.dipPosition,
+        finger.distal.nextJoint,
+        finger.tipPosition
+      )
+
+    scalarScale = ( scale[0] + scale[1] + scale[2] ) / 3;
+    hand.arm.width *= scalarScale
+
 
   {
     hand: (hand)->
 
-      transformWithMatrices(hand, scope.getPositionTransform(hand), scope.getDirectionTransform(hand))
+      transformWithMatrices(hand, scope.getTransform(hand), (scope.getScale(hand) || new THREE.Vector3(1,1,1)).toArray() )
 
       if scope.effectiveParent
-        # as long as parent doesn't have scale, we're good -.-
-        transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.matrixWorld.elements)
+        # as long as parent doesn't have scale, we're good.
+        # could refactor to extract scale from mat4 and do the two separately
+        # e.g., decompose in to pos/rot/scale, recompose from pos/rot/defaultScale
+        transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.scale.toArray())
 
       len = null
       for finger in hand.fingers
