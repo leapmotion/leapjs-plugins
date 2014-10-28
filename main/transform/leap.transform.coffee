@@ -18,6 +18,23 @@ Leap.plugin 'transform', (scope = {})->
   ]
   _directionTransform = new THREE.Matrix4
 
+  if scope.vr == true
+
+    # This matrix flips the x, y, and z axis.
+    scope.quaternion = (new THREE.Quaternion).setFromRotationMatrix(
+      (new THREE.Matrix4).set(
+        -1,  0,  0,  0,
+         0,  0, -1,  0,
+         0, -1,  0,  0,
+         0,  0,  0,  1
+      )
+    )
+
+    # Scales to meters.
+    scope.scale = 0.001
+
+    scope.position = new THREE.Vector3(0,0,-0.08)
+
   # no scale
   scope.getTransform = (hand)->
     if scope.matrix
