@@ -1,5 +1,3 @@
-
-
 // this allows RequireJS without necessitating it.
 // see http://bob.yexley.net/umd-javascript-that-runs-anywhere/
 (function (root, factory) {
@@ -84,7 +82,7 @@
   // - name: name of the plot
   // - precision: how many decimals to show (for max, min, current value)
   LeapDataPlotter.prototype.plot = function (id, data, opts) {
-    console.assert(!isNaN(data), "No plotting data received");
+//    console.assert(!isNaN(data), "No plotting data received");
 
     opts || (opts = {});
 

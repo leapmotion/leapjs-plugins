@@ -3,17 +3,22 @@
   var __slice = [].slice;
 
   Leap.plugin('transform', function(scope) {
-    var noop, transformDirections, transformMat4Implicit0, transformPositions, transformWithMatrices, _directionTransform, _positionTransform;
+    var noop, transformDirections, transformMat4Implicit0, transformPositions, transformWithMatrices, _directionTransform;
     if (scope == null) {
       scope = {};
     }
     noop = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-    _positionTransform = new THREE.Matrix4;
     _directionTransform = new THREE.Matrix4;
-    scope.getDirectionTransform = function(hand) {
+    if (scope.vr === true) {
+      this.setOptimizeHMD(true);
+      scope.quaternion = (new THREE.Quaternion).setFromRotationMatrix((new THREE.Matrix4).set(-1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1));
+      scope.scale = 0.001;
+      scope.position = new THREE.Vector3(0, 0, -0.08);
+    }
+    scope.getTransform = function(hand) {
       var matrix;
-      if (scope.transform) {
-        matrix = typeof scope.transform === 'function' ? scope.transform(hand) : scope.transform;
+      if (scope.matrix) {
+        matrix = typeof scope.matrix === 'function' ? scope.matrix(hand) : scope.matrix;
         if (window['THREE'] && matrix instanceof THREE.Matrix4) {
           return matrix.elements;
         } else {
@@ -32,32 +37,14 @@
         return noop;
       }
     };
-    scope.getPositionTransform = function(hand) {
-      var matrix;
-      if (scope.transform) {
-        matrix = typeof scope.transform === 'function' ? scope.transform(hand) : scope.transform;
-        if (window['THREE'] && matrix instanceof THREE.Matrix4) {
-          return matrix.elements;
-        } else {
-          return matrix;
-        }
-      } else if (scope.position || scope.quaternion || scope.scale) {
-        _positionTransform.set.apply(_positionTransform, noop);
-        if (scope.quaternion) {
-          _positionTransform.makeRotationFromQuaternion(typeof scope.quaternion === 'function' ? scope.quaternion(hand) : scope.quaternion);
-        }
-        if (scope.scale) {
-          if (!isNaN(scope.scale)) {
-            scope.scale = new THREE.Vector3(scope.scale, scope.scale, scope.scale);
-          }
-          _positionTransform.scale(typeof scope.scale === 'function' ? scope.scale(hand) : scope.scale);
-        }
-        if (scope.position) {
-          _positionTransform.setPosition(typeof scope.position === 'function' ? scope.position(hand) : scope.position);
-        }
-        return _positionTransform.elements;
+    scope.getScale = function(hand) {
+      if (!isNaN(scope.scale)) {
+        scope.scale = new THREE.Vector3(scope.scale, scope.scale, scope.scale);
+      }
+      if (typeof scope.scale === 'function') {
+        return scope.scale(hand);
       } else {
-        return noop;
+        return scope.scale;
       }
     };
     transformPositions = function() {
@@ -98,25 +85,30 @@
       }
       return _results;
     };
-    transformWithMatrices = function(hand, positionTransform, directionTransform) {
-      var finger, _i, _len, _ref, _results;
-      transformPositions(positionTransform, hand.palmPosition, hand.stabilizedPalmPosition, hand.sphereCenter, hand.arm.nextJoint, hand.arm.prevJoint);
-      transformDirections(directionTransform, hand.direction, hand.palmNormal, hand.palmVelocity, hand.arm.basis[0], hand.arm.basis[1], hand.arm.basis[2]);
+    transformWithMatrices = function(hand, transform, scale) {
+      var finger, scalarScale, _i, _j, _len, _len1, _ref, _ref1;
+      transformDirections(transform, hand.direction, hand.palmNormal, hand.palmVelocity, hand.arm.basis[0], hand.arm.basis[1], hand.arm.basis[2]);
       _ref = hand.fingers;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         finger = _ref[_i];
-        transformPositions(positionTransform, finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.distal.nextJoint, finger.tipPosition);
-        _results.push(transformDirections(directionTransform, finger.direction, finger.metacarpal.basis[0], finger.metacarpal.basis[1], finger.metacarpal.basis[2], finger.proximal.basis[0], finger.proximal.basis[1], finger.proximal.basis[2], finger.medial.basis[0], finger.medial.basis[1], finger.medial.basis[2], finger.distal.basis[0], finger.distal.basis[1], finger.distal.basis[2]));
+        transformDirections(transform, finger.direction, finger.metacarpal.basis[0], finger.metacarpal.basis[1], finger.metacarpal.basis[2], finger.proximal.basis[0], finger.proximal.basis[1], finger.proximal.basis[2], finger.medial.basis[0], finger.medial.basis[1], finger.medial.basis[2], finger.distal.basis[0], finger.distal.basis[1], finger.distal.basis[2]);
       }
-      return _results;
+      Leap.glMatrix.mat4.scale(transform, transform, scale);
+      transformPositions(transform, hand.palmPosition, hand.stabilizedPalmPosition, hand.sphereCenter, hand.arm.nextJoint, hand.arm.prevJoint);
+      _ref1 = hand.fingers;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        finger = _ref1[_j];
+        transformPositions(transform, finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.distal.nextJoint, finger.tipPosition);
+      }
+      scalarScale = (scale[0] + scale[1] + scale[2]) / 3;
+      return hand.arm.width *= scalarScale;
     };
     return {
       hand: function(hand) {
         var finger, len, _i, _len, _ref;
-        transformWithMatrices(hand, scope.getPositionTransform(hand), scope.getDirectionTransform(hand));
+        transformWithMatrices(hand, scope.getTransform(hand), (scope.getScale(hand) || new THREE.Vector3(1, 1, 1)).toArray());
         if (scope.effectiveParent) {
-          transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.matrixWorld.elements);
+          transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.scale.toArray());
         }
         len = null;
         _ref = hand.fingers;

@@ -3,18 +3,111 @@
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.js"></script>
   <script src="//js.leapmotion.com/leap-0.6.3.js"></script>
-  <script src="//js.leapmotion.com/leap-plugins-0.1.8.js"></script>
+  <script src="//js.leapmotion.com/leap-plugins-0.1.9.js"></script>
   <script src="lib/OrbitControls.js"></script>
 
   <script src="leap.bone-hand.js"></script>
   <style>
     body {
-      margin: 0;
+      margin: 10px;
+      font-family: Helvetica;
+    }
+    canvas.leap-boneHand {
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: none;
+    }
+    table, th, td {
+      border: 1px solid #aaa;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    td, th {
+      vertical-align: top;
+      padding: 3px;
+    }
+    th {
+      color: #555;
+    }
+    #view-source {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 10px;
     }
   </style>
 
 </head>
 <body>
+
+<a id="view-source" href="#">View Source</a>
+
+<h1>Bone Hand</h1>
+<p>
+  Insert hand for live demo.
+</p>
+<p>
+  Allows adding a hand to your THREE.js scene in one line.
+</p>
+<p>
+  Creates a default scene for you, when time is of the essence.
+</p>
+<pre><code>
+  // At the simplest:
+  Leap.loop()
+    .use('boneHand', {
+      targetEl: document.body,
+      arm: true
+    });
+</code></pre>
+
+
+<h3>Options</h3>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>scene</td>
+    <td>undefined</td>
+    <td>
+      <p>Accepts a THREE.scene.  If undefined, a default scene will be created with some defaults (transparent canvas, three lights, mm units),
+      and rendered on every animation frame.  If null, the plugin will wait for the scene to be set explicitly at a future point.
+      </p>
+      <p>With the default scene, the renderer, camera, and scene will all be made available on the plugin scope. E.g., `myController.plugins.boneHand.scene`</p>
+    </td>
+  </tr>
+  <tr>
+    <td>targetEl</td>
+    <td>undefined</td>
+    <td>Accepts an element, such as `document.body`. </td>
+  </tr>
+  <tr>
+    <td>boneScale</td>
+    <td>1 / 6</td>
+    <td>The radius of the bones relative to the length of the proximal bone on the middle finger</td>
+  </tr>
+  <tr>
+    <td>jointScale</td>
+    <td>1 / 5</td>
+    <td>The radius of the bones relative to the length of the proximal bone on the middle finger</td>
+  </tr>
+  <tr>
+    <td>boneColor</td>
+    <td>(new THREE.Color).setHex(0xffffff)</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>jointColor</td>
+    <td>(new THREE.Color).setHex(0x5daa00)</td>
+    <td></td>
+  </tr>
+</table>
 
 </body>
 
@@ -23,18 +116,18 @@
   // Set up plugins
 
   Leap.loop()
-      .use('boneHand', {
-        targetEl: document.body,
-        opacity: 0.3,
-        jointColor: new THREE.Color(0xffffff),
-        arm: false
-      });
+    .use('boneHand', {
+      targetEl: document.body,
+      arm: true
+    });
+
 
 
   // Set up scene
 
-  var scene = Leap.loopController.plugins.boneHand.scene;
-  var camera = Leap.loopController.plugins.boneHand.camera;
+  var scene    = Leap.loopController.plugins.boneHand.scene;
+  var camera   = Leap.loopController.plugins.boneHand.camera;
+  var renderer = Leap.loopController.plugins.boneHand.renderer;
 
   var plane = new THREE.Mesh(
     new THREE.PlaneGeometry(80,80),
@@ -47,16 +140,23 @@
 
   camera.lookAt( plane.position );
 
-  var lineGeometry = new THREE.Geometry();
-  lineGeometry.vertices.push( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, -300 ) );
-
-  scene.add(plane);
+//  scene.add(plane);
 
   var axisHelper = new THREE.AxisHelper( 100 );
   scene.add( axisHelper );
 
-  var controls = new THREE.OrbitControls( camera );
+  var controls = new THREE.OrbitControls( camera, renderer.domElement );
 
+
+  Leap.loopController.on('handFound', function(hand) {
+    document.querySelector('canvas').style.display = 'block';
+  }).on('handLost', function(hand){
+    if (Leap.loopController.frame(0).hands.length === 0){
+      document.querySelector('canvas').style.display = 'none';
+    }
+  });
+
+  document.getElementById('view-source').href = window.location.href.replace(/^(.*)\/\//, 'view-source:')
 
 
 </script>

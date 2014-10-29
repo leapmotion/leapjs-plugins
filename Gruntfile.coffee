@@ -80,7 +80,7 @@ module.exports = (grunt) ->
             if fs.existsSync(coffeePath)
               "//CoffeeScript generated from #{coffeePath}"
             else
-              ''
+              null
         src: "main/**/*.js"
       coffeeMessagesUtils:
         options:
@@ -89,7 +89,7 @@ module.exports = (grunt) ->
             if fs.existsSync(coffeePath)
               "//CoffeeScript generated from #{coffeePath}"
             else
-              ''
+              null
         src: "utils/**/*.js"
 
       licenseMain:
@@ -138,6 +138,23 @@ module.exports = (grunt) ->
     bump:
       options:
         pushTo: 'master'
+
+
+    watch:
+      files: ['main/**/*.coffee', 'utils/**/*.coffee'],
+      options:
+        atBegin: true
+      tasks: [
+        "string-replace",
+        "coffee",
+        "usebanner:coffeeMessagesMain",
+        "usebanner:coffeeMessagesUtils",
+        "clean",
+        "concat",
+        "usebanner:licenseMain",
+        "usebanner:licenseUtils",
+        "uglify"
+      ]
 
 
   require('load-grunt-tasks')(grunt);

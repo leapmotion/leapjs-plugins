@@ -1,3 +1,13 @@
+# 0.1.9
+ - [bone hand] Added bone hand plugin.
+ - [bone hand] Optimized performance for new hands entering the scene.
+ - [transform] Added preset VR mode
+ - [transform] Add effectiveParent option
+ - [transform] Add arm support, bone lengths, bone bases
+ - [transform] Fix issue where rotations would be scaled
+ - [playback, plotter] Minor speedup, removing errant console assertions.
+ - [meta] Added grunt watch.
+
 # 0.1.8
  - Add LeapDataPlotter utility
  - Fix issue where bone tip position would not be transformed.

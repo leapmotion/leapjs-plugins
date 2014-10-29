@@ -1,6 +1,6 @@
 {
   "name": "leapjs-plugins",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "A collection of useful plugins for LeapJS",
   "main": "main/leapjs-plugins-0.7.js",
   "dependencies": {},
@@ -9,6 +9,7 @@
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-uglify": "~0.3.2",
     "grunt-contrib-coffee": "~0.8.2",
+    "grunt-contrib-watch": "~0.6.1",
     "grunt-string-replace": "~0.2.7",
     "grunt-banner": "git://github.com/pehrlich/grunt-banner.git",
     "grunt-contrib-clean": "~0.5.0",
