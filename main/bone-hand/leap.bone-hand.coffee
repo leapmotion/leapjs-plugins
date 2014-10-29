@@ -238,7 +238,7 @@ class HandMesh
 
         @armSpheres[i].scale.set(baseScale, baseScale, baseScale)
 
-      boneXOffset  = (hand.arm.width / 2) - (boneRadius / 2)
+      boneXOffset  = (hand.arm.width / 2) * 0.85
       halfArmLength = hand.arm.length / 2
 
 

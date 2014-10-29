@@ -169,7 +169,7 @@
           this.armBones[i].scale.set(baseScale, (i < 2 ? armLenScale : armWidthScale), baseScale);
           this.armSpheres[i].scale.set(baseScale, baseScale, baseScale);
         }
-        boneXOffset = (hand.arm.width / 2) - (boneRadius / 2);
+        boneXOffset = (hand.arm.width / 2) * 0.85;
         halfArmLength = hand.arm.length / 2;
         this.armBones[0].position.setX(boneXOffset);
         this.armBones[1].position.setX(-boneXOffset);
