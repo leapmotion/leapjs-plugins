@@ -80,7 +80,7 @@ module.exports = (grunt) ->
             if fs.existsSync(coffeePath)
               "//CoffeeScript generated from #{coffeePath}"
             else
-              ''
+              null
         src: "main/**/*.js"
       coffeeMessagesUtils:
         options:
@@ -89,7 +89,7 @@ module.exports = (grunt) ->
             if fs.existsSync(coffeePath)
               "//CoffeeScript generated from #{coffeePath}"
             else
-              ''
+              null
         src: "utils/**/*.js"
 
       licenseMain:
