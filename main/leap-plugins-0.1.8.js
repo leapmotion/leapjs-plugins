@@ -1206,7 +1206,11 @@ function Recording (options){
       'stabilizedPalmPosition',
       'pinchStrength',
       'grabStrength',
-      'confidence'
+      'confidence',
+      'armBasis',
+      'armWidth',
+      'elbow',
+      'wrist'
       // leaving out r, s, t, sphereCenter, sphereRadius
     ]]},
     {pointables: [[
@@ -1344,7 +1348,7 @@ Recording.prototype = {
           t
         );
 
-        console.assert(hand[prop]);
+//        console.assert(hand[prop]);
       }
 
     }
@@ -1385,7 +1389,7 @@ Recording.prototype = {
     if (elapsedTime < 0) {
       elapsedTime = this.timeBetweenLoops; //arbitrary pause at slightly less than 30 fps.
     }
-    console.assert(!isNaN(elapsedTime));
+//    console.assert(!isNaN(elapsedTime));
     return elapsedTime;
   },
 
@@ -1505,13 +1509,13 @@ Recording.prototype = {
 
       } else { // key-value (nested object) such as interactionBox
 
-        console.assert(nameOrHash);
+//        console.assert(nameOrHash);
 
         for (var key in nameOrHash) break;
 
-        console.assert(key);
-        console.assert(nameOrHash[key]);
-        console.assert(data[key]);
+//        console.assert(key);
+//        console.assert(nameOrHash[key]);
+//        console.assert(data[key]);
 
         out.push(this.packArray(
           nameOrHash[key],
@@ -1884,7 +1888,7 @@ Recording.prototype = {
 
       this.lastFrameTime = now;
 
-      console.assert(!isNaN(this.timeSinceLastFrame));
+//      console.assert(!isNaN(this.timeSinceLastFrame));
 
 
       var timeToNextFrame;

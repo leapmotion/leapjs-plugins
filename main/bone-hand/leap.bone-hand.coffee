@@ -174,7 +174,6 @@ class HandMesh
         @armBones.push(new THREE.Mesh(
           # CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded)
           new THREE.CylinderGeometry(boneRadius, boneRadius,
-#            ( if  i < 2 then hand.arm.length else hand.arm.width )
             ( if  i < 2 then 1000 else 100 )
           , 32),
           material.clone()

@@ -82,7 +82,7 @@
   // - name: name of the plot
   // - precision: how many decimals to show (for max, min, current value)
   LeapDataPlotter.prototype.plot = function (id, data, opts) {
-    console.assert(!isNaN(data), "No plotting data received");
+//    console.assert(!isNaN(data), "No plotting data received");
 
     opts || (opts = {});
 
