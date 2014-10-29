@@ -33,6 +33,12 @@
     th {
       color: #555;
     }
+    #view-source {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 10px;
+    }
   </style>
 
 
@@ -43,6 +49,8 @@
 
 </head>
 <body>
+
+<a id="view-source" href="#">View Source</a>
 
 <h1>Transform Plugin</h1>
 <p>
@@ -240,6 +248,8 @@
       el.style.display = 'none'
     }
   }
+
+  document.getElementById('view-source').href = window.location.href.replace(/^(.*)\/\//, 'view-source:')
 
 </script>
 
