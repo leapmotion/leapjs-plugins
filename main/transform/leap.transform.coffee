@@ -20,6 +20,8 @@ Leap.plugin 'transform', (scope = {})->
 
   if scope.vr == true
 
+    this.setOptimizeHMD(true)
+
     # This matrix flips the x, y, and z axis.
     scope.quaternion = (new THREE.Quaternion).setFromRotationMatrix(
       (new THREE.Matrix4).set(

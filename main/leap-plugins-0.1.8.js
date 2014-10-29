@@ -2395,6 +2395,7 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
     noop = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
     _directionTransform = new THREE.Matrix4;
     if (scope.vr === true) {
+      this.setOptimizeHMD(true);
       scope.quaternion = (new THREE.Quaternion).setFromRotationMatrix((new THREE.Matrix4).set(-1, 0, 0, 0, 0, 0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1));
       scope.scale = 0.001;
       scope.position = new THREE.Vector3(0, 0, -0.08);
