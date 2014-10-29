@@ -215,20 +215,20 @@ class HandMesh
 
         bone = finger.bones[ 3 - (j / 2) ]
 
+        # joints
         mesh = @fingerMeshes[i][j]
         mesh.scale.set(baseScale, baseScale, baseScale)
 
         j++
 
-        # joints are all same-size
-
+        # bones
         mesh = @fingerMeshes[i][j]
-        lengthScale = bone.length / mesh.geometry.parameters.height
-        mesh.scale.set(baseScale, lengthScale, baseScale)
+        fingerBoneLengthScale = bone.length / mesh.geometry.parameters.height
+        mesh.scale.set(baseScale, fingerBoneLengthScale, baseScale)
         j++
 
     if scope.arm
-      armLenScale   = hand.arm.length / ( @armBones[0].geometry.parameters.height  + @armBones[2].geometry.parameters.radiusTop )
+      armLenScale   = hand.arm.length / ( @armBones[0].geometry.parameters.height + @armBones[0].geometry.parameters.radiusTop )
       armWidthScale = hand.arm.width  / ( @armBones[2].geometry.parameters.height + @armBones[2].geometry.parameters.radiusTop )
 
       for i in [0..3]
@@ -236,9 +236,11 @@ class HandMesh
           ( if  i < 2 then armLenScale else armWidthScale )
         , baseScale)
 
+        @armSpheres[i].scale.set(baseScale, baseScale, baseScale)
 
       boneXOffset  = (hand.arm.width / 2) - (boneRadius / 2)
       halfArmLength = hand.arm.length / 2
+
 
       # CW from Top center
       @armBones[0].position.setX(boneXOffset) # radius
@@ -299,9 +301,10 @@ class HandMesh
 
         break if j == @fingerMeshes[i].length
 
-    for i in [0..3]
-      @armBones[i].visible   = visible
-      @armSpheres[i].visible = visible
+    if scope.arm
+      for i in [0..3]
+        @armBones[i].visible   = visible
+        @armSpheres[i].visible = visible
 
 
   show: ->

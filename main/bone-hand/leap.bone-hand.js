@@ -141,7 +141,7 @@
     }
 
     HandMesh.prototype.scaleTo = function(hand) {
-      var armLenScale, armWidthScale, baseScale, bone, boneXOffset, finger, halfArmLength, i, j, lengthScale, mesh, _i, _j;
+      var armLenScale, armWidthScale, baseScale, bone, boneXOffset, finger, fingerBoneLengthScale, halfArmLength, i, j, mesh, _i, _j;
       baseScale = hand.middleFinger.proximal.length / this.fingerMeshes[2][1].geometry.parameters.height;
       for (i = _i = 0; _i < 5; i = ++_i) {
         finger = hand.fingers[i];
@@ -157,16 +157,17 @@
           mesh.scale.set(baseScale, baseScale, baseScale);
           j++;
           mesh = this.fingerMeshes[i][j];
-          lengthScale = bone.length / mesh.geometry.parameters.height;
-          mesh.scale.set(baseScale, lengthScale, baseScale);
+          fingerBoneLengthScale = bone.length / mesh.geometry.parameters.height;
+          mesh.scale.set(baseScale, fingerBoneLengthScale, baseScale);
           j++;
         }
       }
       if (scope.arm) {
-        armLenScale = hand.arm.length / (this.armBones[0].geometry.parameters.height + this.armBones[2].geometry.parameters.radiusTop);
+        armLenScale = hand.arm.length / (this.armBones[0].geometry.parameters.height + this.armBones[0].geometry.parameters.radiusTop);
         armWidthScale = hand.arm.width / (this.armBones[2].geometry.parameters.height + this.armBones[2].geometry.parameters.radiusTop);
         for (i = _j = 0; _j <= 3; i = ++_j) {
           this.armBones[i].scale.set(baseScale, (i < 2 ? armLenScale : armWidthScale), baseScale);
+          this.armSpheres[i].scale.set(baseScale, baseScale, baseScale);
         }
         boneXOffset = (hand.arm.width / 2) - (boneRadius / 2);
         halfArmLength = hand.arm.length / 2;
@@ -224,12 +225,14 @@
           }
         }
       }
-      _results = [];
-      for (i = _j = 0; _j <= 3; i = ++_j) {
-        this.armBones[i].visible = visible;
-        _results.push(this.armSpheres[i].visible = visible);
+      if (scope.arm) {
+        _results = [];
+        for (i = _j = 0; _j <= 3; i = ++_j) {
+          this.armBones[i].visible = visible;
+          _results.push(this.armSpheres[i].visible = visible);
+        }
+        return _results;
       }
-      return _results;
     };
 
     HandMesh.prototype.show = function() {
