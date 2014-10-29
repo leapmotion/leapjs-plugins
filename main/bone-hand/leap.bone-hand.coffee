@@ -16,15 +16,15 @@ initScene = (targetEl)->
 
   targetEl.appendChild(renderer.domElement)
 
-  directionalLight = directionalLight = new THREE.DirectionalLight( 0xffffff, 1 )
+  directionalLight = new THREE.DirectionalLight( 0xffffff, 1 )
   directionalLight.position.set( 0, 0.5, 1 )
   scope.scene.add(directionalLight)
 
-  directionalLight = directionalLight = new THREE.DirectionalLight( 0xffffff, 1 )
+  directionalLight = new THREE.DirectionalLight( 0xffffff, 1 )
   directionalLight.position.set( 0.5, -0.5, -1 )
   scope.scene.add(directionalLight)
 
-  directionalLight = directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 )
+  directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 )
   directionalLight.position.set( -0.5, 0, -0.2 )
   scope.scene.add(directionalLight)
 
@@ -77,91 +77,94 @@ jointRadius = null
 
 material = null
 
-boneHand = (hand) ->
-  return if !scope.scene
 
 
-  hand.fingers.forEach (finger) ->
 
-    # the handFound listener doesn't actually fire if in live mode with hand-in-screen
-    # we manually check for finger meshes and initialize if necessary
-    boneMeshes = finger.data("boneMeshes")
-    jointMeshes = finger.data("jointMeshes")
+class HandMesh
+  # when a hand enters the scene, it takes a mesh out of here, or creates a new one
+  @unusedHandMeshes: []
 
-    unless boneMeshes
-      boneMeshes = []
-      jointMeshes = []
+  # gets or creates a handmesh
+  # makes it visible
+  @get: ->
+    if HandMesh.unusedHandMeshes.length > 0
+      handMesh = HandMesh.unusedHandMeshes.pop()
+    else
+      handMesh = HandMesh.create()
 
-      material = if !isNaN(scope.opacity)
-        new THREE.MeshPhongMaterial(transparent: true, opacity: scope.opacity)
-      else
-        new THREE.MeshPhongMaterial()
+    handMesh.show()
 
+    return handMesh
 
-      boneRadius  = hand.middleFinger.proximal.length * boneScale
-      jointRadius = hand.middleFinger.proximal.length * jointScale
-
-      unless finger.bones
-        console.warn("error, no bones on", hand.id)
-        return
-
-      finger.bones.forEach (bone) ->
-
-        # create joints
+  # replaces a handMesh in the cache
+  # makes it invisible.
+  replace: ->
+    @hide()
+    HandMesh.unusedHandMeshes.push(this)
 
 
-        # CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded)
-        boneMesh = new THREE.Mesh(
-          new THREE.CylinderGeometry(boneRadius, boneRadius, bone.length, 32),
-          material.clone()
-        )
-        boneMesh.material.color.copy(boneColor)
-        scope.scene.add boneMesh
-        boneMeshes.push boneMesh
+  # adds hand meshes to the scene
+  # stores them in unusedhandMesh
+  @create: ->
+    mesh = new HandMesh
+    mesh.setVisibility(false)
+    HandMesh.unusedHandMeshes.push(mesh)
+    return mesh
 
-        jointMesh = new THREE.Mesh(
+  constructor: ->
+
+    material = if !isNaN(scope.opacity)
+      new THREE.MeshPhongMaterial(transparent: true, opacity: scope.opacity)
+    else
+      new THREE.MeshPhongMaterial()
+
+    boneRadius  = 40 * boneScale # 40 is typical mm middle finger proximal bone length. This can be anything, as it gets rescaled later.
+    jointRadius = 40 * jointScale
+
+    @fingerMeshes = []
+    for i in [0...5]
+      finger = []
+      boneCount = if i == 0 then 3 else 4 # thumb has one fewer
+
+      for j in [0...boneCount]
+        # we keep one array with bone and joint meshes, and iterate through it later for position.. easy
+
+        #joint
+        mesh = new THREE.Mesh(
           new THREE.SphereGeometry(jointRadius, 32, 32),
           material.clone()
         )
-        jointMesh.material.color.copy(jointColor)
-        scope.scene.add jointMesh
-        jointMeshes.push jointMesh
+        mesh.material.color.copy(jointColor)
+        scope.scene.add mesh
+        finger.push mesh
 
-      jointMesh = new THREE.Mesh(
+        # bone
+        # CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded)
+        mesh = new THREE.Mesh(
+          new THREE.CylinderGeometry(boneRadius, boneRadius, 40, 32),
+          material.clone()
+        )
+        mesh.material.color.copy(boneColor)
+        scope.scene.add mesh
+        finger.push mesh
+
+      #joint - end cap
+      mesh = new THREE.Mesh(
         new THREE.SphereGeometry(jointRadius, 32, 32),
         material.clone()
       )
-      jointMesh.material.color.copy(jointColor)
-      scope.scene.add jointMesh
-      jointMeshes.push jointMesh
-
-      finger.data "boneMeshes", boneMeshes
-      finger.data "jointMeshes", jointMeshes
-
-    boneMeshes.forEach (mesh, i) ->
-      bone = finger.bones[i]
-      mesh.position.fromArray bone.center()
-      mesh.setRotationFromMatrix (new THREE.Matrix4).fromArray(bone.matrix())
-      mesh.quaternion.multiply baseBoneRotation
-
-    jointMeshes.forEach (mesh, i) ->
-      bone = finger.bones[i]
-      if bone
-        mesh.position.fromArray bone.prevJoint
-      else
-        bone = finger.bones[i-1]
-        mesh.position.fromArray bone.nextJoint
+      mesh.material.color.copy(jointColor)
+      scope.scene.add mesh
+      finger.push mesh
 
 
-  if scope.arm
-    armMesh = hand.data('armMesh')
+      @fingerMeshes.push(finger)
 
-    unless armMesh
-      armMesh = new THREE.Object3D;
-      scope.scene.add(armMesh);
-      hand.data('armMesh', armMesh);
 
-      boneXOffset = (hand.arm.width / 2) - (boneRadius / 2)
+    if scope.arm
+      @armMesh = new THREE.Object3D;
+
+      boneXOffset  = (hand.arm.width / 2) - (boneRadius / 2)
       halfArmLength = hand.arm.length / 2
 
       armBones = []
@@ -174,7 +177,7 @@ boneHand = (hand) ->
           material.clone()
         ))
         armBones[i].material.color.copy(boneColor)
-        armMesh.add(armBones[i])
+        @armMesh.add(armBones[i])
 
       # CW from Top center
       armBones[0].position.setX(boneXOffset) # radius
@@ -195,7 +198,7 @@ boneHand = (hand) ->
           material.clone()
         ))
         armBones[i].material.color.copy(jointColor)
-        armMesh.add(armBones[i])
+        @armMesh.add(armBones[i])
 
       # CW from TL
       armBones[0].position.set( - boneXOffset,   halfArmLength, 0)
@@ -203,38 +206,110 @@ boneHand = (hand) ->
       armBones[2].position.set(   boneXOffset, - halfArmLength, 0)
       armBones[3].position.set( - boneXOffset, - halfArmLength, 0)
 
+      scope.scene.add(@armMesh);
 
-    armMesh.position.fromArray(hand.arm.center());
+  # scales the meshes appropriately
+  scaleTo: (hand)->
 
-    armMesh.setRotationFromMatrix(
-      (new THREE.Matrix4).fromArray( hand.arm.matrix() ) # does this get transformed?
-    );
-    armMesh.quaternion.multiply(baseBoneRotation);
+    # bone radius changes with overall hand size, but not joint length
+    baseScale = hand.middleFinger.proximal.length / @fingerMeshes[2][1].geometry.parameters.height
+
+    for i in [0...5]
+      finger = hand.fingers[i]
+      j = 0
+      # iterate backwards as first bone in the thumb is bunk.
+      while true
+        if j == @fingerMeshes[i].length - 1
+          mesh = @fingerMeshes[i][j]
+          mesh.scale.set(baseScale, baseScale, baseScale)
+          break
+
+        bone = finger.bones[ 3 - (j / 2) ]
+
+        mesh = @fingerMeshes[i][j]
+        mesh.scale.set(baseScale, baseScale, baseScale)
+
+        j++
+
+        # joints are all same-size
+
+        mesh = @fingerMeshes[i][j]
+        lengthScale = bone.length / mesh.geometry.parameters.height
+        mesh.scale.set(baseScale, lengthScale, baseScale)
+        j++
 
 
+    return this
+
+  # positions and rotates the meshes appropriately
+  formTo: (hand)->
+    for i in [0...5]
+      finger = hand.fingers[i]
+      j = 0
+      while true
+
+        if j == @fingerMeshes[i].length - 1
+          mesh = @fingerMeshes[i][j] # alternating, joint-bone-joint-bone...
+          mesh.position.fromArray bone.prevJoint
+          break
+
+        bone = finger.bones[  3 - (j / 2) ]
+
+        mesh = @fingerMeshes[i][j]
+        mesh.position.fromArray bone.nextJoint
+        ++j
+
+        mesh = @fingerMeshes[i][j]
+
+        mesh.position.fromArray bone.center()
+        mesh.setRotationFromMatrix (new THREE.Matrix4).fromArray(bone.matrix())
+        mesh.quaternion.multiply baseBoneRotation
+        ++j
+
+    if @armMesh
+      @armMesh.position.fromArray(hand.arm.center())
+      @armMesh.setRotationFromMatrix(
+        (new THREE.Matrix4).fromArray( hand.arm.matrix() )
+      );
+      @armMesh.quaternion.multiply(baseBoneRotation)
+
+    return this
+
+  setVisibility: (visible)->
+    for i in [0...5]
+      j = 0
+      while true
+        @fingerMeshes[i][j].visible = visible
+        ++j
+
+        break if j == @fingerMeshes[i].length
+
+  show: ->
+    @setVisibility(true)
+
+  hide: ->
+    @setVisibility(false)
+
+
+
+onHand = (hand) ->
+  return if !scope.scene
+
+  handMesh = hand.data('handMesh')
+
+  # the handFound listener doesn't actually fire if in live mode with hand-in-screen
+  # we manually check for finger meshes and initialize if necessary
+  if !handMesh
+    handMesh = HandMesh.get().scaleTo(hand)
+    hand.data('handMesh', handMesh)
+
+  handMesh.formTo(hand)
 
 
 boneHandLost = (hand) ->
-  hand.fingers.forEach (finger) ->
-    boneMeshes = finger.data("boneMeshes")
-    jointMeshes = finger.data("jointMeshes")
-
-
-    return unless boneMeshes
-
-    boneMeshes.forEach (mesh) ->
-      scope.scene.remove mesh
-
-    jointMeshes.forEach (mesh) ->
-      scope.scene.remove mesh
-
-    finger.data(boneMeshes: null)
-    finger.data(jointMeshes: null)
-
-  if scope.arm
-    armMesh = hand.data('armMesh');
-    scope.scene.remove(armMesh);
-    hand.data('armMesh', null);
+  handMesh = hand.data('handMesh')
+  if handMesh
+    handMesh.replace()
 
 
 Leap.plugin 'boneHand', (options = {}) ->
@@ -247,6 +322,7 @@ Leap.plugin 'boneHand', (options = {}) ->
   scope.boneColor  && boneColor  = scope.boneColor
   scope.jointColor && jointColor = scope.jointColor
 
+
   @use('handEntry')
   @use('handHold')
 
@@ -255,8 +331,13 @@ Leap.plugin 'boneHand', (options = {}) ->
     console.assert(scope.targetEl)
     initScene(scope.targetEl)
 
+  # Preload two hands
+  if scope.scene
+    HandMesh.create()
+    HandMesh.create()
+
   @on 'handLost', boneHandLost
 
   {
-    hand: boneHand
+    hand: onHand
   }

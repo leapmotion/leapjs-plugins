@@ -1,6 +1,6 @@
 //CoffeeScript generated from main/bone-hand/leap.bone-hand.coffee
 (function() {
-  var baseBoneRotation, boneColor, boneHand, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, scope;
+  var HandMesh, baseBoneRotation, boneColor, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, onHand, scope;
 
   scope = null;
 
@@ -16,13 +16,13 @@
     renderer.setSize(width, height);
     renderer.domElement.className = "leap-boneHand";
     targetEl.appendChild(renderer.domElement);
-    directionalLight = directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(0, 0.5, 1);
     scope.scene.add(directionalLight);
-    directionalLight = directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(0.5, -0.5, -1);
     scope.scene.add(directionalLight);
-    directionalLight = directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(-0.5, 0, -0.2);
     scope.scene.add(directionalLight);
     scope.camera = camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
@@ -61,77 +61,70 @@
 
   material = null;
 
-  boneHand = function(hand) {
-    var armBones, armMesh, armTopAndBottomRotation, boneXOffset, halfArmLength, i, _i, _j;
-    if (!scope.scene) {
-      return;
-    }
-    hand.fingers.forEach(function(finger) {
-      var boneMeshes, jointMesh, jointMeshes;
-      boneMeshes = finger.data("boneMeshes");
-      jointMeshes = finger.data("jointMeshes");
-      if (!boneMeshes) {
-        boneMeshes = [];
-        jointMeshes = [];
-        material = !isNaN(scope.opacity) ? new THREE.MeshPhongMaterial({
-          transparent: true,
-          opacity: scope.opacity
-        }) : new THREE.MeshPhongMaterial();
-        boneRadius = hand.middleFinger.proximal.length * boneScale;
-        jointRadius = hand.middleFinger.proximal.length * jointScale;
-        if (!finger.bones) {
-          console.warn("error, no bones on", hand.id);
-          return;
-        }
-        finger.bones.forEach(function(bone) {
-          var boneMesh, jointMesh;
-          boneMesh = new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, bone.length, 32), material.clone());
-          boneMesh.material.color.copy(boneColor);
-          scope.scene.add(boneMesh);
-          boneMeshes.push(boneMesh);
-          jointMesh = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone());
-          jointMesh.material.color.copy(jointColor);
-          scope.scene.add(jointMesh);
-          return jointMeshes.push(jointMesh);
-        });
-        jointMesh = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone());
-        jointMesh.material.color.copy(jointColor);
-        scope.scene.add(jointMesh);
-        jointMeshes.push(jointMesh);
-        finger.data("boneMeshes", boneMeshes);
-        finger.data("jointMeshes", jointMeshes);
+  HandMesh = (function() {
+    HandMesh.unusedHandMeshes = [];
+
+    HandMesh.get = function() {
+      var handMesh;
+      if (HandMesh.unusedHandMeshes.length > 0) {
+        handMesh = HandMesh.unusedHandMeshes.pop();
+      } else {
+        handMesh = HandMesh.create();
       }
-      boneMeshes.forEach(function(mesh, i) {
-        var bone;
-        bone = finger.bones[i];
-        mesh.position.fromArray(bone.center());
-        mesh.setRotationFromMatrix((new THREE.Matrix4).fromArray(bone.matrix()));
-        return mesh.quaternion.multiply(baseBoneRotation);
-      });
-      return jointMeshes.forEach(function(mesh, i) {
-        var bone;
-        bone = finger.bones[i];
-        if (bone) {
-          return mesh.position.fromArray(bone.prevJoint);
-        } else {
-          bone = finger.bones[i - 1];
-          return mesh.position.fromArray(bone.nextJoint);
+      handMesh.show();
+      return handMesh;
+    };
+
+    HandMesh.prototype.replace = function() {
+      this.hide();
+      return HandMesh.unusedHandMeshes.push(this);
+    };
+
+    HandMesh.create = function() {
+      var mesh;
+      mesh = new HandMesh;
+      mesh.setVisibility(false);
+      HandMesh.unusedHandMeshes.push(mesh);
+      return mesh;
+    };
+
+    function HandMesh() {
+      var armBones, armTopAndBottomRotation, boneCount, boneXOffset, finger, halfArmLength, i, j, mesh, _i, _j, _k, _l;
+      material = !isNaN(scope.opacity) ? new THREE.MeshPhongMaterial({
+        transparent: true,
+        opacity: scope.opacity
+      }) : new THREE.MeshPhongMaterial();
+      boneRadius = 40 * boneScale;
+      jointRadius = 40 * jointScale;
+      this.fingerMeshes = [];
+      for (i = _i = 0; _i < 5; i = ++_i) {
+        finger = [];
+        boneCount = i === 0 ? 3 : 4;
+        for (j = _j = 0; 0 <= boneCount ? _j < boneCount : _j > boneCount; j = 0 <= boneCount ? ++_j : --_j) {
+          mesh = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone());
+          mesh.material.color.copy(jointColor);
+          scope.scene.add(mesh);
+          finger.push(mesh);
+          mesh = new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, 40, 32), material.clone());
+          mesh.material.color.copy(boneColor);
+          scope.scene.add(mesh);
+          finger.push(mesh);
         }
-      });
-    });
-    if (scope.arm) {
-      armMesh = hand.data('armMesh');
-      if (!armMesh) {
-        armMesh = new THREE.Object3D;
-        scope.scene.add(armMesh);
-        hand.data('armMesh', armMesh);
+        mesh = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone());
+        mesh.material.color.copy(jointColor);
+        scope.scene.add(mesh);
+        finger.push(mesh);
+        this.fingerMeshes.push(finger);
+      }
+      if (scope.arm) {
+        this.armMesh = new THREE.Object3D;
         boneXOffset = (hand.arm.width / 2) - (boneRadius / 2);
         halfArmLength = hand.arm.length / 2;
         armBones = [];
-        for (i = _i = 0; _i <= 3; i = ++_i) {
+        for (i = _k = 0; _k <= 3; i = ++_k) {
           armBones.push(new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, (i < 2 ? hand.arm.length : hand.arm.width), 32), material.clone()));
           armBones[i].material.color.copy(boneColor);
-          armMesh.add(armBones[i]);
+          this.armMesh.add(armBones[i]);
         }
         armBones[0].position.setX(boneXOffset);
         armBones[1].position.setX(-boneXOffset);
@@ -141,48 +134,127 @@
         armBones[2].quaternion.multiply(armTopAndBottomRotation);
         armBones[3].quaternion.multiply(armTopAndBottomRotation);
         armBones = [];
-        for (i = _j = 0; _j <= 3; i = ++_j) {
+        for (i = _l = 0; _l <= 3; i = ++_l) {
           armBones.push(new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone()));
           armBones[i].material.color.copy(jointColor);
-          armMesh.add(armBones[i]);
+          this.armMesh.add(armBones[i]);
         }
         armBones[0].position.set(-boneXOffset, halfArmLength, 0);
         armBones[1].position.set(boneXOffset, halfArmLength, 0);
         armBones[2].position.set(boneXOffset, -halfArmLength, 0);
         armBones[3].position.set(-boneXOffset, -halfArmLength, 0);
+        scope.scene.add(this.armMesh);
       }
-      armMesh.position.fromArray(hand.arm.center());
-      armMesh.setRotationFromMatrix((new THREE.Matrix4).fromArray(hand.arm.matrix()));
-      return armMesh.quaternion.multiply(baseBoneRotation);
     }
+
+    HandMesh.prototype.scaleTo = function(hand) {
+      var baseScale, bone, finger, i, j, lengthScale, mesh, _i;
+      baseScale = hand.middleFinger.proximal.length / this.fingerMeshes[2][1].geometry.parameters.height;
+      for (i = _i = 0; _i < 5; i = ++_i) {
+        finger = hand.fingers[i];
+        j = 0;
+        while (true) {
+          if (j === this.fingerMeshes[i].length - 1) {
+            mesh = this.fingerMeshes[i][j];
+            mesh.scale.set(baseScale, baseScale, baseScale);
+            break;
+          }
+          bone = finger.bones[3 - (j / 2)];
+          mesh = this.fingerMeshes[i][j];
+          mesh.scale.set(baseScale, baseScale, baseScale);
+          j++;
+          mesh = this.fingerMeshes[i][j];
+          lengthScale = bone.length / mesh.geometry.parameters.height;
+          mesh.scale.set(baseScale, lengthScale, baseScale);
+          j++;
+        }
+      }
+      return this;
+    };
+
+    HandMesh.prototype.formTo = function(hand) {
+      var bone, finger, i, j, mesh, _i;
+      for (i = _i = 0; _i < 5; i = ++_i) {
+        finger = hand.fingers[i];
+        j = 0;
+        while (true) {
+          if (j === this.fingerMeshes[i].length - 1) {
+            mesh = this.fingerMeshes[i][j];
+            mesh.position.fromArray(bone.prevJoint);
+            break;
+          }
+          bone = finger.bones[3 - (j / 2)];
+          mesh = this.fingerMeshes[i][j];
+          mesh.position.fromArray(bone.nextJoint);
+          ++j;
+          mesh = this.fingerMeshes[i][j];
+          mesh.position.fromArray(bone.center());
+          mesh.setRotationFromMatrix((new THREE.Matrix4).fromArray(bone.matrix()));
+          mesh.quaternion.multiply(baseBoneRotation);
+          ++j;
+        }
+      }
+      if (this.armMesh) {
+        this.armMesh.position.fromArray(hand.arm.center());
+        this.armMesh.setRotationFromMatrix((new THREE.Matrix4).fromArray(hand.arm.matrix()));
+        this.armMesh.quaternion.multiply(baseBoneRotation);
+      }
+      return this;
+    };
+
+    HandMesh.prototype.setVisibility = function(visible) {
+      var i, j, _i, _results;
+      _results = [];
+      for (i = _i = 0; _i < 5; i = ++_i) {
+        j = 0;
+        _results.push((function() {
+          var _results1;
+          _results1 = [];
+          while (true) {
+            this.fingerMeshes[i][j].visible = visible;
+            ++j;
+            if (j === this.fingerMeshes[i].length) {
+              break;
+            } else {
+              _results1.push(void 0);
+            }
+          }
+          return _results1;
+        }).call(this));
+      }
+      return _results;
+    };
+
+    HandMesh.prototype.show = function() {
+      return this.setVisibility(true);
+    };
+
+    HandMesh.prototype.hide = function() {
+      return this.setVisibility(false);
+    };
+
+    return HandMesh;
+
+  })();
+
+  onHand = function(hand) {
+    var handMesh;
+    if (!scope.scene) {
+      return;
+    }
+    handMesh = hand.data('handMesh');
+    if (!handMesh) {
+      handMesh = HandMesh.get().scaleTo(hand);
+      hand.data('handMesh', handMesh);
+    }
+    return handMesh.formTo(hand);
   };
 
   boneHandLost = function(hand) {
-    var armMesh;
-    hand.fingers.forEach(function(finger) {
-      var boneMeshes, jointMeshes;
-      boneMeshes = finger.data("boneMeshes");
-      jointMeshes = finger.data("jointMeshes");
-      if (!boneMeshes) {
-        return;
-      }
-      boneMeshes.forEach(function(mesh) {
-        return scope.scene.remove(mesh);
-      });
-      jointMeshes.forEach(function(mesh) {
-        return scope.scene.remove(mesh);
-      });
-      finger.data({
-        boneMeshes: null
-      });
-      return finger.data({
-        jointMeshes: null
-      });
-    });
-    if (scope.arm) {
-      armMesh = hand.data('armMesh');
-      scope.scene.remove(armMesh);
-      return hand.data('armMesh', null);
+    var handMesh;
+    handMesh = hand.data('handMesh');
+    if (handMesh) {
+      return handMesh.replace();
     }
   };
 
@@ -201,9 +273,13 @@
       console.assert(scope.targetEl);
       initScene(scope.targetEl);
     }
+    if (scope.scene) {
+      HandMesh.create();
+      HandMesh.create();
+    }
     this.on('handLost', boneHandLost);
     return {
-      hand: boneHand
+      hand: onHand
     };
   });
 
