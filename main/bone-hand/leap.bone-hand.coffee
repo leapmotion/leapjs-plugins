@@ -77,6 +77,10 @@ jointRadius = null
 
 material = null
 
+armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(
+  new THREE.Euler(0, 0, Math.PI / 2)
+);
+
 
 
 
@@ -163,50 +167,36 @@ class HandMesh
 
     if scope.arm
       @armMesh = new THREE.Object3D;
+      @armBones = []
+      @armSpheres = []
 
-      boneXOffset  = (hand.arm.width / 2) - (boneRadius / 2)
-      halfArmLength = hand.arm.length / 2
-
-      armBones = []
       for i in [0..3]
-        armBones.push(new THREE.Mesh(
+        @armBones.push(new THREE.Mesh(
           # CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded)
           new THREE.CylinderGeometry(boneRadius, boneRadius,
-            ( if  i < 2 then hand.arm.length else hand.arm.width )
+#            ( if  i < 2 then hand.arm.length else hand.arm.width )
+            ( if  i < 2 then 1000 else 100 )
           , 32),
           material.clone()
         ))
-        armBones[i].material.color.copy(boneColor)
-        @armMesh.add(armBones[i])
+        @armBones[i].material.color.copy(boneColor)
 
-      # CW from Top center
-      armBones[0].position.setX(boneXOffset) # radius
-      armBones[1].position.setX(-boneXOffset) # ulna
-      armBones[2].position.setY(halfArmLength)
-      armBones[3].position.setY(-halfArmLength)
-      armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(
-        new THREE.Euler(0, 0, Math.PI / 2)
-      );
+        if i > 1
+          @armBones[i].quaternion.multiply(armTopAndBottomRotation)
 
-      armBones[2].quaternion.multiply(armTopAndBottomRotation)
-      armBones[3].quaternion.multiply(armTopAndBottomRotation)
-
-      armBones = []
+        @armMesh.add(@armBones[i])
+        
+      @armSpheres = []
       for i in [0..3]
-        armBones.push(new THREE.Mesh(
+        @armSpheres.push(new THREE.Mesh(
           new THREE.SphereGeometry(jointRadius, 32, 32),
           material.clone()
         ))
-        armBones[i].material.color.copy(jointColor)
-        @armMesh.add(armBones[i])
-
-      # CW from TL
-      armBones[0].position.set( - boneXOffset,   halfArmLength, 0)
-      armBones[1].position.set(   boneXOffset,   halfArmLength, 0)
-      armBones[2].position.set(   boneXOffset, - halfArmLength, 0)
-      armBones[3].position.set( - boneXOffset, - halfArmLength, 0)
+        @armSpheres[i].material.color.copy(jointColor)
+        @armMesh.add(@armSpheres[i])
 
       scope.scene.add(@armMesh);
+
 
   # scales the meshes appropriately
   scaleTo: (hand)->
@@ -237,6 +227,32 @@ class HandMesh
         lengthScale = bone.length / mesh.geometry.parameters.height
         mesh.scale.set(baseScale, lengthScale, baseScale)
         j++
+
+    if scope.arm
+      armLenScale   = hand.arm.length / @armBones[0].geometry.parameters.height
+      armWidthScale = hand.arm.width  / @armBones[2].geometry.parameters.height
+
+      for i in [0..3]
+        @armBones[i].scale.set(baseScale,
+          ( if  i < 2 then armLenScale else armWidthScale )
+        , baseScale)
+
+
+      boneXOffset  = (hand.arm.width / 2) - (boneRadius / 2)
+      halfArmLength = hand.arm.length / 2
+
+      # CW from Top center
+      @armBones[0].position.setX(boneXOffset) # radius
+      @armBones[1].position.setX(-boneXOffset) # ulna
+      @armBones[2].position.setY(halfArmLength)
+      @armBones[3].position.setY(-halfArmLength)
+
+      # CW from TL
+      @armSpheres[0].position.set( - boneXOffset,   halfArmLength, 0)
+      @armSpheres[1].position.set(   boneXOffset,   halfArmLength, 0)
+      @armSpheres[2].position.set(   boneXOffset, - halfArmLength, 0)
+      @armSpheres[3].position.set( - boneXOffset, - halfArmLength, 0)
+
 
 
     return this
@@ -283,6 +299,11 @@ class HandMesh
         ++j
 
         break if j == @fingerMeshes[i].length
+
+    for i in [0..3]
+      @armBones[i].visible   = visible
+      @armSpheres[i].visible = visible
+
 
   show: ->
     @setVisibility(true)
