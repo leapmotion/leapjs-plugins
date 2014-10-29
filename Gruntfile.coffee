@@ -132,6 +132,23 @@ module.exports = (grunt) ->
         pushTo: 'master'
 
 
+    watch:
+      files: ['main/**/*.coffee', 'utils/**/*.coffee'],
+      options:
+        atBegin: true
+      tasks: [
+        "string-replace",
+        "coffee",
+        "usebanner:coffeeMessagesMain",
+        "usebanner:coffeeMessagesUtils",
+        "clean",
+        "concat",
+        "usebanner:licenseMain",
+        "usebanner:licenseUtils",
+        "uglify"
+      ]
+
+
   require('load-grunt-tasks')(grunt);
 
   grunt.registerTask "default", [
