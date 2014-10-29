@@ -19,6 +19,20 @@
       bottom: 0;
       top: auto !important;
     }
+
+    table, th, td {
+      border: 1px solid #aaa;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    td, th {
+      vertical-align: top;
+      padding: 3px;
+    }
+    th {
+      color: #555;
+    }
   </style>
 
 
@@ -63,6 +77,61 @@
   <!-- note - there seems to be a strange issue with THREEjs sections of the hand disappearing for scales larger than 1.
        Scale set as an option for the riggedHand will cause the issue.  -->
 </div>
+<div style="float: left; padding: 10px">
+  <button id="showHide">Show/Hide</button>
+</div>
+
+<br/>
+
+<pre><code>
+  // At the simplest:
+  Leap.loop()
+    .use('transform', {
+      // move 20 cm back.
+      position: new THREE.Vector3(0,0,-200)
+    });
+</code></pre>
+
+<br/>
+
+<h3>Options</h3>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>VR</td>
+    <td>false</td>
+    <td>
+      Sets scale, position, and rotation transforms for HMD mode.  These are: units in meters, 8cm forward, and all x, y, and z axis flipped.
+    </td>
+  </tr>
+  <tr>
+    <td>position</td>
+    <td>undefined</td>
+    <td>A THREE.Vector3 position offset vector</td>
+  </tr>
+  <tr>
+    <td>quaternion</td>
+    <td>undefined</td>
+    <td>A THREE.Quaternion rotation</td>
+  </tr>
+  <tr>
+    <td>scale</td>
+    <td>undefined</td>
+    <td>A THREE.Vector scale vector, or a single scalar to be applied to all three axis.</td>
+  </tr>
+  <tr>
+    <td>effectiveParent</td>
+    <td>undefined</td>
+    <td>A THREE.Object3d, or anything which responds to `matrixWorld` and `scale`. This matrixWorld is applied to the
+      hand data as well as any transformations specified through the other options.  This allows hands to be "attached"
+      to a camera.</td>
+  </tr>
+</table>
 
 
 </body>
@@ -124,7 +193,7 @@
   .use('transform', {
     quaternion: new THREE.Quaternion,
     position: new THREE.Vector3,
-    scale: new THREE.Vector3(1,1,1)
+    scale: 0.3
   })
   .use('playback', {recording: 'finger-tap-54fps.json.lz'})
   .use('riggedHand', {
@@ -162,6 +231,15 @@
     );
     document.getElementById('scaleOutput').innerHTML = value;
   };
+
+  document.getElementById('showHide').onclick = function(){
+    var el = document.querySelector('canvas');
+    if (el.style.display == 'none'){
+      el.style.display = 'block'
+    }else {
+      el.style.display = 'none'
+    }
+  }
 
 </script>
 
