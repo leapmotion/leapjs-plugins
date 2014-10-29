@@ -228,8 +228,8 @@ class HandMesh
         j++
 
     if scope.arm
-      armLenScale   = hand.arm.length / @armBones[0].geometry.parameters.height
-      armWidthScale = hand.arm.width  / @armBones[2].geometry.parameters.height
+      armLenScale   = hand.arm.length / ( @armBones[0].geometry.parameters.height  + @armBones[2].geometry.parameters.radiusTop )
+      armWidthScale = hand.arm.width  / ( @armBones[2].geometry.parameters.height + @armBones[2].geometry.parameters.radiusTop )
 
       for i in [0..3]
         @armBones[i].scale.set(baseScale,

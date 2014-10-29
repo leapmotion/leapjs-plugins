@@ -163,8 +163,8 @@
         }
       }
       if (scope.arm) {
-        armLenScale = hand.arm.length / this.armBones[0].geometry.parameters.height;
-        armWidthScale = hand.arm.width / this.armBones[2].geometry.parameters.height;
+        armLenScale = hand.arm.length / (this.armBones[0].geometry.parameters.height + this.armBones[2].geometry.parameters.radiusTop);
+        armWidthScale = hand.arm.width / (this.armBones[2].geometry.parameters.height + this.armBones[2].geometry.parameters.radiusTop);
         for (i = _j = 0; _j <= 3; i = ++_j) {
           this.armBones[i].scale.set(baseScale, (i < 2 ? armLenScale : armWidthScale), baseScale);
         }
