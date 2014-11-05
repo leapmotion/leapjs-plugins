@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.9 - 2014-10-29    
+ * LeapJS-Plugins  - v0.1.9 - 2014-11-04    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -88,11 +88,10 @@
 
     HandMesh.get = function() {
       var handMesh;
-      if (HandMesh.unusedHandMeshes.length > 0) {
-        handMesh = HandMesh.unusedHandMeshes.pop();
-      } else {
+      if (HandMesh.unusedHandMeshes.length === 0) {
         handMesh = HandMesh.create();
       }
+      handMesh = HandMesh.unusedHandMeshes.pop();
       handMesh.show();
       return handMesh;
     };

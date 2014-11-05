@@ -68,11 +68,10 @@
 
     HandMesh.get = function() {
       var handMesh;
-      if (HandMesh.unusedHandMeshes.length > 0) {
-        handMesh = HandMesh.unusedHandMeshes.pop();
-      } else {
+      if (HandMesh.unusedHandMeshes.length === 0) {
         handMesh = HandMesh.create();
       }
+      handMesh = HandMesh.unusedHandMeshes.pop();
       handMesh.show();
       return handMesh;
     };

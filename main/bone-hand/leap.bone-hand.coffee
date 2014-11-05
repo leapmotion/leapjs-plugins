@@ -91,10 +91,10 @@ class HandMesh
   # gets or creates a handmesh
   # makes it visible
   @get: ->
-    if HandMesh.unusedHandMeshes.length > 0
-      handMesh = HandMesh.unusedHandMeshes.pop()
-    else
+    if HandMesh.unusedHandMeshes.length == 0
       handMesh = HandMesh.create()
+
+    handMesh = HandMesh.unusedHandMeshes.pop()
 
     handMesh.show()
 
