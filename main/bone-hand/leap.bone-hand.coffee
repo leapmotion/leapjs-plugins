@@ -334,6 +334,7 @@ boneHandLost = (hand) ->
   if handMesh
     handMesh.replace()
 
+  handMesh = hand.data('handMesh', null)
 
 Leap.plugin 'boneHand', (options = {}) ->
   # make sure scope is globally available
