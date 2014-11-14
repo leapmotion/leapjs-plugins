@@ -337,6 +337,10 @@ Leap.plugin 'boneHand', (options = {}) ->
   scope.boneColor  && boneColor  = scope.boneColor
   scope.jointColor && jointColor = scope.jointColor
 
+  scope.HandMesh = HandMesh
+
+
+
   baseBoneRotation = (new THREE.Quaternion).setFromEuler(
     new THREE.Euler(Math.PI / 2, 0, 0)
   );
