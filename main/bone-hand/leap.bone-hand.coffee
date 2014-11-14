@@ -58,29 +58,20 @@ initScene = (targetEl)->
   render()
 
 
+  scope.render ||= ->
+    renderer.render(scope.scene, scope.camera);
 
-# bone hand methods copied from leapdev
+  scope.render()
 
-baseBoneRotation = (new THREE.Quaternion).setFromEuler(
-  new THREE.Euler(Math.PI / 2, 0, 0)
-);
-
-
-jointColor = (new THREE.Color).setHex(0x5daa00)
-boneColor = (new THREE.Color).setHex(0xffffff)
-
-boneScale  = 1 / 6
-jointScale = 1 / 5
-
+baseBoneRotation = null
+jointColor = null
+boneColor = null
+boneScale  = null
+jointScale = null
 boneRadius = null
 jointRadius = null
-
 material = null
-
-armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(
-  new THREE.Euler(0, 0, Math.PI / 2)
-);
-
+armTopAndBottomRotation = null
 
 
 
@@ -345,6 +336,29 @@ Leap.plugin 'boneHand', (options = {}) ->
 
   scope.boneColor  && boneColor  = scope.boneColor
   scope.jointColor && jointColor = scope.jointColor
+
+  baseBoneRotation = (new THREE.Quaternion).setFromEuler(
+    new THREE.Euler(Math.PI / 2, 0, 0)
+  );
+
+
+  jointColor = (new THREE.Color).setHex(0x5daa00)
+  boneColor = (new THREE.Color).setHex(0xffffff)
+
+  boneScale  = 1 / 6
+  jointScale = 1 / 5
+
+  boneRadius = null
+  jointRadius = null
+
+  material = null
+
+  armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(
+    new THREE.Euler(0, 0, Math.PI / 2)
+  );
+
+
+
 
 
   @use('handEntry')
