@@ -51,14 +51,8 @@ initScene = (targetEl)->
     renderer.render(scope.scene, camera)
   , false
 
-  render = ->
-    renderer.render(scope.scene, camera);
-    window.requestAnimationFrame(render);
 
-  render()
-
-
-  scope.render ||= ->
+  scope.render ||= (timestamp)->
     renderer.render(scope.scene, scope.camera);
 
   scope.render()
@@ -378,8 +372,19 @@ Leap.plugin 'boneHand', (options = {}) ->
     HandMesh.create()
     HandMesh.create()
 
+    # have rendered called by leap, rather than animation frame, to make sure there's no one-frame-delay.
+    # we wrap this to allow the render method to be replaced
+    if Leap.version.major == 0 && Leap.version.minor < 7 && Leap.version.dot < 4
+      console.warn("BoneHand default scene render requires LeapJS > 0.6.3. You're running have #{Leap.version.full}")
+
+    @on 'frameEnd', (timestamp)->
+      scope.render(timestamp)
+
   @on 'handLost', boneHandLost
 
+
   {
+
     hand: onHand
+
   }
