@@ -152,33 +152,39 @@ Leap.plugin 'transform', (scope = {})->
 
 
   {
-    hand: (hand)->
+    frame: (frame)->
 
-      transformWithMatrices(hand, scope.getTransform(hand), (scope.getScale(hand) || new THREE.Vector3(1,1,1)).toArray() )
+      return if frame.data.transformed
 
-      if scope.effectiveParent
-        # as long as parent doesn't have scale, we're good.
-        # could refactor to extract scale from mat4 and do the two separately
-        # e.g., decompose in to pos/rot/scale, recompose from pos/rot/defaultScale
-        transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.scale.toArray())
+      frame.data.transformed = true
 
-      len = null
-      for finger in hand.fingers
-        # recalculate lengths
-        len = Leap.vec3.create()
-        Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition)
-        finger.metacarpal.length = Leap.vec3.length(len)
+      for hand in frame.hands
 
-        Leap.vec3.sub(len, finger.pipPosition, finger.mcpPosition)
-        finger.proximal.length = Leap.vec3.length(len)
+        transformWithMatrices(hand, scope.getTransform(hand), (scope.getScale(hand) || new THREE.Vector3(1,1,1)).toArray() )
 
-        Leap.vec3.sub(len, finger.dipPosition, finger.pipPosition)
-        finger.medial.length = Leap.vec3.length(len)
+        if scope.effectiveParent
+          # as long as parent doesn't have scale, we're good.
+          # could refactor to extract scale from mat4 and do the two separately
+          # e.g., decompose in to pos/rot/scale, recompose from pos/rot/defaultScale
+          transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.scale.toArray())
 
-        Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition)
-        finger.distal.length = Leap.vec3.length(len)
+        len = null
+        for finger in hand.fingers
+          # recalculate lengths
+          len = Leap.vec3.create()
+          Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition)
+          finger.metacarpal.length = Leap.vec3.length(len)
 
-      Leap.vec3.sub(len, hand.arm.prevJoint, hand.arm.nextJoint)
-      hand.arm.length = Leap.vec3.length(len)
+          Leap.vec3.sub(len, finger.pipPosition, finger.mcpPosition)
+          finger.proximal.length = Leap.vec3.length(len)
+
+          Leap.vec3.sub(len, finger.dipPosition, finger.pipPosition)
+          finger.medial.length = Leap.vec3.length(len)
+
+          Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition)
+          finger.distal.length = Leap.vec3.length(len)
+
+        Leap.vec3.sub(len, hand.arm.prevJoint, hand.arm.nextJoint)
+        hand.arm.length = Leap.vec3.length(len)
 
   }

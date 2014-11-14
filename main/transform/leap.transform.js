@@ -104,28 +104,38 @@
       return hand.arm.width *= scalarScale;
     };
     return {
-      hand: function(hand) {
-        var finger, len, _i, _len, _ref;
-        transformWithMatrices(hand, scope.getTransform(hand), (scope.getScale(hand) || new THREE.Vector3(1, 1, 1)).toArray());
-        if (scope.effectiveParent) {
-          transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.scale.toArray());
+      frame: function(frame) {
+        var finger, hand, len, _i, _j, _len, _len1, _ref, _ref1, _results;
+        if (frame.data.transformed) {
+          return;
         }
-        len = null;
-        _ref = hand.fingers;
+        frame.data.transformed = true;
+        _ref = frame.hands;
+        _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          finger = _ref[_i];
-          len = Leap.vec3.create();
-          Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition);
-          finger.metacarpal.length = Leap.vec3.length(len);
-          Leap.vec3.sub(len, finger.pipPosition, finger.mcpPosition);
-          finger.proximal.length = Leap.vec3.length(len);
-          Leap.vec3.sub(len, finger.dipPosition, finger.pipPosition);
-          finger.medial.length = Leap.vec3.length(len);
-          Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition);
-          finger.distal.length = Leap.vec3.length(len);
+          hand = _ref[_i];
+          transformWithMatrices(hand, scope.getTransform(hand), (scope.getScale(hand) || new THREE.Vector3(1, 1, 1)).toArray());
+          if (scope.effectiveParent) {
+            transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.scale.toArray());
+          }
+          len = null;
+          _ref1 = hand.fingers;
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            finger = _ref1[_j];
+            len = Leap.vec3.create();
+            Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition);
+            finger.metacarpal.length = Leap.vec3.length(len);
+            Leap.vec3.sub(len, finger.pipPosition, finger.mcpPosition);
+            finger.proximal.length = Leap.vec3.length(len);
+            Leap.vec3.sub(len, finger.dipPosition, finger.pipPosition);
+            finger.medial.length = Leap.vec3.length(len);
+            Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition);
+            finger.distal.length = Leap.vec3.length(len);
+          }
+          Leap.vec3.sub(len, hand.arm.prevJoint, hand.arm.nextJoint);
+          _results.push(hand.arm.length = Leap.vec3.length(len));
         }
-        Leap.vec3.sub(len, hand.arm.prevJoint, hand.arm.nextJoint);
-        return hand.arm.length = Leap.vec3.length(len);
+        return _results;
       }
     };
   });
