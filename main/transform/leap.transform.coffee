@@ -154,7 +154,7 @@ Leap.plugin 'transform', (scope = {})->
   {
     frame: (frame)->
 
-      return if frame.data.transformed
+      return if !frame.valid || frame.data.transformed
 
       frame.data.transformed = true
 
