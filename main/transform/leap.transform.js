@@ -106,7 +106,7 @@
     return {
       frame: function(frame) {
         var finger, hand, len, _i, _j, _len, _len1, _ref, _ref1, _results;
-        if (frame.data.transformed) {
+        if (!frame.valid || frame.data.transformed) {
           return;
         }
         frame.data.transformed = true;

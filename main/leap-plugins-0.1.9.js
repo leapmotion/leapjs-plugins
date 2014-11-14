@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.9 - 2014-11-04    
+ * LeapJS-Plugins  - v0.1.9 - 2014-11-14    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2014 LeapMotion, Inc    
@@ -24,8 +24,8 @@
 
   scope = null;
 
-  initScene = function(targetEl) {
-    var camera, directionalLight, height, render, renderer, width;
+  initScene = function(targetEl, scale) {
+    var camera, directionalLight, far, height, near, renderer, width;
     scope.scene = new THREE.Scene();
     scope.renderer = renderer = new THREE.WebGLRenderer({
       alpha: true
@@ -45,11 +45,16 @@
     directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(-0.5, 0, -0.2);
     scope.scene.add(directionalLight);
-    scope.camera = camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
+    near = 1;
+    far = 10000;
+    if (scale) {
+      near *= scale;
+      far *= scale;
+    }
+    scope.camera = camera = new THREE.PerspectiveCamera(45, width / height, near, far);
     camera.position.fromArray([0, 300, 500]);
     camera.lookAt(new THREE.Vector3(0, 160, 0));
     scope.scene.add(camera);
-    renderer.render(scope.scene, camera);
     window.addEventListener('resize', function() {
       width = window.innerWidth;
       height = window.innerHeight;
@@ -58,22 +63,21 @@
       renderer.setSize(width, height);
       return renderer.render(scope.scene, camera);
     }, false);
-    render = function() {
-      renderer.render(scope.scene, camera);
-      return window.requestAnimationFrame(render);
-    };
-    return render();
+    scope.render || (scope.render = function(timestamp) {
+      return renderer.render(scope.scene, scope.camera);
+    });
+    return scope.render();
   };
 
-  baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0));
+  baseBoneRotation = null;
 
-  jointColor = (new THREE.Color).setHex(0x5daa00);
+  jointColor = null;
 
-  boneColor = (new THREE.Color).setHex(0xffffff);
+  boneColor = null;
 
-  boneScale = 1 / 6;
+  boneScale = null;
 
-  jointScale = 1 / 5;
+  jointScale = null;
 
   boneRadius = null;
 
@@ -81,7 +85,7 @@
 
   material = null;
 
-  armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0, Math.PI / 2));
+  armTopAndBottomRotation = null;
 
   HandMesh = (function() {
     HandMesh.unusedHandMeshes = [];
@@ -283,11 +287,13 @@
     var handMesh;
     handMesh = hand.data('handMesh');
     if (handMesh) {
-      return handMesh.replace();
+      handMesh.replace();
     }
+    return handMesh = hand.data('handMesh', null);
   };
 
   Leap.plugin('boneHand', function(options) {
+    var scale;
     if (options == null) {
       options = {};
     }
@@ -296,15 +302,37 @@
     scope.jointScale && (jointScale = scope.jointScale);
     scope.boneColor && (boneColor = scope.boneColor);
     scope.jointColor && (jointColor = scope.jointColor);
+    scope.HandMesh = HandMesh;
+    baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0));
+    jointColor = (new THREE.Color).setHex(0x5daa00);
+    boneColor = (new THREE.Color).setHex(0xffffff);
+    boneScale = 1 / 6;
+    jointScale = 1 / 5;
+    boneRadius = null;
+    jointRadius = null;
+    material = null;
+    armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0, Math.PI / 2));
     this.use('handEntry');
     this.use('handHold');
     if (scope.scene === void 0) {
       console.assert(scope.targetEl);
-      initScene(scope.targetEl);
+      if (this.plugins.transform && this.plugins.transform.getScale()) {
+        scale = this.plugins.transform.scale.x;
+      }
+      initScene(scope.targetEl, scale);
+      if (this.plugins.transform && this.plugins.transform.vr) {
+        scope.camera.position.set(0, 0, 0);
+      }
     }
     if (scope.scene) {
       HandMesh.create();
       HandMesh.create();
+      if (Leap.version.major === 0 && Leap.version.minor < 7 && Leap.version.dot < 4) {
+        console.warn("BoneHand default scene render requires LeapJS > 0.6.3. You're running have " + Leap.version.full);
+      }
+      this.on('frameEnd', function(timestamp) {
+        return scope.render(timestamp);
+      });
     }
     this.on('handLost', boneHandLost);
     return {
@@ -2491,28 +2519,38 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
       return hand.arm.width *= scalarScale;
     };
     return {
-      hand: function(hand) {
-        var finger, len, _i, _len, _ref;
-        transformWithMatrices(hand, scope.getTransform(hand), (scope.getScale(hand) || new THREE.Vector3(1, 1, 1)).toArray());
-        if (scope.effectiveParent) {
-          transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.scale.toArray());
+      frame: function(frame) {
+        var finger, hand, len, _i, _j, _len, _len1, _ref, _ref1, _results;
+        if (!frame.valid || frame.data.transformed) {
+          return;
         }
-        len = null;
-        _ref = hand.fingers;
+        frame.data.transformed = true;
+        _ref = frame.hands;
+        _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          finger = _ref[_i];
-          len = Leap.vec3.create();
-          Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition);
-          finger.metacarpal.length = Leap.vec3.length(len);
-          Leap.vec3.sub(len, finger.pipPosition, finger.mcpPosition);
-          finger.proximal.length = Leap.vec3.length(len);
-          Leap.vec3.sub(len, finger.dipPosition, finger.pipPosition);
-          finger.medial.length = Leap.vec3.length(len);
-          Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition);
-          finger.distal.length = Leap.vec3.length(len);
+          hand = _ref[_i];
+          transformWithMatrices(hand, scope.getTransform(hand), (scope.getScale(hand) || new THREE.Vector3(1, 1, 1)).toArray());
+          if (scope.effectiveParent) {
+            transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.scale.toArray());
+          }
+          len = null;
+          _ref1 = hand.fingers;
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            finger = _ref1[_j];
+            len = Leap.vec3.create();
+            Leap.vec3.sub(len, finger.mcpPosition, finger.carpPosition);
+            finger.metacarpal.length = Leap.vec3.length(len);
+            Leap.vec3.sub(len, finger.pipPosition, finger.mcpPosition);
+            finger.proximal.length = Leap.vec3.length(len);
+            Leap.vec3.sub(len, finger.dipPosition, finger.pipPosition);
+            finger.medial.length = Leap.vec3.length(len);
+            Leap.vec3.sub(len, finger.tipPosition, finger.dipPosition);
+            finger.distal.length = Leap.vec3.length(len);
+          }
+          Leap.vec3.sub(len, hand.arm.prevJoint, hand.arm.nextJoint);
+          _results.push(hand.arm.length = Leap.vec3.length(len));
         }
-        Leap.vec3.sub(len, hand.arm.prevJoint, hand.arm.nextJoint);
-        return hand.arm.length = Leap.vec3.length(len);
+        return _results;
       }
     };
   });

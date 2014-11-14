@@ -4,8 +4,8 @@
 
   scope = null;
 
-  initScene = function(targetEl) {
-    var camera, directionalLight, height, render, renderer, width;
+  initScene = function(targetEl, scale) {
+    var camera, directionalLight, far, height, near, renderer, width;
     scope.scene = new THREE.Scene();
     scope.renderer = renderer = new THREE.WebGLRenderer({
       alpha: true
@@ -25,11 +25,16 @@
     directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(-0.5, 0, -0.2);
     scope.scene.add(directionalLight);
-    scope.camera = camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
+    near = 1;
+    far = 10000;
+    if (scale) {
+      near *= scale;
+      far *= scale;
+    }
+    scope.camera = camera = new THREE.PerspectiveCamera(45, width / height, near, far);
     camera.position.fromArray([0, 300, 500]);
     camera.lookAt(new THREE.Vector3(0, 160, 0));
     scope.scene.add(camera);
-    renderer.render(scope.scene, camera);
     window.addEventListener('resize', function() {
       width = window.innerWidth;
       height = window.innerHeight;
@@ -38,22 +43,21 @@
       renderer.setSize(width, height);
       return renderer.render(scope.scene, camera);
     }, false);
-    render = function() {
-      renderer.render(scope.scene, camera);
-      return window.requestAnimationFrame(render);
-    };
-    return render();
+    scope.render || (scope.render = function(timestamp) {
+      return renderer.render(scope.scene, scope.camera);
+    });
+    return scope.render();
   };
 
-  baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0));
+  baseBoneRotation = null;
 
-  jointColor = (new THREE.Color).setHex(0x5daa00);
+  jointColor = null;
 
-  boneColor = (new THREE.Color).setHex(0xffffff);
+  boneColor = null;
 
-  boneScale = 1 / 6;
+  boneScale = null;
 
-  jointScale = 1 / 5;
+  jointScale = null;
 
   boneRadius = null;
 
@@ -61,7 +65,7 @@
 
   material = null;
 
-  armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0, Math.PI / 2));
+  armTopAndBottomRotation = null;
 
   HandMesh = (function() {
     HandMesh.unusedHandMeshes = [];
@@ -263,11 +267,13 @@
     var handMesh;
     handMesh = hand.data('handMesh');
     if (handMesh) {
-      return handMesh.replace();
+      handMesh.replace();
     }
+    return handMesh = hand.data('handMesh', null);
   };
 
   Leap.plugin('boneHand', function(options) {
+    var scale;
     if (options == null) {
       options = {};
     }
@@ -276,15 +282,37 @@
     scope.jointScale && (jointScale = scope.jointScale);
     scope.boneColor && (boneColor = scope.boneColor);
     scope.jointColor && (jointColor = scope.jointColor);
+    scope.HandMesh = HandMesh;
+    baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0));
+    jointColor = (new THREE.Color).setHex(0x5daa00);
+    boneColor = (new THREE.Color).setHex(0xffffff);
+    boneScale = 1 / 6;
+    jointScale = 1 / 5;
+    boneRadius = null;
+    jointRadius = null;
+    material = null;
+    armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0, Math.PI / 2));
     this.use('handEntry');
     this.use('handHold');
     if (scope.scene === void 0) {
       console.assert(scope.targetEl);
-      initScene(scope.targetEl);
+      if (this.plugins.transform && this.plugins.transform.getScale()) {
+        scale = this.plugins.transform.scale.x;
+      }
+      initScene(scope.targetEl, scale);
+      if (this.plugins.transform && this.plugins.transform.vr) {
+        scope.camera.position.set(0, 0, 0);
+      }
     }
     if (scope.scene) {
       HandMesh.create();
       HandMesh.create();
+      if (Leap.version.major === 0 && Leap.version.minor < 7 && Leap.version.dot < 4) {
+        console.warn("BoneHand default scene render requires LeapJS > 0.6.3. You're running have " + Leap.version.full);
+      }
+      this.on('frameEnd', function(timestamp) {
+        return scope.render(timestamp);
+      });
     }
     this.on('handLost', boneHandLost);
     return {
