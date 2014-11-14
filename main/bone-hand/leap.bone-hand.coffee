@@ -28,7 +28,7 @@ initScene = (targetEl, scale)->
   directionalLight.position.set( -0.5, 0, -0.2 )
   scope.scene.add(directionalLight)
 
-  near = 10 # 1 cm
+  near = 1 # 1 mm
   far = 10000 # 10 m
 
   if scale
@@ -44,7 +44,7 @@ initScene = (targetEl, scale)->
   scope.scene.add(camera)
 
   window.addEventListener 'resize', ->
-    width = window.innerWidth
+    width  = window.innerWidth
     height = window.innerHeight
 
     camera.aspect = width / height
@@ -370,10 +370,13 @@ Leap.plugin 'boneHand', (options = {}) ->
   if scope.scene == undefined
     console.assert(scope.targetEl)
 
-    if @plugins.transform && @plugins.transform.scale
+    if @plugins.transform && @plugins.transform.getScale()
       scale = @plugins.transform.scale.x # we just grab one value, as they're usually all the same.
 
     initScene(scope.targetEl, scale)
+
+    if @plugins.transform && @plugins.transform.vr
+      scope.camera.position.set(0,0,0)
 
   # Preload two hands
   if scope.scene
