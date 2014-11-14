@@ -1,6 +1,6 @@
 scope = null
 
-initScene = (targetEl)->
+initScene = (targetEl, scale)->
   scope.scene = new THREE.Scene()
   scope.renderer = renderer = new THREE.WebGLRenderer({
     alpha: true
@@ -28,16 +28,20 @@ initScene = (targetEl)->
   directionalLight.position.set( -0.5, 0, -0.2 )
   scope.scene.add(directionalLight)
 
-  scope.camera = camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000)
+  near = 10 # 1 cm
+  far = 10000 # 10 m
+
+  if scale
+    near *= scale
+    far  *= scale
+
+  scope.camera = camera = new THREE.PerspectiveCamera(45, width / height, near, far)
 
   camera.position.fromArray([0, 300, 500]);
   camera.lookAt(new THREE.Vector3(0, 160, 0));
 
 
   scope.scene.add(camera)
-
-  renderer.render(scope.scene, camera)
-
 
   window.addEventListener 'resize', ->
     width = window.innerWidth
@@ -365,7 +369,11 @@ Leap.plugin 'boneHand', (options = {}) ->
   # this allows a null scene to be passed in for delayed-initialization.
   if scope.scene == undefined
     console.assert(scope.targetEl)
-    initScene(scope.targetEl)
+
+    if @plugins.transform && @plugins.transform.scale
+      scale = @plugins.transform.scale.x # we just grab one value, as they're usually all the same.
+
+    initScene(scope.targetEl, scale)
 
   # Preload two hands
   if scope.scene
