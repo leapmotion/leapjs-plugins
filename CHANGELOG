@@ -1,3 +1,12 @@
+# 0.1.10
+ - [transform] Do not allow duplicate transformations (important for LeapJS 0.6.4+ with playback, which can emit the same frame multiple times)
+ - [boneHand] Automatically scale the view frustum based upon scene scale.
+ - [boneHand] Render after leapmotion pipeline runs, expose scope.render method
+ - [boneHand] Expose HandMesh on scope
+ - [boneHand] Fix issue where including plugins would depend on THREE.js
+ - [boneHand] Fix issue where handMesh would not be cleaned up on hand lost
+ - [boneHand] fix issue where deferred scene creation would result in a one hand maximum
+
 # 0.1.9
  - [bone hand] Added bone hand plugin.
  - [bone hand] Optimized performance for new hands entering the scene.
