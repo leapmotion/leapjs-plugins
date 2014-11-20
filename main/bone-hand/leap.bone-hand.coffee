@@ -137,6 +137,7 @@ class HandMesh
           new THREE.CylinderGeometry(boneRadius, boneRadius, 40, 32),
           material.clone()
         )
+        mesh.name = "..."
         mesh.material.color.copy(boneColor)
         scope.scene.add mesh
         finger.push mesh
@@ -389,7 +390,8 @@ Leap.plugin 'boneHand', (options = {}) ->
       console.warn("BoneHand default scene render requires LeapJS > 0.6.3. You're running have #{Leap.version.full}")
 
     @on 'frameEnd', (timestamp)->
-      scope.render(timestamp)
+      if scope.render
+        scope.render(timestamp)
 
   @on 'handLost', boneHandLost
 

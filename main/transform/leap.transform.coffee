@@ -166,7 +166,7 @@ Leap.plugin 'transform', (scope = {})->
           # as long as parent doesn't have scale, we're good.
           # could refactor to extract scale from mat4 and do the two separately
           # e.g., decompose in to pos/rot/scale, recompose from pos/rot/defaultScale
-          transformWithMatrices(hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.scale.toArray())
+          transformWithMatrices( hand, scope.effectiveParent.matrixWorld.elements, scope.effectiveParent.scale.toArray() )
 
         len = null
         for finger in hand.fingers
