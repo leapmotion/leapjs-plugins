@@ -128,6 +128,7 @@ class HandMesh
           material.clone()
         )
         mesh.material.color.copy(jointColor)
+        mesh.renderDepth = ((i * 9) + (2 * j) ) / 36 # might fuckup opaque objects?
         scope.scene.add mesh
         finger.push mesh
 
@@ -139,6 +140,7 @@ class HandMesh
         )
         mesh.name = "..."
         mesh.material.color.copy(boneColor)
+        mesh.renderDepth = ((i * 9) + (2 * j) + 1 ) / 36 # might fuckup opaque objects?
         scope.scene.add mesh
         finger.push mesh
 
