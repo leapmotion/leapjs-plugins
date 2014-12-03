@@ -3,7 +3,7 @@
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.js"></script>
   <script src="//js.leapmotion.com/leap-0.6.4.js"></script>
-  <script src="//js.leapmotion.com/leap-plugins-0.1.10.js"></script>
+  <script src="//js.leapmotion.com/leap-plugins-0.1.11pre.js"></script>
   <script src="lib/OrbitControls.js"></script>
 
   <script src="leap.bone-hand.js"></script>
@@ -118,7 +118,8 @@
   Leap.loop()
     .use('boneHand', {
       targetEl: document.body,
-      arm: true
+      arm: true,
+      opacity: 0.5
     });
 
 
