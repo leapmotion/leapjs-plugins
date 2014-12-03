@@ -112,6 +112,9 @@
       mesh = new HandMesh;
       mesh.setVisibility(false);
       HandMesh.unusedHandMeshes.push(mesh);
+      if (HandMesh.onMeshCreated) {
+        HandMesh.onMeshCreated(mesh);
+      }
       return mesh;
     };
 
@@ -161,6 +164,7 @@
           this.armBones.push(new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, (i < 2 ? 1000 : 100), 32), material.clone()));
           this.armBones[i].material.color.copy(boneColor);
           this.armBones[i].castShadow = true;
+          this.armBones[i].name = "ArmBone" + i;
           if (i > 1) {
             this.armBones[i].quaternion.multiply(armTopAndBottomRotation);
           }
@@ -171,11 +175,24 @@
           this.armSpheres.push(new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone()));
           this.armSpheres[i].material.color.copy(jointColor);
           this.armSpheres[i].castShadow = true;
+          this.armSpheres[i].name = "ArmSphere" + i;
           this.armMesh.add(this.armSpheres[i]);
         }
         scope.scene.add(this.armMesh);
       }
     }
+
+    HandMesh.prototype.traverse = function(callback) {
+      var i, mesh, _i, _j, _len, _ref;
+      for (i = _i = 0; _i < 5; i = ++_i) {
+        _ref = this.fingerMeshes[i];
+        for (_j = 0, _len = _ref.length; _j < _len; _j++) {
+          mesh = _ref[_j];
+          callback(mesh);
+        }
+      }
+      return this.armMesh.traverse(callback);
+    };
 
     HandMesh.prototype.scaleTo = function(hand) {
       var armLenScale, armWidthScale, baseScale, bone, boneXOffset, finger, fingerBoneLengthScale, halfArmLength, i, j, mesh, _i, _j;
@@ -293,6 +310,9 @@
     if (!handMesh) {
       handMesh = HandMesh.get().scaleTo(hand);
       hand.data('handMesh', handMesh);
+      if (HandMesh.onMeshUsed) {
+        HandMesh.onMeshUsed(handMesh);
+      }
     }
     return handMesh.formTo(hand);
   };
@@ -307,7 +327,7 @@
   };
 
   Leap.plugin('boneHand', function(options) {
-    var scale;
+    var controller, scale;
     if (options == null) {
       options = {};
     }
@@ -326,6 +346,13 @@
     jointRadius = null;
     material = null;
     armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0, Math.PI / 2));
+    controller = this;
+    HandMesh.onMeshCreated = function(mesh) {
+      return controller.emit('handMeshCreated', mesh);
+    };
+    HandMesh.onMeshUsed = function(mesh) {
+      return controller.emit('handMeshUsed', mesh);
+    };
     this.use('handEntry');
     this.use('handHold');
     if (scope.scene === void 0) {

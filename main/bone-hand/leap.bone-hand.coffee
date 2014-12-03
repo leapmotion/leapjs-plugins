@@ -102,6 +102,11 @@ class HandMesh
     mesh = new HandMesh
     mesh.setVisibility(false)
     HandMesh.unusedHandMeshes.push(mesh)
+
+
+    if HandMesh.onMeshCreated
+      HandMesh.onMeshCreated(mesh)
+
     return mesh
 
   constructor: ->
@@ -179,6 +184,7 @@ class HandMesh
         ))
         @armBones[i].material.color.copy(boneColor)
         @armBones[i].castShadow = true
+        @armBones[i].name= "ArmBone#{i}"
 
         if i > 1
           @armBones[i].quaternion.multiply(armTopAndBottomRotation)
@@ -193,9 +199,18 @@ class HandMesh
         ))
         @armSpheres[i].material.color.copy(jointColor)
         @armSpheres[i].castShadow = true
+        @armSpheres[i].name= "ArmSphere#{i}"
         @armMesh.add(@armSpheres[i])
 
       scope.scene.add(@armMesh);
+
+  traverse: (callback)->
+    for i in [0...5]
+      for mesh in @fingerMeshes[i]
+        callback(mesh)
+
+    @armMesh.traverse(callback)
+
 
 
   # scales the meshes appropriately
@@ -326,6 +341,8 @@ onHand = (hand) ->
   if !handMesh
     handMesh = HandMesh.get().scaleTo(hand)
     hand.data('handMesh', handMesh)
+    if HandMesh.onMeshUsed
+      HandMesh.onMeshUsed(handMesh)
 
   handMesh.formTo(hand)
 
@@ -371,7 +388,13 @@ Leap.plugin 'boneHand', (options = {}) ->
     new THREE.Euler(0, 0, Math.PI / 2)
   );
 
+  controller = this;
 
+  HandMesh.onMeshCreated = (mesh)->
+    controller.emit('handMeshCreated', mesh)
+
+  HandMesh.onMeshUsed = (mesh)->
+    controller.emit('handMeshUsed', mesh)
 
 
 
