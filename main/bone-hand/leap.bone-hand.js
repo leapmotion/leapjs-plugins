@@ -140,6 +140,7 @@
         for (i = _k = 0; _k <= 3; i = ++_k) {
           this.armBones.push(new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, (i < 2 ? 1000 : 100), 32), material.clone()));
           this.armBones[i].material.color.copy(boneColor);
+          this.armBones[i].castShadow = true;
           if (i > 1) {
             this.armBones[i].quaternion.multiply(armTopAndBottomRotation);
           }
@@ -149,6 +150,7 @@
         for (i = _l = 0; _l <= 3; i = ++_l) {
           this.armSpheres.push(new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone()));
           this.armSpheres[i].material.color.copy(jointColor);
+          this.armSpheres[i].castShadow = true;
           this.armMesh.add(this.armSpheres[i]);
         }
         scope.scene.add(this.armMesh);

@@ -178,12 +178,13 @@ class HandMesh
           material.clone()
         ))
         @armBones[i].material.color.copy(boneColor)
+        @armBones[i].castShadow = true
 
         if i > 1
           @armBones[i].quaternion.multiply(armTopAndBottomRotation)
 
         @armMesh.add(@armBones[i])
-        
+
       @armSpheres = []
       for i in [0..3]
         @armSpheres.push(new THREE.Mesh(
@@ -191,6 +192,7 @@ class HandMesh
           material.clone()
         ))
         @armSpheres[i].material.color.copy(jointColor)
+        @armSpheres[i].castShadow = true
         @armMesh.add(@armSpheres[i])
 
       scope.scene.add(@armMesh);
