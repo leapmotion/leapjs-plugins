@@ -7,9 +7,11 @@
   initScene = function(targetEl, scale) {
     var camera, directionalLight, far, height, near, renderer, width;
     scope.scene = new THREE.Scene();
-    scope.renderer = renderer = new THREE.WebGLRenderer({
-      alpha: true
-    });
+    scope.rendererOps || (scope.rendererOps = {});
+    if (scope.rendererOps.alpha === void 0) {
+      scope.rendererOps.alpha = true;
+    }
+    scope.renderer = renderer = new THREE.WebGLRenderer(scope.rendererOps);
     width = window.innerWidth;
     height = window.innerHeight;
     renderer.setClearColor(0x000000, 0);
@@ -32,7 +34,7 @@
       far *= scale;
     }
     scope.camera = camera = new THREE.PerspectiveCamera(45, width / height, near, far);
-    camera.position.fromArray([0, 300, 500]);
+    camera.position.set(0, 300, 500);
     camera.lookAt(new THREE.Vector3(0, 160, 0));
     scope.scene.add(camera);
     window.addEventListener('resize', function() {
@@ -96,9 +98,12 @@
     function HandMesh() {
       var boneCount, finger, i, j, mesh, _i, _j, _k, _l;
       material = !isNaN(scope.opacity) ? new THREE.MeshPhongMaterial({
+        fog: false,
         transparent: true,
         opacity: scope.opacity
-      }) : new THREE.MeshPhongMaterial();
+      }) : new THREE.MeshPhongMaterial({
+        fog: false
+      });
       boneRadius = 40 * boneScale;
       jointRadius = 40 * jointScale;
       this.fingerMeshes = [];
@@ -107,16 +112,21 @@
         boneCount = i === 0 ? 3 : 4;
         for (j = _j = 0; 0 <= boneCount ? _j < boneCount : _j > boneCount; j = 0 <= boneCount ? ++_j : --_j) {
           mesh = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone());
+          mesh.name = "hand-bone-" + j;
           mesh.material.color.copy(jointColor);
+          mesh.renderDepth = ((i * 9) + (2 * j)) / 36;
           scope.scene.add(mesh);
           finger.push(mesh);
           mesh = new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, 40, 32), material.clone());
+          mesh.name = "hand-joint-" + j;
           mesh.material.color.copy(boneColor);
+          mesh.renderDepth = ((i * 9) + (2 * j) + 1) / 36;
           scope.scene.add(mesh);
           finger.push(mesh);
         }
         mesh = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone());
         mesh.material.color.copy(jointColor);
+        mesh.castShadow = true;
         scope.scene.add(mesh);
         finger.push(mesh);
         this.fingerMeshes.push(finger);
@@ -300,8 +310,11 @@
         scale = this.plugins.transform.scale.x;
       }
       initScene(scope.targetEl, scale);
-      if (this.plugins.transform && this.plugins.transform.vr) {
+      if (this.plugins.transform && this.plugins.transform.vr === true) {
         scope.camera.position.set(0, 0, 0);
+      }
+      if (this.plugins.transform && this.plugins.transform.vr === 'desktop') {
+        scope.camera.position.set(0, 0.15, 0.3);
       }
     }
     if (scope.scene) {
@@ -311,7 +324,9 @@
         console.warn("BoneHand default scene render requires LeapJS > 0.6.3. You're running have " + Leap.version.full);
       }
       this.on('frameEnd', function(timestamp) {
-        return scope.render(timestamp);
+        if (scope.render) {
+          return scope.render(timestamp);
+        }
       });
     }
     this.on('handLost', boneHandLost);

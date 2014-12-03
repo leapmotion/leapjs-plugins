@@ -2,9 +2,9 @@ scope = null
 
 initScene = (targetEl, scale)->
   scope.scene = new THREE.Scene()
-  scope.renderer = renderer = new THREE.WebGLRenderer({
-    alpha: true
-  })
+  scope.rendererOps ||= {}
+  if scope.rendererOps.alpha == undefined then scope.rendererOps.alpha = true
+  scope.renderer = renderer = new THREE.WebGLRenderer(scope.rendererOps)
 
   width = window.innerWidth
   height = window.innerHeight
@@ -37,7 +37,7 @@ initScene = (targetEl, scale)->
 
   scope.camera = camera = new THREE.PerspectiveCamera(45, width / height, near, far)
 
-  camera.position.fromArray([0, 300, 500]);
+  camera.position.set(0, 300, 500);
   camera.lookAt(new THREE.Vector3(0, 160, 0));
 
 
@@ -107,9 +107,9 @@ class HandMesh
   constructor: ->
 
     material = if !isNaN(scope.opacity)
-      new THREE.MeshPhongMaterial(transparent: true, opacity: scope.opacity)
+      new THREE.MeshPhongMaterial(fog: false, transparent: true, opacity: scope.opacity)
     else
-      new THREE.MeshPhongMaterial()
+      new THREE.MeshPhongMaterial(fog: false)
 
     boneRadius  = 40 * boneScale # 40 is typical mm middle finger proximal bone length. This can be anything, as it gets rescaled later.
     jointRadius = 40 * jointScale
