@@ -129,7 +129,8 @@ class HandMesh
         )
         mesh.name = "hand-bone-#{j}"
         mesh.material.color.copy(jointColor)
-        mesh.renderDepth = ((i * 9) + (2 * j) ) / 36 # might fuckup opaque objects?
+        mesh.renderDepth = ((i * 9) + (2 * j) ) / 36
+        mesh.castShadow = true
         scope.scene.add mesh
         finger.push mesh
 
@@ -142,8 +143,10 @@ class HandMesh
         mesh.name = "hand-joint-#{j}"
         mesh.material.color.copy(boneColor)
         mesh.renderDepth = ((i * 9) + (2 * j) + 1 ) / 36 # might fuckup opaque objects?
+        mesh.castShadow = true
         scope.scene.add mesh
         finger.push mesh
+
 
       #joint - end cap
       mesh = new THREE.Mesh(
@@ -151,6 +154,9 @@ class HandMesh
         material.clone()
       )
       mesh.material.color.copy(jointColor)
+
+      mesh.castShadow = true
+
       scope.scene.add mesh
       finger.push mesh
 

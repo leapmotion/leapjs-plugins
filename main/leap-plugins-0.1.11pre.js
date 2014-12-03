@@ -135,12 +135,14 @@
           mesh.name = "hand-bone-" + j;
           mesh.material.color.copy(jointColor);
           mesh.renderDepth = ((i * 9) + (2 * j)) / 36;
+          mesh.castShadow = true;
           scope.scene.add(mesh);
           finger.push(mesh);
           mesh = new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, 40, 32), material.clone());
           mesh.name = "hand-joint-" + j;
           mesh.material.color.copy(boneColor);
           mesh.renderDepth = ((i * 9) + (2 * j) + 1) / 36;
+          mesh.castShadow = true;
           scope.scene.add(mesh);
           finger.push(mesh);
         }
