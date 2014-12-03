@@ -379,8 +379,12 @@ Leap.plugin 'boneHand', (options = {}) ->
 
     initScene(scope.targetEl, scale)
 
-    if @plugins.transform && @plugins.transform.vr
+    if @plugins.transform && @plugins.transform.vr == true
       scope.camera.position.set(0,0,0)
+
+    if @plugins.transform && @plugins.transform.vr == 'desktop'
+      scope.camera.position.set(0,0.15,0.3)
+
 
   # Preload two hands
   if scope.scene

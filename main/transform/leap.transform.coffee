@@ -37,6 +37,9 @@ Leap.plugin 'transform', (scope = {})->
 
     scope.position = new THREE.Vector3(0,0,-0.08)
 
+  if scope.vr == 'desktop'
+    scope.scale = 0.001
+
   # no scale
   scope.getTransform = (hand)->
     if scope.matrix
@@ -150,7 +153,7 @@ Leap.plugin 'transform', (scope = {})->
     scalarScale = ( scale[0] + scale[1] + scale[2] ) / 3;
     hand.arm.width *= scalarScale
 
-
+  # todo - expose function to transform a frame
   {
     frame: (frame)->
 

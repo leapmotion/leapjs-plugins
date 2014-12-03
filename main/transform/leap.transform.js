@@ -15,6 +15,9 @@
       scope.scale = 0.001;
       scope.position = new THREE.Vector3(0, 0, -0.08);
     }
+    if (scope.vr === 'desktop') {
+      scope.scale = 0.001;
+    }
     scope.getTransform = function(hand) {
       var matrix;
       if (scope.matrix) {
