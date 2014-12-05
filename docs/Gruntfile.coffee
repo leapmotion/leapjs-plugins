@@ -1,8 +1,5 @@
 module.exports = (grunt) ->
 
-  fs = require('fs');
-
-
   filename = "leap-plugins-<%= pkg.version %>"
   banner = (project)->
      '/*
@@ -30,27 +27,6 @@ module.exports = (grunt) ->
 
   grunt.initConfig
     pkg: grunt.file.readJSON("package.json")
-    
-    'string-replace':
-      main:
-        files: {
-          'main/': 'main/**/*.html'
-          './':    'bower.json'
-        }
-        options: {
-          replacements: [
-            # bower.json
-            {
-              pattern: /"version": ".*"/,
-              replacement: '"version": "<%= pkg.version %>"'
-            },
-            # examples
-            {
-              pattern: /leap-plugins.*\.js/,
-              replacement: filename + '.js'
-            }
-          ]
-        }
 
     coffee:
       main:
@@ -62,12 +38,12 @@ module.exports = (grunt) ->
           rename: (task, path, options)->
             task + path.replace('.coffee', '.js')
         }]
-      utils:
+      extras:
         files: [{
           expand: true
-          cwd: 'util/'
+          cwd: 'extras/'
           src: '**/*.coffee'
-          dest: 'utils/'
+          dest: 'extras/'
           rename: (task, path, options)->
             task + path.replace('.coffee', '.js')
         }]
@@ -75,28 +51,18 @@ module.exports = (grunt) ->
     usebanner:
       coffeeMessagesMain:
         options:
-          banner: (file) ->
-            coffeePath = file.replace('.js', '.coffee')
-            if fs.existsSync(coffeePath)
-              "//CoffeeScript generated from #{coffeePath}"
-            else
-              null
+          banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
         src: "main/**/*.js"
-      coffeeMessagesUtils:
+      coffeeMessagesExtras:
         options:
-          banner: (file) ->
-            coffeePath = file.replace('.js', '.coffee')
-            if fs.existsSync(coffeePath)
-              "//CoffeeScript generated from #{coffeePath}"
-            else
-              null
-        src: "utils/**/*.js"
+          banner: (file) -> "//CoffeeScript generated from #{file.replace('.js', '.coffee')}"
+        src: "extras/**/*.js"
 
       licenseMain:
         options:
           banner: banner('')
         src: "main/#{filename}.js"
-      licenseUtils:
+      licenseExtras:
         options:
           banner: banner('Extra')
         src: "exras/#{filename}.js"
@@ -104,16 +70,16 @@ module.exports = (grunt) ->
     clean:
       main:
         src: ["main/leap-plugins-*.js"]
-      utils:
-        src: ["utils/leap-plugins-*.js"]
+      extras:
+        src: ["extras/leap-plugins-*.js"]
 
     concat:
       main:
-        src: 'main/*/*.js'
+        src: 'main/**/*.js'
         dest: "main/#{filename}.js"
-      utils:
-        src: 'utils/**/*.js'
-        dest: "utils/#{filename}-utils.js"
+      extras:
+        src: 'extras/**/*.js'
+        dest: "extras/#{filename}-extras.js"
 
     browserify:
       main:
@@ -129,44 +95,26 @@ module.exports = (grunt) ->
            banner: banner('')
         src: "main/#{filename}.js"
         dest: "main/#{filename}.min.js"
-      utils:
+      extras:
         options:
           banner: banner('Extra')
-        src: "utils/#{filename}-utils.js"
-        dest: "utils/#{filename}-utils.min.js"
+        src: "extras/#{filename}-extras.js"
+        dest: "extras/#{filename}-extras.min.js"
 
     bump:
       options:
         pushTo: 'master'
 
 
-    watch:
-      files: ['main/**/*.coffee', 'utils/**/*.coffee'],
-      options:
-        atBegin: true
-      tasks: [
-        "string-replace",
-        "coffee",
-        "usebanner:coffeeMessagesMain",
-        "usebanner:coffeeMessagesUtils",
-        "clean",
-        "concat",
-        "usebanner:licenseMain",
-        "usebanner:licenseUtils",
-        "uglify"
-      ]
-
-
   require('load-grunt-tasks')(grunt);
 
   grunt.registerTask "default", [
-    "string-replace",
     "coffee",
-    "usebanner:coffeeMessagesMain",
-    "usebanner:coffeeMessagesUtils",
+#    "usebanner:coffeeMessagesMain",
+#    "usebanner:coffeeMessagesExtras",
     "clean",
     "concat",
     "usebanner:licenseMain",
-    "usebanner:licenseUtils",
+    "usebanner:licenseExtras",
     "uglify"
   ]

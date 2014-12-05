@@ -11,10 +11,7 @@ Each event also includes the hand object, which will be invalid for the handLost
   handEntry = function() {
     var activeHandIds;
     activeHandIds = [];
-    if (Leap.version.major === 0 && Leap.version.minor < 5) {
-      console.warn("The hand entry plugin requires LeapJS 0.5.0 or newer.");
-    }
-    this.on("deviceStopped", function() {
+    this.on("deviceDisconnected", function() {
       for (var i = 0, len = activeHandIds.length; i < len; i++){
       id = activeHandIds[i];
       activeHandIds.splice(i, 1);
@@ -35,7 +32,7 @@ Each event also includes the hand object, which will be invalid for the handLost
         if(  newValidHandIds.indexOf(id) == -1){
           activeHandIds.splice(i, 1);
           // this gets executed before the current frame is added to the history.
-          this.emit('handLost', this.frame(1).hand(id));
+          this.emit('handLost', this.frame(1).hand(id))
           i--;
           len--;
         }
