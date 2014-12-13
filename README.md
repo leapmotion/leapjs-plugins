@@ -17,6 +17,7 @@ This repository holds a collection of independent plugins which extend the funct
  - **[LeapDataPlotter](http://leapmotion.github.io/leapjs-plugins/utils/data-plotter/)** Allows super trivial plotting of streaming data.
  
 **Other libraries** 
+ - **[Widgets](https://github.com/leapmotion/leapjs-widgets)** 3D input elements - buttons and planes.
  - **[Rigged Hand](https://github.com/leapmotion/leapjs-rigged-hand)** Easily add virtual 3d hands to any web page with THREE.js.
 
 ## Download
