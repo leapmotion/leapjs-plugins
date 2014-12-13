@@ -32,7 +32,7 @@ See [hand-entry](http://leapmotion.github.io/leapjs-plugins/docs/index.html#hand
 
 ```html
 <!-- your index.html -->
-<script type="text/javascript" src="js/leap-0.4.0.js"></script>
+<script type="text/javascript" src="js/leap-0.6.4.js"></script>
 <script type="text/javascript" src="js/lib/leap.hand-entry.js"></script>
 <script type="text/javascript">
   new Leap.Controller()
