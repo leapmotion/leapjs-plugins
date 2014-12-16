@@ -171,7 +171,7 @@
           callback(mesh);
         }
       }
-      return this.armMesh.traverse(callback);
+      return this.armMesh && this.armMesh.traverse(callback);
     };
 
     HandMesh.prototype.scaleTo = function(hand) {

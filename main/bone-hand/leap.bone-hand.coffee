@@ -209,7 +209,7 @@ class HandMesh
       for mesh in @fingerMeshes[i]
         callback(mesh)
 
-    @armMesh.traverse(callback)
+    @armMesh && @armMesh.traverse(callback)
 
 
 
