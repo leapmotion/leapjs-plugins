@@ -1,7 +1,5 @@
 //CoffeeScript generated from main/transform/leap.transform.coffee
 (function() {
-  var __slice = [].slice;
-
   Leap.plugin('transform', function(scope) {
     var noop, transformDirections, transformMat4Implicit0, transformPositions, transformWithMatrices, _directionTransform;
     if (scope == null) {
@@ -50,9 +48,8 @@
         return scope.scale;
       }
     };
-    transformPositions = function() {
-      var matrix, vec3, vec3s, _i, _len, _results;
-      matrix = arguments[0], vec3s = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    transformPositions = function(matrix, vec3s) {
+      var vec3, _i, _len, _results;
       _results = [];
       for (_i = 0, _len = vec3s.length; _i < _len; _i++) {
         vec3 = vec3s[_i];
@@ -74,9 +71,8 @@
       out[2] = m[2] * x + m[6] * y + m[10] * z;
       return out;
     };
-    transformDirections = function() {
-      var matrix, vec3, vec3s, _i, _len, _results;
-      matrix = arguments[0], vec3s = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    transformDirections = function(matrix, vec3s) {
+      var vec3, _i, _len, _results;
       _results = [];
       for (_i = 0, _len = vec3s.length; _i < _len; _i++) {
         vec3 = vec3s[_i];
@@ -90,18 +86,18 @@
     };
     transformWithMatrices = function(hand, transform, scale) {
       var finger, scalarScale, _i, _j, _len, _len1, _ref, _ref1;
-      transformDirections(transform, hand.direction, hand.palmNormal, hand.palmVelocity, hand.arm.basis[0], hand.arm.basis[1], hand.arm.basis[2]);
+      transformDirections(transform, [hand.direction, hand.palmNormal, hand.palmVelocity, hand.arm.basis[0], hand.arm.basis[1], hand.arm.basis[2]]);
       _ref = hand.fingers;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         finger = _ref[_i];
-        transformDirections(transform, finger.direction, finger.metacarpal.basis[0], finger.metacarpal.basis[1], finger.metacarpal.basis[2], finger.proximal.basis[0], finger.proximal.basis[1], finger.proximal.basis[2], finger.medial.basis[0], finger.medial.basis[1], finger.medial.basis[2], finger.distal.basis[0], finger.distal.basis[1], finger.distal.basis[2]);
+        transformDirections(transform, [finger.direction, finger.metacarpal.basis[0], finger.metacarpal.basis[1], finger.metacarpal.basis[2], finger.proximal.basis[0], finger.proximal.basis[1], finger.proximal.basis[2], finger.medial.basis[0], finger.medial.basis[1], finger.medial.basis[2], finger.distal.basis[0], finger.distal.basis[1], finger.distal.basis[2]]);
       }
       Leap.glMatrix.mat4.scale(transform, transform, scale);
-      transformPositions(transform, hand.palmPosition, hand.stabilizedPalmPosition, hand.sphereCenter, hand.arm.nextJoint, hand.arm.prevJoint);
+      transformPositions(transform, [hand.palmPosition, hand.stabilizedPalmPosition, hand.sphereCenter, hand.arm.nextJoint, hand.arm.prevJoint]);
       _ref1 = hand.fingers;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         finger = _ref1[_j];
-        transformPositions(transform, finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.distal.nextJoint, finger.tipPosition);
+        transformPositions(transform, [finger.carpPosition, finger.mcpPosition, finger.pipPosition, finger.dipPosition, finger.distal.nextJoint, finger.tipPosition]);
       }
       scalarScale = (scale[0] + scale[1] + scale[2]) / 3;
       return hand.arm.width *= scalarScale;

@@ -77,7 +77,7 @@ Leap.plugin 'transform', (scope = {})->
 
 
   # implicitly appends 1 to the vec3s, applying both translation and rotation
-  transformPositions = (matrix, vec3s...)->
+  transformPositions = (matrix, vec3s)->
     for vec3 in vec3s
       if vec3 # some recordings may not have all fields
         Leap.vec3.transformMat4(vec3, vec3, matrix)
@@ -93,7 +93,7 @@ Leap.plugin 'transform', (scope = {})->
     return out
 
   # appends 0 to the vec3s, applying only rotation
-  transformDirections = (matrix, vec3s...)->
+  transformDirections = (matrix, vec3s)->
     for vec3 in vec3s
       if vec3 # some recordings may not have all fields
         transformMat4Implicit0(vec3, vec3, matrix)
@@ -102,52 +102,60 @@ Leap.plugin 'transform', (scope = {})->
   transformWithMatrices = (hand, transform, scale) ->
     transformDirections(
       transform,
-      hand.direction,
-      hand.palmNormal,
-      hand.palmVelocity,
-      hand.arm.basis[0],
-      hand.arm.basis[1],
-      hand.arm.basis[2]
+      [
+        hand.direction,
+        hand.palmNormal,
+        hand.palmVelocity,
+        hand.arm.basis[0],
+        hand.arm.basis[1],
+        hand.arm.basis[2],
+      ]
     )
 
     for finger in hand.fingers
       transformDirections(
         transform,
-        finger.direction,
-        finger.metacarpal.basis[0],
-        finger.metacarpal.basis[1],
-        finger.metacarpal.basis[2],
-        finger.proximal.basis[0],
-        finger.proximal.basis[1],
-        finger.proximal.basis[2],
-        finger.medial.basis[0],
-        finger.medial.basis[1],
-        finger.medial.basis[2],
-        finger.distal.basis[0],
-        finger.distal.basis[1],
-        finger.distal.basis[2]
+        [
+          finger.direction,
+          finger.metacarpal.basis[0],
+          finger.metacarpal.basis[1],
+          finger.metacarpal.basis[2],
+          finger.proximal.basis[0],
+          finger.proximal.basis[1],
+          finger.proximal.basis[2],
+          finger.medial.basis[0],
+          finger.medial.basis[1],
+          finger.medial.basis[2],
+          finger.distal.basis[0],
+          finger.distal.basis[1],
+          finger.distal.basis[2]
+        ]
       )
 
     Leap.glMatrix.mat4.scale(transform, transform, scale)
 
     transformPositions(
       transform,
-      hand.palmPosition,
-      hand.stabilizedPalmPosition,
-      hand.sphereCenter,
-      hand.arm.nextJoint,
-      hand.arm.prevJoint
+      [
+        hand.palmPosition,
+        hand.stabilizedPalmPosition,
+        hand.sphereCenter,
+        hand.arm.nextJoint,
+        hand.arm.prevJoint
+      ]
     )
 
     for finger in hand.fingers
       transformPositions(
         transform,
-        finger.carpPosition,
-        finger.mcpPosition,
-        finger.pipPosition,
-        finger.dipPosition,
-        finger.distal.nextJoint,
-        finger.tipPosition
+        [
+          finger.carpPosition,
+          finger.mcpPosition,
+          finger.pipPosition,
+          finger.dipPosition,
+          finger.distal.nextJoint,
+          finger.tipPosition
+        ]
       )
 
     scalarScale = ( scale[0] + scale[1] + scale[2] ) / 3;
