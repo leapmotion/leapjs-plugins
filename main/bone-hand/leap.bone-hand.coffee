@@ -358,6 +358,9 @@ Leap.plugin 'boneHand', (options = {}) ->
   # make sure scope is globally available
   scope = options
 
+  jointColor = (new THREE.Color).setHex(0x5daa00)
+  boneColor = (new THREE.Color).setHex(0xffffff)
+
   scope.boneScale  && boneScale  = scope.boneScale
   scope.jointScale && jointScale = scope.jointScale
 
@@ -373,8 +376,6 @@ Leap.plugin 'boneHand', (options = {}) ->
   );
 
 
-  jointColor = (new THREE.Color).setHex(0x5daa00)
-  boneColor = (new THREE.Color).setHex(0xffffff)
 
   boneScale  = 1 / 6
   jointScale = 1 / 5

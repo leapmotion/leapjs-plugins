@@ -312,14 +312,14 @@
       options = {};
     }
     scope = options;
+    jointColor = (new THREE.Color).setHex(0x5daa00);
+    boneColor = (new THREE.Color).setHex(0xffffff);
     scope.boneScale && (boneScale = scope.boneScale);
     scope.jointScale && (jointScale = scope.jointScale);
     scope.boneColor && (boneColor = scope.boneColor);
     scope.jointColor && (jointColor = scope.jointColor);
     scope.HandMesh = HandMesh;
     baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0));
-    jointColor = (new THREE.Color).setHex(0x5daa00);
-    boneColor = (new THREE.Color).setHex(0xffffff);
     boneScale = 1 / 6;
     jointScale = 1 / 5;
     boneRadius = null;
