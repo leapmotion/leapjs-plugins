@@ -11,6 +11,7 @@ This repository holds a collection of independent plugins which extend the funct
  - **[Version Check](http://leapmotion.github.io/leapjs-plugins/docs/#version-check)** Ensure a minimum protocol version when running your app.
  - **[Playback](http://leapmotion.github.io/leapjs-plugins/docs/#playback)** Record hand-data from the Leap, compress it, and use it to animate your app.
  - **[Transform](http://leapmotion.github.io/leapjs-plugins/main/transform/)** Translate, rotate, and scale Leap Motion data. Easily.
+ - **[Bone Hand](http://leapmotion.github.io/leapjs-plugins/main/bone-hand/)** Drop-in THREE.js Hands in any scene, or quick-start with the default scene.
 
 **`leap-plugins-utils.js`** explores what can be done with LeapJS Plugins.
 
