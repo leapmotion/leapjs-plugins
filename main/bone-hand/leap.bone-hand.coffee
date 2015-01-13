@@ -1,13 +1,16 @@
 scope = null
 
 initScene = (targetEl, scale)->
+
+  # scene and renderer
+
   scope.scene = new THREE.Scene()
   scope.rendererOps ||= {}
   if scope.rendererOps.alpha == undefined then scope.rendererOps.alpha = true
   scope.renderer = renderer = new THREE.WebGLRenderer(scope.rendererOps)
 
-  width = window.innerWidth
-  height = window.innerHeight
+  width  = scope.width  || window.innerWidth
+  height = scope.height || window.innerHeight
 
   renderer.setClearColor(0x000000, 0)
   renderer.setSize(width, height)
@@ -43,17 +46,21 @@ initScene = (targetEl, scale)->
 
   scope.scene.add(camera)
 
-  window.addEventListener 'resize', ->
-    width  = window.innerWidth
-    height = window.innerHeight
 
-    camera.aspect = width / height
-    camera.updateProjectionMatrix()
 
-    renderer.setSize( width, height )
 
-    renderer.render(scope.scene, camera)
-  , false
+  if !scope.width && !scope.height
+    window.addEventListener 'resize', ->
+      width  = window.innerWidth
+      height = window.innerHeight
+
+      camera.aspect = width / height
+      camera.updateProjectionMatrix()
+
+      renderer.setSize( width, height )
+
+      renderer.render(scope.scene, camera)
+    , false
 
 
   scope.render ||= (timestamp)->
