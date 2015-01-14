@@ -36,7 +36,7 @@ See [hand-entry](http://leapmotion.github.io/leapjs-plugins/docs/index.html#hand
 <script type="text/javascript" src="js/leap-0.6.4.js"></script>
 <script type="text/javascript" src="js/lib/leap.hand-entry.js"></script>
 <script type="text/javascript">
-  new Leap.Controller()
+  Leap.loop()
     .use('handEntry')
 </script>
 ```
