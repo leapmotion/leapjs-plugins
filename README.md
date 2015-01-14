@@ -7,7 +7,7 @@ This repository holds a collection of independent plugins which extend the funct
 
  - **[Hand Entry](http://leapmotion.github.io/leapjs-plugins/docs/#hand-entry)** Emit events when a hand enters of leaves the field of view.
  - **[Hand Hold](http://leapmotion.github.io/leapjs-plugins/docs/#hand-hold)** Save data on to hands or fingers which will be persisted between frames.
- - **[Screen Position](http://leapmotion.github.io/leapjs-plugins/docs/#screen-position)** Get the on-screen position of any point in Leap-space.
+ - **[Screen Position](http://leapmotion.github.io/leapjs-plugins/docs/#screen-position)** Get the on-screen position of any Leap-space point.
  - **[Version Check](http://leapmotion.github.io/leapjs-plugins/docs/#version-check)** Ensure a minimum protocol version when running your app.
  - **[Playback](http://leapmotion.github.io/leapjs-plugins/docs/#playback)** Record hand-data from the Leap, compress it, and use it to animate your app.
  - **[Transform](http://leapmotion.github.io/leapjs-plugins/main/transform/)** Translate, rotate, and scale Leap Motion data. Easily.
