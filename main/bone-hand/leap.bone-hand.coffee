@@ -1,5 +1,7 @@
 scope = null
 
+if require then THREE = require('three')
+
 initScene = (targetEl, scale)->
   scope.scene = new THREE.Scene()
   scope.rendererOps ||= {}
