@@ -1,8 +1,10 @@
 //CoffeeScript generated from main/bone-hand/leap.bone-hand.coffee
 (function() {
-  var HandMesh, armTopAndBottomRotation, baseBoneRotation, boneColor, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, onHand, scope;
+  var HandMesh, armTopAndBottomRotation, baseBoneRotation, boneColor, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, onHand, scope, THREE;
 
   scope = null;
+
+  if(require) THREE = require('three');
 
   initScene = function(targetEl, scale) {
     var camera, directionalLight, far, height, near, renderer, width;
