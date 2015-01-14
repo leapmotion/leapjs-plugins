@@ -3,7 +3,9 @@
   "version": "0.1.11pre",
   "description": "A collection of useful plugins for LeapJS",
   "main": "main/leapjs-plugins-0.7.js",
-  "dependencies": {},
+  "dependencies": {
+    "three": "^0.69.0"
+  },
   "devDependencies": {
     "coffee-script": ">=1.7.1",
     "grunt-contrib-concat": "~0.3.0",
