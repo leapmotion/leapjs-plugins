@@ -8,6 +8,7 @@
 # position:  a THREE.Vector3
 # scale:  a THREE.Vector3 or a number.
 
+if require then THREE = require('three')
 
 Leap.plugin 'transform', (scope = {})->
   noop = [

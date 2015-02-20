@@ -1,8 +1,8 @@
 /*    
- * LeapJS-Plugins  - v0.1.11pre - 2014-12-18    
+ * LeapJS-Plugins  - v0.1.11pre - 2015-02-20    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
- * Copyright 2014 LeapMotion, Inc    
+ * Copyright 2015 LeapMotion, Inc    
  *    
  * Licensed under the Apache License, Version 2.0 (the "License");    
  * you may not use this file except in compliance with the License.    
@@ -20,9 +20,13 @@
 
 //CoffeeScript generated from main/bone-hand/leap.bone-hand.coffee
 (function() {
-  var HandMesh, armTopAndBottomRotation, baseBoneRotation, boneColor, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, onHand, scope;
+  var HandMesh, THREE, armTopAndBottomRotation, baseBoneRotation, boneColor, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, onHand, scope;
 
   scope = null;
+
+  if (require) {
+    THREE = require('three');
+  }
 
   initScene = function(targetEl, scale) {
     var camera, directionalLight, far, height, near, renderer, width;
@@ -2461,6 +2465,12 @@ More info on vec3 can be found, here: http://glmatrix.net/docs/2.2.0/symbols/vec
 
 //CoffeeScript generated from main/transform/leap.transform.coffee
 (function() {
+  var THREE;
+
+  if (require) {
+    THREE = require('three');
+  }
+
   Leap.plugin('transform', function(scope) {
     var noop, transformDirections, transformMat4Implicit0, transformPositions, transformWithMatrices, _directionTransform;
     if (scope == null) {
