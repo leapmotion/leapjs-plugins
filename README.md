@@ -61,8 +61,12 @@ To run them on localhost, you'll need a web server to resolve asset paths.
 Contributing
 ===============
 
-#### Read up on [Making Plugins](https://github.com/leapmotion/leapjs/wiki/Plugins#plugin-development), then:
+#### Open an issue!
+ - https://github.com/leapmotion/leapjs-plugins/issues
 
+#### Open a pull request!
+
+ - Read up on [Making Plugins](https://github.com/leapmotion/leapjs/wiki/Plugins#plugin-development), then:
  - Make a fork, name your branch, add your plugin or fix.
  - Add your name, email, and github account to the CONTRIBUTORS.txt list, thereby agreeing to the terms and conditions of the Contributor License Agreement.
  - Open a Pull Request. If your information is not in the CONTRIBUTORS file, your pull request will not be reviewed.
