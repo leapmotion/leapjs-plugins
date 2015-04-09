@@ -329,7 +329,6 @@
       scope.camera.add(scope.light);
       if (controller.plugins.transform) {
         if (controller.plugins.transform.getScale()) {
-          console.log("scaling shadow mechanism by " + controller.plugins.transform.scale.x);
           scope.light.shadowCameraNear *= controller.plugins.transform.scale.x;
           scope.light.shadowCameraFar *= controller.plugins.transform.scale.x;
           scope.light.target.position.multiply(controller.plugins.transform.scale);

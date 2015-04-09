@@ -394,7 +394,6 @@ Leap.plugin 'boneHand', (options = {}) ->
         # this somewhat confusingly-named method also ensures that scale is a Vector3
         # for VR, this would be 0.001 m/mm
 
-        console.log "scaling shadow mechanism by #{controller.plugins.transform.scale.x}"
         scope.light.shadowCameraNear *= controller.plugins.transform.scale.x
         scope.light.shadowCameraFar  *= controller.plugins.transform.scale.x
         scope.light.target.position.multiply(controller.plugins.transform.scale)
