@@ -1,12 +1,11 @@
 <html>
 <head>
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/three.js/r70/three.js"></script>
   <script src="//js.leapmotion.com/leap-0.6.4.js"></script>
-  <script src="//js.leapmotion.com/leap-plugins-0.1.10.js"></script>
+  <script src="../leap-plugins-0.1.11pre.js"></script>
   <script src="lib/OrbitControls.js"></script>
 
-  <script src="leap.bone-hand.js"></script>
   <style>
     body {
       margin: 10px;
@@ -109,6 +108,22 @@
   </tr>
 </table>
 
+<h3>Addendum</h3>
+
+<p>
+  THREE.js shadows are fully supported.
+</p>
+  <ul>
+    <li>If using the default scene, simply set <code>yourMesh.receivesShadow = true</code>, as
+      demonstrated in the source of this page.</li>
+    <li>If working with your own scene, be sure to have your <code>renderer.shadowMapEnabled = true</code>
+      and then, if you choose, call <code>myController.plugins.boneHand.addShadowCamera()</code>.  </li>
+  </ul>
+
+<p>
+    See the source for details.  <code>scope.light.shadowCameraVisible</code> is a nice tool to know about.
+</p>
+
 </body>
 
 <script>
@@ -116,10 +131,11 @@
   // Set up plugins
 
   Leap.loop()
+//    .use('transform', {vr: true})
     .use('boneHand', {
       targetEl: document.body,
       arm: true,
-      opacity: 0.5
+      opacity: 0.8
     });
 
 
@@ -132,16 +148,15 @@
 
   var plane = new THREE.Mesh(
     new THREE.PlaneGeometry(80,80),
-    new THREE.MeshPhongMaterial({wireframe: false})
+    new THREE.MeshPhongMaterial({wireframe: false, side: THREE.DoubleSide})
   );
-
 
   plane.scale.set(2,2,2);
   plane.position.set(0,200,-100);
+  plane.receiveShadow = true;
+  scene.add(plane);
 
   camera.lookAt( plane.position );
-
-//  scene.add(plane);
 
   var axisHelper = new THREE.AxisHelper( 100 );
   scene.add( axisHelper );

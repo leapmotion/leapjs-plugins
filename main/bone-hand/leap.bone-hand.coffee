@@ -17,19 +17,12 @@ initScene = (targetEl, scale)->
 
   renderer.domElement.className = "leap-boneHand"
 
+  renderer.shadowMapEnabled = true
+  renderer.shadowMapType = THREE.PCFSoftShadowMap
+
   targetEl.appendChild(renderer.domElement)
 
-  directionalLight = new THREE.DirectionalLight( 0xffffff, 1 )
-  directionalLight.position.set( 0, 0.5, 1 )
-  scope.scene.add(directionalLight)
-
-  directionalLight = new THREE.DirectionalLight( 0xffffff, 1 )
-  directionalLight.position.set( 0.5, -0.5, -1 )
-  scope.scene.add(directionalLight)
-
-  directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 )
-  directionalLight.position.set( -0.5, 0, -0.2 )
-  scope.scene.add(directionalLight)
+  # camera
 
   near = 1 # 1 mm
   far = 10000 # 10 m
@@ -43,11 +36,7 @@ initScene = (targetEl, scale)->
   camera.position.set(0, 300, 500);
   camera.lookAt(new THREE.Vector3(0, 160, 0));
 
-
   scope.scene.add(camera)
-
-
-
 
   if !scope.width && !scope.height
     window.addEventListener 'resize', ->
@@ -364,6 +353,7 @@ boneHandLost = (hand) ->
 Leap.plugin 'boneHand', (options = {}) ->
   # make sure scope is globally available
   scope = options
+  controller = this;
 
   jointColor = (new THREE.Color).setHex(0x5daa00)
   boneColor = (new THREE.Color).setHex(0xffffff)
@@ -375,6 +365,47 @@ Leap.plugin 'boneHand', (options = {}) ->
   scope.jointColor && jointColor = scope.jointColor
 
   scope.HandMesh = HandMesh
+
+  # this method enhances scope.scene with camera and lighting
+  # it is split from initScene so as to allow it being called with non-default scenes.
+  # expects camera to be added to the scene
+  scope.addShadowCamera = ->
+
+    scope.light = new THREE.SpotLight( 0xffffff, 1 )
+    scope.light.castShadow = true
+#    scope.light.shadowCameraVisible = true # This makes for excellent debugging
+    scope.light.shadowDarkness = 0.8
+    scope.light.shadowMapWidth = 1024
+    scope.light.shadowMapHeight = 1024
+    scope.light.shadowCameraNear = 0.5 / 0.001
+    scope.light.shadowCameraFar = 3  / 0.001
+
+    # fixed hand position..
+    scope.light.position.set(0,1000,1000); # up and behind
+    scope.light.target.position.set(0,0,-1000); # one meter forward
+
+    # see https:#github.com/mrdoob/three.js/issues/2251
+    scope.camera.add(scope.light.target);
+    scope.camera.add(scope.light);
+
+    if controller.plugins.transform
+
+      if controller.plugins.transform.getScale()
+        # this somewhat confusingly-named method also ensures that scale is a Vector3
+        # for VR, this would be 0.001 m/mm
+
+        console.log "scaling shadow mechanism by #{controller.plugins.transform.scale.x}"
+        scope.light.shadowCameraNear *= controller.plugins.transform.scale.x
+        scope.light.shadowCameraFar  *= controller.plugins.transform.scale.x
+        scope.light.target.position.multiply(controller.plugins.transform.scale)
+        scope.light.position.multiply(controller.plugins.transform.scale)
+
+      if controller.plugins.transform.vr == true
+        scope.camera.position.set(0,0,0)
+
+      if controller.plugins.transform.vr == 'desktop'
+        scope.camera.position.set(0,0.15,0.3)
+
 
 
 
@@ -396,13 +427,13 @@ Leap.plugin 'boneHand', (options = {}) ->
     new THREE.Euler(0, 0, Math.PI / 2)
   );
 
-  controller = this;
 
   HandMesh.onMeshCreated = (mesh)->
     controller.emit('handMeshCreated', mesh)
 
   HandMesh.onMeshUsed = (mesh)->
     controller.emit('handMeshUsed', mesh)
+
 
 
 
@@ -417,12 +448,8 @@ Leap.plugin 'boneHand', (options = {}) ->
       scale = @plugins.transform.scale.x # we just grab one value, as they're usually all the same.
 
     initScene(scope.targetEl, scale)
+    scope.addShadowCamera()
 
-    if @plugins.transform && @plugins.transform.vr == true
-      scope.camera.position.set(0,0,0)
-
-    if @plugins.transform && @plugins.transform.vr == 'desktop'
-      scope.camera.position.set(0,0.15,0.3)
 
 
   # Preload two hands
