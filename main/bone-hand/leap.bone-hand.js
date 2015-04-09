@@ -7,28 +7,21 @@
   if(require) THREE = require('three');
 
   initScene = function(targetEl, scale) {
-    var camera, directionalLight, far, height, near, renderer, width;
+    var camera, far, height, near, renderer, width;
     scope.scene = new THREE.Scene();
     scope.rendererOps || (scope.rendererOps = {});
     if (scope.rendererOps.alpha === void 0) {
       scope.rendererOps.alpha = true;
     }
     scope.renderer = renderer = new THREE.WebGLRenderer(scope.rendererOps);
-    width = window.innerWidth;
-    height = window.innerHeight;
+    width = scope.width || window.innerWidth;
+    height = scope.height || window.innerHeight;
     renderer.setClearColor(0x000000, 0);
     renderer.setSize(width, height);
     renderer.domElement.className = "leap-boneHand";
+    renderer.shadowMapEnabled = true;
+    renderer.shadowMapType = THREE.PCFSoftShadowMap;
     targetEl.appendChild(renderer.domElement);
-    directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0, 0.5, 1);
-    scope.scene.add(directionalLight);
-    directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(0.5, -0.5, -1);
-    scope.scene.add(directionalLight);
-    directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    directionalLight.position.set(-0.5, 0, -0.2);
-    scope.scene.add(directionalLight);
     near = 1;
     far = 10000;
     if (scale) {
@@ -39,14 +32,16 @@
     camera.position.set(0, 300, 500);
     camera.lookAt(new THREE.Vector3(0, 160, 0));
     scope.scene.add(camera);
-    window.addEventListener('resize', function() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-      return renderer.render(scope.scene, camera);
-    }, false);
+    if (!scope.width && !scope.height) {
+      window.addEventListener('resize', function() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+        return renderer.render(scope.scene, camera);
+      }, false);
+    }
     scope.render || (scope.render = function(timestamp) {
       return renderer.render(scope.scene, scope.camera);
     });
@@ -314,6 +309,7 @@
       options = {};
     }
     scope = options;
+    controller = this;
     jointColor = (new THREE.Color).setHex(0x5daa00);
     boneColor = (new THREE.Color).setHex(0xffffff);
     scope.boneScale && (boneScale = scope.boneScale);
@@ -321,6 +317,33 @@
     scope.boneColor && (boneColor = scope.boneColor);
     scope.jointColor && (jointColor = scope.jointColor);
     scope.HandMesh = HandMesh;
+    scope.addShadowCamera = function() {
+      scope.light = new THREE.SpotLight(0xffffff, 1);
+      scope.light.castShadow = true;
+      scope.light.shadowDarkness = 0.8;
+      scope.light.shadowMapWidth = 1024;
+      scope.light.shadowMapHeight = 1024;
+      scope.light.shadowCameraNear = 0.5 / 0.001;
+      scope.light.shadowCameraFar = 3 / 0.001;
+      scope.light.position.set(0, 1000, 1000);
+      scope.light.target.position.set(0, 0, -1000);
+      scope.camera.add(scope.light.target);
+      scope.camera.add(scope.light);
+      if (controller.plugins.transform) {
+        if (controller.plugins.transform.getScale()) {
+          scope.light.shadowCameraNear *= controller.plugins.transform.scale.x;
+          scope.light.shadowCameraFar *= controller.plugins.transform.scale.x;
+          scope.light.target.position.multiply(controller.plugins.transform.scale);
+          scope.light.position.multiply(controller.plugins.transform.scale);
+        }
+        if (controller.plugins.transform.vr === true) {
+          scope.camera.position.set(0, 0, 0);
+        }
+        if (controller.plugins.transform.vr === 'desktop') {
+          return scope.camera.position.set(0, 0.15, 0.3);
+        }
+      }
+    };
     baseBoneRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(Math.PI / 2, 0, 0));
     boneScale = 1 / 6;
     jointScale = 1 / 5;
@@ -328,7 +351,6 @@
     jointRadius = null;
     material = null;
     armTopAndBottomRotation = (new THREE.Quaternion).setFromEuler(new THREE.Euler(0, 0, Math.PI / 2));
-    controller = this;
     HandMesh.onMeshCreated = function(mesh) {
       return controller.emit('handMeshCreated', mesh);
     };
@@ -343,12 +365,7 @@
         scale = this.plugins.transform.scale.x;
       }
       initScene(scope.targetEl, scale);
-      if (this.plugins.transform && this.plugins.transform.vr === true) {
-        scope.camera.position.set(0, 0, 0);
-      }
-      if (this.plugins.transform && this.plugins.transform.vr === 'desktop') {
-        scope.camera.position.set(0, 0.15, 0.3);
-      }
+      scope.addShadowCamera();
     }
     if (scope.scene) {
       HandMesh.create();
