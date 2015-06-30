@@ -1,6 +1,6 @@
 scope = null
 
-if require then THREE = require('three')
+THREE = if typeof require != 'undefined' then require('three') else window.THREE
 
 initScene = (targetEl, scale)->
 

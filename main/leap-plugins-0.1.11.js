@@ -24,9 +24,7 @@
 
   scope = null;
 
-  if (require) {
-    THREE = require('three');
-  }
+  THREE = typeof require !== 'undefined' ? require('three') : window.THREE;
 
   initScene = function(targetEl, scale) {
     var camera, far, height, near, renderer, width;
