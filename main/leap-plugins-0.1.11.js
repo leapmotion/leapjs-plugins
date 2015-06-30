@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.11pre - 2015-04-08    
+ * LeapJS-Plugins  - v0.1.11 - 2015-06-30    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2015 LeapMotion, Inc    
@@ -20,9 +20,13 @@
 
 //CoffeeScript generated from main/bone-hand/leap.bone-hand.coffee
 (function() {
-  var HandMesh, armTopAndBottomRotation, baseBoneRotation, boneColor, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, onHand, scope;
+  var HandMesh, THREE, armTopAndBottomRotation, baseBoneRotation, boneColor, boneHandLost, boneRadius, boneScale, initScene, jointColor, jointRadius, jointScale, material, onHand, scope;
 
   scope = null;
+
+  if (require) {
+    THREE = require('three');
+  }
 
   initScene = function(targetEl, scale) {
     var camera, far, height, near, renderer, width;

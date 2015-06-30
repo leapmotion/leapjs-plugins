@@ -1,3 +1,17 @@
+# 0.1.11
+ - NPM support
+ - [boneHand] Add default shadowing and shadow camera. (yay)
+ - [boneHand] Add callbacks for `onMeshCreated`, `onMeshUsed`, and `traverse` method.
+ - [boneHand] Fix issue where `render` method is required.
+ - [boneHand] Add `renderDepth` to meshes - prevents flicker (aka "transparency bouncing")
+ - [boneHand] Name the bone meshes
+ - [boneHand] Fix bug where color options would be ignored
+ - [boneHand] Allow width and height to be passed in to default renderer.
+ - [transform,boneHand] Add "desktop" mode - this sets units to meters, but leaves the coordinate system un-rotated.
+ - [transform] subtle CPU optimize
+
+
+
 # 0.1.10
  - [transform] Do not allow duplicate transformations (important for LeapJS 0.6.4+ with playback, which can emit the same frame multiple times)
  - [boneHand] Automatically scale the view frustum based upon scene scale.

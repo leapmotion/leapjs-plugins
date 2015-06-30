@@ -1,8 +1,8 @@
 {
   "name": "leapjs-plugins",
-  "version": "0.1.11pre",
+  "version": "0.1.11",
   "description": "A collection of useful plugins for LeapJS",
-  "main": "main/leapjs-plugins-0.7.js",
+  "main": "main/leapjs-plugins-0.1.11.js",
   "dependencies": {
     "three": "^0.69.0"
   },
