@@ -19,8 +19,8 @@
     renderer.setClearColor(0x000000, 0);
     renderer.setSize(width, height);
     renderer.domElement.className = "leap-boneHand";
-    renderer.shadowMapEnabled = true;
-    renderer.shadowMapType = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     targetEl.appendChild(renderer.domElement);
     near = 1;
     far = 10000;
@@ -114,14 +114,14 @@
           mesh = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), material.clone());
           mesh.name = "hand-bone-" + j;
           mesh.material.color.copy(jointColor);
-          mesh.renderDepth = ((i * 9) + (2 * j)) / 36;
+          mesh.renderOrder = ((i * 9) + (2 * j)) / 36;
           mesh.castShadow = true;
           scope.scene.add(mesh);
           finger.push(mesh);
           mesh = new THREE.Mesh(new THREE.CylinderGeometry(boneRadius, boneRadius, 40, 32), material.clone());
           mesh.name = "hand-joint-" + j;
           mesh.material.color.copy(boneColor);
-          mesh.renderDepth = ((i * 9) + (2 * j) + 1) / 36;
+          mesh.renderOrder = ((i * 9) + (2 * j) + 1) / 36;
           mesh.castShadow = true;
           scope.scene.add(mesh);
           finger.push(mesh);
@@ -320,11 +320,10 @@
     scope.addShadowCamera = function() {
       scope.light = new THREE.SpotLight(0xffffff, 1);
       scope.light.castShadow = true;
-      scope.light.shadowDarkness = 0.8;
-      scope.light.shadowMapWidth = 1024;
-      scope.light.shadowMapHeight = 1024;
-      scope.light.shadowCameraNear = 0.5 / 0.001;
-      scope.light.shadowCameraFar = 3 / 0.001;
+      scope.light.shadow.mapSize.width = 1024;
+      scope.light.shadow.mapSize.height = 1024;
+      scope.light.shadow.camera.near = 0.5 / 0.001;
+      scope.light.shadow.camera.far = 3 / 0.001;
       scope.light.position.set(0, 1000, 1000);
       scope.light.target.position.set(0, 0, -1000);
       scope.camera.add(scope.light.target);

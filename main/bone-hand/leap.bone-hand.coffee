@@ -19,8 +19,8 @@ initScene = (targetEl, scale)->
 
   renderer.domElement.className = "leap-boneHand"
 
-  renderer.shadowMapEnabled = true
-  renderer.shadowMapType = THREE.PCFSoftShadowMap
+  renderer.shadowMap.enabled = true
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
   targetEl.appendChild(renderer.domElement)
 
@@ -132,7 +132,7 @@ class HandMesh
         )
         mesh.name = "hand-bone-#{j}"
         mesh.material.color.copy(jointColor)
-        mesh.renderDepth = ((i * 9) + (2 * j) ) / 36
+        mesh.renderOrder = ((i * 9) + (2 * j) ) / 36
         mesh.castShadow = true
         scope.scene.add mesh
         finger.push mesh
@@ -145,7 +145,7 @@ class HandMesh
         )
         mesh.name = "hand-joint-#{j}"
         mesh.material.color.copy(boneColor)
-        mesh.renderDepth = ((i * 9) + (2 * j) + 1 ) / 36 # might fuckup opaque objects?
+        mesh.renderOrder = ((i * 9) + (2 * j) + 1 ) / 36 # might fuckup opaque objects?
         mesh.castShadow = true
         scope.scene.add mesh
         finger.push mesh
@@ -376,11 +376,11 @@ Leap.plugin 'boneHand', (options = {}) ->
     scope.light = new THREE.SpotLight( 0xffffff, 1 )
     scope.light.castShadow = true
 #    scope.light.shadowCameraVisible = true # This makes for excellent debugging
-    scope.light.shadowDarkness = 0.8
-    scope.light.shadowMapWidth = 1024
-    scope.light.shadowMapHeight = 1024
-    scope.light.shadowCameraNear = 0.5 / 0.001
-    scope.light.shadowCameraFar = 3  / 0.001
+    # scope.light.shadowDarkness = 0.8 # THREE.Light: .shadowDarkness has been removed.
+    scope.light.shadow.mapSize.width = 1024
+    scope.light.shadow.mapSize.height = 1024
+    scope.light.shadow.camera.near = 0.5 / 0.001
+    scope.light.shadow.camera.far = 3  / 0.001
 
     # fixed hand position..
     scope.light.position.set(0,1000,1000); # up and behind
