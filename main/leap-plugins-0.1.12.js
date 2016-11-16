@@ -1,5 +1,5 @@
 /*    
- * LeapJS-Plugins  - v0.1.11 - 2016-02-19    
+ * LeapJS-Plugins  - v0.1.12 - 2016-11-16    
  * http://github.com/leapmotion/leapjs-plugins/    
  *    
  * Copyright 2016 LeapMotion, Inc    
@@ -1836,6 +1836,24 @@ Recording.prototype = {
       callback.call(this, responseData.frames);
     }
 
+  },
+
+  loadCompressedRecording: function(compressedData, callback) {
+    var decompressedData = this.decompress(compressedData);
+    decompressedData = JSON.parse(decompressedData);
+    if (decompressedData.metadata.formatVersion == 2) {
+      decompressedData.frames = this.unPackFrameData(decompressedData.frames);
+    }
+
+    this.metadata = decompressedData.metadata;
+
+    console.log('Recording loaded:', this.metadata);
+
+    this.loading = false;
+
+    if (callback) {
+      callback.call(this, decompressedData.frames);
+    }
   }
 
 };
@@ -2169,7 +2187,7 @@ Recording.prototype = {
 
 
     // Accepts a hash with any of
-    // URL, recording, metadata
+    // URL, recording, metadata, compressedRecording
     // once loaded, the recording is immediately activated
     setRecording: function (options) {
       var player = this;
@@ -2230,6 +2248,10 @@ Recording.prototype = {
           player.controller.emit('playback.ajax:complete', player, this);
         });
 
+      } else if (options.compressedRecording) {
+        this.recording.loadCompressedRecording(options.compressedRecording, function(frames){
+          loadComplete.call(this, frames);
+        });
       }
 
 
